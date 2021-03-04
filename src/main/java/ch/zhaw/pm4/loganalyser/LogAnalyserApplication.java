@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.LogAnalyser;
+package ch.zhaw.pm4.loganalyser;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
