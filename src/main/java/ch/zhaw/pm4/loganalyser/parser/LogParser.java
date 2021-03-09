@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.parser;
 
+import ch.zhaw.pm4.loganalyser.model.filter.Filter;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 
