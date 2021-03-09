@@ -16,7 +16,7 @@ public class LogParser {
     public List<String[]> read(List<Filter> filters, LogService service) throws FileNotFoundException {
         Path logDir = service.getLogDirectory();
 
-        List<String[]> rows = new ArrayList();
+        List<String[]> rows = new ArrayList<>();
 
         for (File logfile : logDir.toFile().listFiles()) {
             rows.addAll(parse(logfile, service.getLogConfig()));
@@ -42,19 +42,22 @@ public class LogParser {
      * @throws FileNotFoundException
      */
     private List<String[]> parse(File logfile, LogConfig config) throws FileNotFoundException {
-        Scanner sc = new Scanner(logfile);
-        sc.useDelimiter(config.getSeparator());
-        int colCount = config.getColumnCount();
+        List<String[]> rows;
 
-        List<String[]> rows = new ArrayList<>();
+        try (Scanner sc = new Scanner(logfile)) {
+            sc.useDelimiter(config.getSeparator());
+            int colCount = config.getColumnCount();
 
-        while(sc.hasNext()) {
+            rows = new ArrayList<>();
 
-            String[] cols = new String[colCount];
-            for (int i = 0; i < colCount; i++) {
-                cols[i] = sc.next();
+            while (sc.hasNext()) {
+
+                String[] cols = new String[colCount];
+                for (int i = 0; i < colCount; i++) {
+                    cols[i] = sc.next();
+                }
+                rows.add(cols);
             }
-            rows.add(cols);
         }
 
         return rows;
