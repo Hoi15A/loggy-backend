@@ -8,13 +8,13 @@
 ![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/carl503/loggy/latest?label=docker%20image&logo=docker)
 ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/carl503/loggy/latest?label=image%20size&logo=docker)
 
-[![Bugs](http://direct.zhaw.neat.moe:9000/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=bugs)](http://direct.zhaw.neat.moe:9000/dashboard?id=ch.zhaw.pm4.loganalyser)
-[![Coverage](http://direct.zhaw.neat.moe:9000/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=coverage)](http://direct.zhaw.neat.moe:9000/dashboard?id=ch.zhaw.pm4.loganalyser)
-[![Lines of Code](http://direct.zhaw.neat.moe:9000/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=ncloc)](http://direct.zhaw.neat.moe:9000/dashboard?id=ch.zhaw.pm4.loganalyser)
-[![Maintainability Rating](http://direct.zhaw.neat.moe:9000/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=sqale_rating)](http://direct.zhaw.neat.moe:9000/dashboard?id=ch.zhaw.pm4.loganalyser)
-[![Quality Gate Status](http://direct.zhaw.neat.moe:9000/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=alert_status)](http://direct.zhaw.neat.moe:9000/dashboard?id=ch.zhaw.pm4.loganalyser)
-[![Reliability Rating](http://direct.zhaw.neat.moe:9000/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=reliability_rating)](http://direct.zhaw.neat.moe:9000/dashboard?id=ch.zhaw.pm4.loganalyser)
-[![Technical Debt](http://direct.zhaw.neat.moe:9000/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=sqale_index)](http://direct.zhaw.neat.moe:9000/dashboard?id=ch.zhaw.pm4.loganalyser)
+[![Bugs](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=bugs)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
+[![Coverage](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=coverage)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
+[![Lines of Code](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=ncloc)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
+[![Maintainability Rating](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=sqale_rating)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
+[![Quality Gate Status](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=alert_status)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
+[![Reliability Rating](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=reliability_rating)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
+[![Technical Debt](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=sqale_index)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
 
 ## Setup
 
