@@ -32,7 +32,7 @@ public class QueryService {
 
          headers.add(new HeaderDTO("Date", "date"));
          headers.add(new HeaderDTO("Type", "type"));
-         headers.add(new HeaderDTO("Message", "Message"));
+         headers.add(new HeaderDTO("Message", "message"));
 
         return new TableDTO(headers, tableData);
 
