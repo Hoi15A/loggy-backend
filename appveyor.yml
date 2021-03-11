@@ -1,0 +1,52 @@
+image:
+  - ubuntu-20.04-amd64
+
+environment:
+  DOCKERHUB_PASS:
+    secure: +nZQV9YjOpjK8eJvYeykaKx7VxsSMyBjSbzjB6YbmrW38cM5Ol7Qn7i19vyVlhKv
+  SONAR_TOKEN:
+    secure: mN5Yef+d81h3iZSs0/Uz5xA9tf6C4Q1ZU4aN7dFEAAjDreFYEkMnYW5PLOUCH0Ko
+  matrix:
+    - JDK_VERSION: adoptopenjdk-15-hotspot-amd64
+
+# branches to build
+branches:
+  # whitelist
+  only:
+    - master
+    - dev
+
+install:
+  - sudo java_select $JDK_VERSION
+  # Use dockerized PostgreSQL 12 for the integration tests.
+  # - docker run --name pgsql -d -p 5432:5432 -e POSTGRES_USER=appveyor -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=sample postgres:13
+
+build_script:
+  # Build a WAR from the sources.
+  - ./gradlew --console=plain build
+
+test_script:
+  # Run tests and CheckStyle audit.
+  - ./gradlew --console=plain check
+
+artifacts:
+  # Collect all JARs that have been built and upload them to the CI server. Can be downloaded via
+  # the UI. If you want to keep them longer than 6 months, deploy to Artifactory (not shown).
+  - path: "build/libs/*.jar"
+
+on_finish:
+  # Search the 'build' folder for all JUnit test reports and upload them to the CI server.
+  - sh: |
+      find "$APPVEYOR_BUILD_FOLDER/build" -type f -name 'TEST*.xml' -print0 | xargs -0 -I '{}' curl -F 'file=@{}' "https://ci.cloudlab.zhaw.ch/api/testresults/junit/$APPVEYOR_JOB_ID"
+      docker login --username carl503 --password $DOCKERHUB_PASS
+      docker build -t loggy .
+      docker tag loggy carl503/loggy:latest
+      docker push carl503/loggy
+      ./gradlew sonarqube -Dsonar.projectKey=ci-test -Dsonar.host.url=http://direct.zhaw.neat.moe:9000 -Dsonar.login=$SONAR_TOKEN
+
+
+# We do not want to build git tags.
+skip_tags: true
+
+# Use integers as build versions (1, 2, 3, …) instead of 1.0.X.
+version: "{build}"
