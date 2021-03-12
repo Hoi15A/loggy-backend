@@ -47,6 +47,12 @@ on_finish:
       docker tag loggy carl503/loggy:latest
       docker push carl503/loggy
       ./gradlew sonarqube -Dsonar.projectKey=ch.zhaw.pm4.loganalyser -Dsonar.host.url=https://sonar.zhaw.neat.moe -Dsonar.login=$SONAR_TOKEN
+      curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
+      ./appveyor-tools/secure-file -decrypt ./id_loganalyzer.enc -secret $my_secret -salt $my_salt -out id_loganalyzer
+      chmod 0600 id_loganalyzer
+      echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+      ssh -i id_loganalyzer psituser@direct.zhaw.neat.moe "docker-compose pull && docker-compose up -d"
+
 
 
 # We do not want to build git tags.
