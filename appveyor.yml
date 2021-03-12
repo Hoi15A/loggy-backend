@@ -2,6 +2,10 @@ image:
   - ubuntu-20.04-amd64
 
 environment:
+  my_secret:
+    secure: HvbR1johj6/PEoG0EyhFmQ==
+  my_salt:
+    secure: SgCRJOf9IjDJiu5qRieFGg6dYvpJV+V1+oUFwKV7E2gQNggJ3s2uDKRoI3g/HqtREwYwdZZPZQ3KJPf+obbpCw==
   DOCKERHUB_PASS:
     secure: +nZQV9YjOpjK8eJvYeykaKx7VxsSMyBjSbzjB6YbmrW38cM5Ol7Qn7i19vyVlhKv
   SONAR_TOKEN:
