@@ -27,11 +27,11 @@ install:
 
 build_script:
   # Build a WAR from the sources.
-  - ./gradlew --console=plain build
+  - gradle --console=plain build
 
 test_script:
   # Run tests and CheckStyle audit.
-  - ./gradlew --console=plain check
+  - gradle --console=plain check
 
 artifacts:
   # Collect all JARs that have been built and upload them to the CI server. Can be downloaded via
@@ -46,7 +46,7 @@ on_finish:
       docker build -t loggy .
       docker tag loggy carl503/loggy:latest
       docker push carl503/loggy
-      ./gradlew sonarqube -Dsonar.projectKey=ch.zhaw.pm4.loganalyser -Dsonar.host.url=https://sonar.zhaw.neat.moe -Dsonar.login=$SONAR_TOKEN
+      gradle sonarqube -Dsonar.projectKey=ch.zhaw.pm4.loganalyser -Dsonar.host.url=https://sonar.zhaw.neat.moe -Dsonar.login=$SONAR_TOKEN
       curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
       ./appveyor-tools/secure-file -decrypt ./id_loganalyzer.enc -secret $my_secret -salt $my_salt -out id_loganalyzer
       chmod 0600 id_loganalyzer
