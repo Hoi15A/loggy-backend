@@ -1,19 +1,25 @@
 package ch.zhaw.pm4.loganalyser.model.log;
 
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.Set;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@Data @Builder
+@Entity
+@Table(name = "configs")
 public class LogConfig {
-    private final String name;
-    private final int columnCount;
-    private final int headerLength;
-    private final String separator;
-    private final List<ColumnComponent> columnComponents;
+    @Id
+    private String name;
+    private int columnCount;
+    private int headerLength;
+    private String separator;
+    @ManyToMany
+    private Set<ColumnComponent> columnComponents;
 }

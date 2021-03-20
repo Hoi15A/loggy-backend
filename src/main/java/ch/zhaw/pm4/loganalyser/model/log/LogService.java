@@ -1,22 +1,25 @@
 package ch.zhaw.pm4.loganalyser.model.log;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import javax.persistence.*;
 import java.net.URI;
-import java.nio.file.Path;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@Data @Builder
+@Entity
+@Table(name = "services")
 public class LogService {
-
-    private final LogConfig logConfig;
-    private final Path logDirectory;
-    private final String name;
-    private final String description;
-    private final URI image;
-    private final LogServiceLocation logServiceLocation;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    @ManyToOne
+    private LogConfig logConfig;
+    private String logDirectory;
+    private String name;
+    private String description;
+    private URI image;
+    private LogServiceLocation logServiceLocation;
 }
