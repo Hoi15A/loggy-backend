@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class LogParser {
 
     public List<String[]> read(List<Filter> filters, LogService service) throws FileNotFoundException {
-        Path logDir = service.getLogDirectory();
+        Path logDir = Path.of(service.getLogDirectory());
 
         List<String[]> rows = new ArrayList<>();
 
