@@ -1,0 +1,7 @@
+{
+  "logDirectory": "/var/log/nginx",
+  "name": "Nginx",
+  "description": "Sample Nginx service",
+  "image": "https://logodownload.org/wp-content/uploads/2018/03/nginx-logo-1.png",
+  "location": 1
+}
