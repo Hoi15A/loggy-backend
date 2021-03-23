@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -83,6 +84,20 @@ class LogServiceControllerTest {
                     .andExpect(status().isBadRequest());
 
             Mockito.verify(logServiceService, Mockito.times(0)).createLogService(Mockito.any());
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void getAllLogServices() {
+
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .get("/service/all")
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists());
         } catch (Exception e) {
             fail(e);
         }
