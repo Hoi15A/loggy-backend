@@ -13,6 +13,7 @@ public class DTOMapper {
                 .description(logServiceDTO.getDescription())
                 .logDirectory(logServiceDTO.getLogDirectory())
                 .image(logServiceDTO.getImage())
+                .logServiceLocation(logServiceDTO.getLocation())
                 .logConfig(mapDTOToLogConfig(logServiceDTO.getLogConfigDTO()))
                 .build();
     }
