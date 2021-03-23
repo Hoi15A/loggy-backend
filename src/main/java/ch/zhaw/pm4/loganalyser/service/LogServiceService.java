@@ -1,7 +1,6 @@
 package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
-import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,9 +16,8 @@ public class LogServiceService {
 
     private final LogServiceRepository logServiceRepository;
 
-    public LogService createLogService(LogServiceDTO logServiceDTO) {
-        LogService logService = mapDTOToLogService(logServiceDTO);
-        return logServiceRepository.save(logService);
+    public void createLogService(LogServiceDTO logServiceDTO) {
+        logServiceRepository.save(mapDTOToLogService(logServiceDTO));
     }
 
 }
