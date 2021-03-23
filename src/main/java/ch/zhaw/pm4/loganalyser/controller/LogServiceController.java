@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/service")
@@ -18,7 +20,7 @@ public class LogServiceController {
     private final LogServiceService logServiceService;
 
     @PostMapping("/")
-    public ResponseEntity<String> createService(@RequestBody final LogServiceDTO logServiceDTO) {
+    public ResponseEntity<String> createService(@Valid @RequestBody final LogServiceDTO logServiceDTO) {
         logServiceService.createLogService(logServiceDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
