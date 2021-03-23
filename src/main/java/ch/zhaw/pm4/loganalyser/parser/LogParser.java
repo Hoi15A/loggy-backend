@@ -41,22 +41,21 @@ public class LogParser {
      * @return Parsed logs
      * @throws FileNotFoundException
      */
-    private List<String[]> parse(File logfile, LogConfig config) throws FileNotFoundException {
-        List<String[]> rows;
-
-        try (Scanner sc = new Scanner(logfile)) {
-            sc.useDelimiter(config.getSeparator());
-            int colCount = config.getColumnCount();
-
-            rows = new ArrayList<>();
-
-            while (sc.hasNext()) {
-
-                String[] cols = new String[colCount];
-                for (int i = 0; i < colCount; i++) {
-                    cols[i] = sc.next();
+    private List<String[]> parse(File logfile, LogConfig config) throws IOException {
+        List<String[]> rows = new ArrayList<>();
+        Pattern p = Pattern.compile(concatenateRegex(config));
+        try (BufferedReader br = new BufferedReader(new FileReader(logfile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                Matcher m = p.matcher(line);
+                List<String> values = new ArrayList<>();
+                if (m.find()) {
+                    for(ColumnComponent c: config.getColumnComponents()) {
+                        values.add(m.group(convertNameForCapturingGroup(c)));
+                    }
+                    Collections.reverse(values);
+                    rows.add(values.stream().toArray(String[]::new));
                 }
-                rows.add(cols);
             }
         }
 
