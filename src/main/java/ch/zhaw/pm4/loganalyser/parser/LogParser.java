@@ -3,21 +3,22 @@ package ch.zhaw.pm4.loganalyser.parser;
 import ch.zhaw.pm4.loganalyser.model.filter.Filter;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
+import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LogParser {
 
-    public List<String[]> read(List<Filter> filters, LogService service) throws FileNotFoundException {
+    public List<String[]> read(List<Filter> filters, LogService service) throws IOException {
         Path logDir = Path.of(service.getLogDirectory());
 
         List<String[]> rows = new ArrayList<>();
-
         for (File logfile : logDir.toFile().listFiles()) {
             rows.addAll(parse(logfile, service.getLogConfig()));
         }
@@ -39,7 +40,7 @@ public class LogParser {
      * @param logfile File that should be parsed
      * @param config Config to apply while parsing
      * @return Parsed logs
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException If file could not be found.
      */
     private List<String[]> parse(File logfile, LogConfig config) throws IOException {
         List<String[]> rows = new ArrayList<>();
@@ -58,7 +59,21 @@ public class LogParser {
                 }
             }
         }
-
         return rows;
     }
+
+    private String concatenateRegex(LogConfig config) {
+        String lineRegex = "";
+        Collections.reverse(config.getColumnComponents());
+        for(ColumnComponent c : config.getColumnComponents()) {
+            lineRegex = String.format("(?<%s>%s)%s%s", convertNameForCapturingGroup(c), c.getFormat(),
+                                      config.getSeparator(), lineRegex);
+        }
+        return lineRegex.trim();
+    }
+
+    private String convertNameForCapturingGroup(ColumnComponent columnComponent) {
+        return columnComponent.getName().replace(" ", "");
+    }
+
 }
