@@ -7,10 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogService;
 import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogServicesToDTOs;
@@ -33,9 +32,7 @@ public class LogServiceService {
     public Set<LogServiceDTO> getAllLogServices()
     {
         List<LogService> logs = logServiceRepository.findAll();
-        return mapLogServicesToDTOs(logs
-                .stream()
-                .collect(Collectors.toSet()));
+        return mapLogServicesToDTOs(new HashSet<>(logs));
     }
 
 }
