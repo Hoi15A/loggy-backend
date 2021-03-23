@@ -95,6 +95,25 @@ class LogServiceControllerTest {
     }
 
     @Test
+    void testGetServiceLogById() {
+        LogServiceDTO logServiceDTO1 = new LogServiceDTO();
+        logServiceDTO1.setName("Test1");
+
+        Mockito.when(logServiceService.getLogServiceById(2)).thenReturn(logServiceDTO1);
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .get("/service/2")
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty());
+        }
+        catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
     void getAllLogServices() {
 
         Set<LogServiceDTO> data = new HashSet<>();
@@ -123,4 +142,24 @@ class LogServiceControllerTest {
         }
         Mockito.verify(logServiceService, Mockito.times(1)).getAllLogServices();
     }
+
+    @Test
+    void deleteLogServiceByExistingId() {
+        LogServiceDTO logServiceDTO1 = new LogServiceDTO();
+        logServiceDTO1.setName("Test1");
+
+        Mockito.when(logServiceService.deleteLogServiceById(2)).thenReturn(logServiceDTO1);
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .delete("/service/2")
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty())
+                    .andDo(MockMvcResultHandlers.print());
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
 }
