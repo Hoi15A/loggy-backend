@@ -1,12 +1,14 @@
 package ch.zhaw.pm4.loganalyser.model.log.column;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.regex.Pattern;
 
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Builder @Data
 @Entity
 @Table(name = "components")
@@ -16,5 +18,5 @@ public class ColumnComponent {
     private long id;
     private String name;
     private ColumnType columnType;
-    private Pattern format;
+    private String format;
 }
