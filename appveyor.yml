@@ -14,11 +14,8 @@ environment:
     - JDK_VERSION: adoptopenjdk-15-hotspot-amd64
 
 # branches to build
-branches:
-  # whitelist
-  only:
-    - master
-    - dev
+#branches:
+  # removed so it builds all
 
 install:
   - sudo java_select $JDK_VERSION
@@ -26,12 +23,13 @@ install:
   # - docker run --name pgsql -d -p 5432:5432 -e POSTGRES_USER=appveyor -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=sample postgres:13
 
 build_script:
-  # Build a WAR from the sources.
+  # Build a JAR from the sources.
   - gradle --console=plain build
 
 test_script:
   # Run tests and CheckStyle audit.
   - gradle --console=plain check
+  - gradle sonarqube -Dsonar.projectKey=ch.zhaw.pm4.loganalyser -Dsonar.host.url=https://sonar.zhaw.neat.moe -Dsonar.login=$SONAR_TOKEN
 
 artifacts:
   # Collect all JARs that have been built and upload them to the CI server. Can be downloaded via
@@ -42,17 +40,9 @@ on_finish:
   # Search the 'build' folder for all JUnit test reports and upload them to the CI server.
   - sh: |
       find "$APPVEYOR_BUILD_FOLDER/build" -type f -name 'TEST*.xml' -print0 | xargs -0 -I '{}' curl -F 'file=@{}' "https://ci.cloudlab.zhaw.ch/api/testresults/junit/$APPVEYOR_JOB_ID"
-      echo "$DOCKERHUB_PASS" | docker login --username carl503 --password-stdin
-      docker build -t loggy .
-      docker tag loggy carl503/loggy:latest
-      docker push carl503/loggy
-      gradle sonarqube -Dsonar.projectKey=ch.zhaw.pm4.loganalyser -Dsonar.host.url=https://sonar.zhaw.neat.moe -Dsonar.login=$SONAR_TOKEN
-      curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/master/install.sh' | bash -e -
-      ./appveyor-tools/secure-file -decrypt ./id_loganalyzer.enc -secret $my_secret -salt $my_salt -out id_loganalyzer
-      chmod 0600 id_loganalyzer
-      echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-      ssh -i id_loganalyzer psituser@direct.zhaw.neat.moe "docker-compose pull && docker-compose up -d"
 
+deploy_script:
+  - sh: ./deploy.sh
 
 
 # We do not want to build git tags.
