@@ -14,6 +14,7 @@ public class DTOMapper {
 
     public static LogService mapDTOToLogService(LogServiceDTO logServiceDTO) {
         return LogService.builder()
+                .id(logServiceDTO.getId())
                 .name(logServiceDTO.getName())
                 .description(logServiceDTO.getDescription())
                 .logDirectory(logServiceDTO.getLogDirectory())

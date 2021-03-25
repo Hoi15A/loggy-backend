@@ -12,6 +12,7 @@ import java.net.URI;
 @NoArgsConstructor
 @Getter @Setter
 public class LogServiceDTO {
+    private long id;
     @NotBlank
     private String logDirectory;
     @NotBlank
