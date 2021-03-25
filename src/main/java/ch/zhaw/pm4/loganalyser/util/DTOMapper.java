@@ -4,12 +4,16 @@ import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
+import lombok.experimental.UtilityClass;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+/**
+ * Utility to map model and data transfer objects.
+ */
+@UtilityClass
 public class DTOMapper {
 
     public static LogService mapDTOToLogService(LogServiceDTO logServiceDTO) {
@@ -35,6 +39,7 @@ public class DTOMapper {
 
     public static LogServiceDTO mapLogServiceToDTO(LogService logService) {
         LogServiceDTO dto = new LogServiceDTO();
+        dto.setId(logService.getId());
         dto.setName(logService.getName());
         dto.setDescription(logService.getDescription());
         dto.setImage(logService.getImage());
