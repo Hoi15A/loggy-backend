@@ -11,7 +11,6 @@
 
 
 [![Bugs](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=bugs)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
-[![Coverage](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=coverage)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
 [![Lines of Code](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=ncloc)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
 [![Maintainability Rating](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=sqale_rating)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
 [![Quality Gate Status](https://sonar.zhaw.neat.moe/api/project_badges/measure?project=ch.zhaw.pm4.loganalyser&metric=alert_status)](https://sonar.zhaw.neat.moe/dashboard?id=ch.zhaw.pm4.loganalyser)
