@@ -13,7 +13,11 @@ public class PathService {
         return Path.of(folder).toFile().listFiles();
     }
 
-    public String getRootFolder() {
-        return System.getenv("SystemDrive");
+    public File[] getRootFolder() {
+        String rootFolder = "/";
+        if (System.getProperty("os.name").toUpperCase().startsWith("WIN")) {
+            rootFolder = "C:";
+        }
+        return Path.of(rootFolder).toFile().listFiles();
     }
 }
