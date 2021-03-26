@@ -22,7 +22,7 @@ public class PathController {
         return ResponseEntity.ok(service.getContentOfFolder(folder));
     }
 
-    public ResponseEntity<String> getRootFolder() {
+    public ResponseEntity<File[]> getRootFolder() {
         return ResponseEntity.ok(service.getRootFolder());
     }
 }
