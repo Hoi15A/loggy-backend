@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 @SpringBootTest
 class PathServiceTest {
@@ -30,6 +31,7 @@ class PathServiceTest {
             }
 
             File[] folderContent = pathService.getContentOfFolder(basePath.toString());
+            Arrays.sort(folderContent);
             for (int i = 0; i < folderContent.length && i < testFolders.length; i++) {
                 Assertions.assertEquals(Path.of(testGetContentOfFolderDir.toString(),
                         "folder", "subfolder", testFolders[i]).toFile(), folderContent[i]);
