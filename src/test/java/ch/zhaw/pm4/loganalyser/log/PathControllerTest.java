@@ -5,6 +5,7 @@ import ch.zhaw.pm4.loganalyser.service.PathService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,7 +27,9 @@ class PathControllerTest {
     PathService pathService;
     MockMvc mockMvc;
     PathController pathController;
-    static final String ROOT_FOLDER = System.getenv("SystemDrive");
+
+    @TempDir
+    static Path rootFolder;
 
     @Autowired
     public PathControllerTest(MockMvc mockMvc, PathController pathController) {
@@ -36,7 +39,8 @@ class PathControllerTest {
 
     @Test
     void testGetContentOfFolder() {
-        File testFile = Path.of(ROOT_FOLDER, "folder").toFile();
+        System.out.println(rootFolder);
+        File testFile = Path.of(rootFolder.toString(), "folder").toFile();
         File[] testFolders = {Path.of(testFile.getPath(), "subfolder1").toFile(),
                 Path.of(testFile.getPath(), "subfolder2").toFile()};
 
@@ -57,5 +61,4 @@ class PathControllerTest {
             Assertions.fail(e);
         }
     }
-
 }
