@@ -10,6 +10,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CORSAdvice implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedMethods("*");
+        registry.addMapping("/**")
+                .allowedMethods("GET", "PUT", "OPTIONS", "DELETE", "POST", "PATCH")
+                .allowedOrigins("http://localhost:8081")
+                .allowedHeaders("Origin", "Content-Type", "Accept");
     }
 }
