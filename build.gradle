@@ -4,6 +4,7 @@ plugins {
 	id 'java'
 	id "org.sonarqube" version "2.7"
 	id 'com.palantir.docker' version '0.26.0'
+	id "jacoco"
 }
 
 group = 'ch.zhaw.pm4'
@@ -50,3 +51,10 @@ dependencyManagement {
 test {
 	useJUnitPlatform()
 }
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+	}
+}
+test.finalizedBy jacocoTestReport
