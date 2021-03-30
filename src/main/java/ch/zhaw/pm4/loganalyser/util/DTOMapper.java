@@ -36,6 +36,15 @@ public class DTOMapper {
                 .build();
     }
 
+    public static LogConfigDTO mapLogConfigToDTO(LogConfig logConfig) {
+        LogConfigDTO logConfigDTO = new LogConfigDTO();
+        logConfigDTO.setName(logConfig.getName());
+        logConfigDTO.setColumnCount(logConfig.getColumnCount());
+        logConfigDTO.setHeaderLength(logConfig.getHeaderLength());
+        logConfigDTO.setSeparator(logConfig.getSeparator());
+        return logConfigDTO;
+    }
+
     public static LogServiceDTO mapLogServiceToDTO(LogService logService) {
         LogServiceDTO dto = new LogServiceDTO();
         dto.setId(logService.getId());
