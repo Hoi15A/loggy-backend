@@ -64,7 +64,7 @@ class LogServiceControllerTest {
     @Test
     void testCreateLogService_ConfigMissing() {
         try {
-            File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogService.json");
+            File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogService_ConfigMissing.json");
             String content = new String(Files.readAllBytes(jsonFile.toPath()));
             Mockito.doNothing().when(logServiceService).createLogService(Mockito.any());
 
