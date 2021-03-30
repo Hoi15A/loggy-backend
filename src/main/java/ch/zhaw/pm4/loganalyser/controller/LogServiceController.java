@@ -5,13 +5,7 @@ import ch.zhaw.pm4.loganalyser.service.LogServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Set;
@@ -23,6 +17,11 @@ public class LogServiceController {
 
     private final LogServiceService logServiceService;
 
+    /**
+     * Creates a log service and saves into the database based on the provided {@link LogServiceDTO}.
+     * @param logServiceDTO Data transfer object containing the data that should be saved in the database.
+     * @return {@link ResponseEntity} with status 201 and an empty body.
+     */
     @PostMapping("/")
     public ResponseEntity<String> createService(@Valid @RequestBody final LogServiceDTO logServiceDTO) {
         logServiceService.createLogService(logServiceDTO);
