@@ -24,7 +24,6 @@ public class DTOMapper {
                 .logDirectory(logServiceDTO.getLogDirectory())
                 .image(logServiceDTO.getImage())
                 .logServiceLocation(logServiceDTO.getLocation())
-                .logConfig(mapDTOToLogConfig(logServiceDTO.getLogConfigDTO()))
                 .build();
     }
 

@@ -21,6 +21,6 @@ public class LogServiceDTO {
     private URI image;
     @NotNull
     private LogServiceLocation location;
-    @NotNull
-    private LogConfigDTO logConfigDTO;
+    @NotBlank
+    private String logConfig;
 }
