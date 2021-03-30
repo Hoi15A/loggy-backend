@@ -15,11 +15,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.ResourceUtils;
 
-import java.nio.file.Path;
+import java.io.File;
+import java.nio.file.Files;
 import java.util.HashSet;
-import java.util.Objects;
-import java.util.Scanner;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -42,25 +42,11 @@ class LogServiceControllerTest {
         this.mockMvc = mockMvc;
     }
 
-
-    String loadJsonTestFile(String filename) {
-        try (Scanner sc = new Scanner(Objects.requireNonNull(LogServiceController
-                .class
-                .getClassLoader()
-                .getResourceAsStream(Path.of(JLOCATION, filename).toString())))) {
-            StringBuilder sb = new StringBuilder();
-            while (sc.hasNextLine()) {
-                sb.append(sc.nextLine());
-            }
-            return sb.toString();
-        }
-    }
-
     @Test
     void testCreateLogService() {
-        String content = loadJsonTestFile("testCreateLogService.json");
         try {
-
+            File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogService.json");
+            String content = new String(Files.readAllBytes(jsonFile.toPath()));
             Mockito.doNothing().when(logServiceService).createLogService(Mockito.any());
 
             mockMvc.perform(MockMvcRequestBuilders
@@ -77,9 +63,9 @@ class LogServiceControllerTest {
 
     @Test
     void testCreateLogService_ConfigMissing() {
-        String content = loadJsonTestFile("testCreateLogService_ConfigMissing.json");
-
         try {
+            File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogService.json");
+            String content = new String(Files.readAllBytes(jsonFile.toPath()));
             Mockito.doNothing().when(logServiceService).createLogService(Mockito.any());
 
             mockMvc.perform(MockMvcRequestBuilders
