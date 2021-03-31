@@ -12,7 +12,7 @@ public class CORSAdvice implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("GET", "PUT", "OPTIONS", "DELETE", "POST", "PATCH")
-                .allowedOrigins("http://localhost:8081")
+                .allowedOrigins("http://localhost:8081", "https://zhaw.neat.moe", "http://direct.zhaw.neat.moe")
                 .allowedHeaders("Origin", "Content-Type", "Accept");
     }
 }
