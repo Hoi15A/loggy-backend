@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -41,23 +43,24 @@ class LogParserTest {
 
     private static LogConfig getLogConfig() {
         // register columns
-        List<ColumnComponent> components = new ArrayList<>();
-        components.add(new ColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));
-        components.add(new ColumnComponent(9L, "Custom Seperator", ColumnType.CUSTOM, "-"));
-        components.add(new ColumnComponent(2L, "User", ColumnType.CUSTOM, "-|[a-zA-Z]+"));
-        components.add(new ColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
-        components.add(new ColumnComponent(4L, "Request", ColumnType.MESSAGE, "\\\".+\\\""));
-        components.add(new ColumnComponent(5L, "Response Code", ColumnType.CUSTOM, "\\d{1,3}"));
-        components.add(new ColumnComponent(6L, "Byte Size", ColumnType.CUSTOM, "\\d+"));
-        components.add(new ColumnComponent(7L, "Something", ColumnType.CUSTOM, "\\\".+\\\""));
-        components.add(new ColumnComponent(8L, "Request Client", ColumnType.CUSTOM, "\\\".+\\\""));
+        Map<Integer, ColumnComponent> columnComponentMap = new TreeMap<>();
+        int i = 0;
+        columnComponentMap.put(++i, new ColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));
+        columnComponentMap.put(++i, new ColumnComponent(9L, "Custom Seperator", ColumnType.CUSTOM, "-"));
+        columnComponentMap.put(++i, new ColumnComponent(2L, "User", ColumnType.CUSTOM, "-|[a-zA-Z]+"));
+        columnComponentMap.put(++i, new ColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
+        columnComponentMap.put(++i, new ColumnComponent(4L, "Request", ColumnType.MESSAGE, "\\\".+\\\""));
+        columnComponentMap.put(++i, new ColumnComponent(5L, "Response Code", ColumnType.CUSTOM, "\\d{1,3}"));
+        columnComponentMap.put(++i, new ColumnComponent(6L, "Byte Size", ColumnType.CUSTOM, "\\d+"));
+        columnComponentMap.put(++i, new ColumnComponent(7L, "Something", ColumnType.CUSTOM, "\\\".+\\\""));
+        columnComponentMap.put(++i, new ColumnComponent(8L, "Request Client", ColumnType.CUSTOM, "\\\".+\\\""));
 
         //register config
         LogConfig config = new LogConfig();
         config.setName("Nginx");
         config.setSeparator(" ");
         config.setHeaderLength(0);
-        config.setColumnComponents(components);
+        config.setColumnComponents(columnComponentMap);
 
         return config;
     }

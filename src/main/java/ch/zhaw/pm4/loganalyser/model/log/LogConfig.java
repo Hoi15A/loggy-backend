@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
@@ -21,5 +21,5 @@ public class LogConfig {
     private int headerLength;
     private String separator;
     @ManyToMany
-    private List<ColumnComponent> columnComponents;
+    private Map<Integer, ColumnComponent> columnComponents;
 }

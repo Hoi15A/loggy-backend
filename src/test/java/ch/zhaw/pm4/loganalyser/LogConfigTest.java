@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class LogConfigTest {
 
@@ -36,32 +36,34 @@ class LogConfigTest {
         List<String> lines = readLogLines(filename);
         // register columns
         List<ColumnComponent> components = new ArrayList<>();
-        components.add(new ColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));
-        components.add(new ColumnComponent(9L, "Custom Seperator", ColumnType.CUSTOM, "-"));
-        components.add(new ColumnComponent(2L, "User", ColumnType.CUSTOM, "-|[a-zA-Z]+"));
-        components.add(new ColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
-        components.add(new ColumnComponent(4L, "Request", ColumnType.MESSAGE, "\\\".+\\\""));
-        components.add(new ColumnComponent(5L, "Response Code", ColumnType.CUSTOM, "\\d{1,3}"));
-        components.add(new ColumnComponent(6L, "Byte Size", ColumnType.CUSTOM, "\\d+"));
-        components.add(new ColumnComponent(7L, "Something", ColumnType.CUSTOM, "\\\".+\\\""));
-        components.add(new ColumnComponent(8L, "Request Client", ColumnType.CUSTOM, "\\\".+\\\""));
+        int i = 0;
+        Map<Integer, ColumnComponent> componentMap = new TreeMap<>();
+        componentMap.put(++i, new ColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));
+        componentMap.put(++i, new ColumnComponent(9L, "Custom Seperator", ColumnType.CUSTOM, "-"));
+        componentMap.put(++i, new ColumnComponent(2L, "User", ColumnType.CUSTOM, "-|[a-zA-Z]+"));
+        componentMap.put(++i, new ColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
+        componentMap.put(++i, new ColumnComponent(4L, "Request", ColumnType.MESSAGE, "\\\".+\\\""));
+        componentMap.put(++i, new ColumnComponent(5L, "Response Code", ColumnType.CUSTOM, "\\d{1,3}"));
+        componentMap.put(++i, new ColumnComponent(6L, "Byte Size", ColumnType.CUSTOM, "\\d+"));
+        componentMap.put(++i, new ColumnComponent(7L, "Something", ColumnType.CUSTOM, "\\\".+\\\""));
+        componentMap.put(++i, new ColumnComponent(8L, "Request Client", ColumnType.CUSTOM, "\\\".+\\\""));
 
         //register config
         LogConfig config = new LogConfig();
         config.setName("Nginx");
         config.setSeparator(" ");
         config.setHeaderLength(0);
-        config.setColumnComponents(components);
+        config.setColumnComponents(componentMap);
 
         Pattern p = Pattern.compile(concatenateRegex(config));
         for(String line: lines) {
             Matcher m = p.matcher(line);
-            String[] values = new String[components.size()];
+            String[] values = new String[componentMap.values().size()];
             if (m.find()) {
-                int i = 0;
-                for(ColumnComponent c: components) {
+                int j = 0;
+                for(ColumnComponent c: componentMap.values()) {
                     String name = convertNameForCapturingGroup(c);
-                    values[i++] = m.group(name);
+                    values[j++] = m.group(name);
                     assertNotNull(m.group(name));
                 }
                 System.out.println(Arrays.toString(values));
@@ -71,8 +73,9 @@ class LogConfigTest {
 
     private String concatenateRegex(LogConfig config) {
         String lineRegex = "";
-        Collections.reverse(config.getColumnComponents());
-        for(ColumnComponent c : config.getColumnComponents()) {
+        Map<Integer, ColumnComponent> reversedOrder = new TreeMap<>(Collections.reverseOrder());
+        reversedOrder.putAll(config.getColumnComponents());
+        for(ColumnComponent c : reversedOrder.values()) {
             lineRegex = String.format("(?<%s>%s)%s%s", convertNameForCapturingGroup(c), c.getFormat(),
                                       config.getSeparator(), lineRegex);
         }

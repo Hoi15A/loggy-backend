@@ -7,19 +7,19 @@ import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogParser {
 
+    private Map<Integer, ColumnComponent> sortedColumns;
+
     public List<String[]> read(List<Filter> filters, LogService service) throws IOException {
         Path logDir = Path.of(service.getLogDirectory());
 
         List<String[]> rows = new ArrayList<>();
-        for (File logfile : logDir.toFile().listFiles()) {
+        for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
             rows.addAll(parse(logfile, service.getLogConfig()));
         }
 
@@ -51,7 +51,7 @@ public class LogParser {
                 Matcher m = p.matcher(line);
                 List<String> values = new ArrayList<>();
                 if (m.find()) {
-                    for(ColumnComponent c: config.getColumnComponents()) {
+                    for(ColumnComponent c: sortedColumns.values()) {
                         values.add(m.group(convertNameForCapturingGroup(c)));
                     }
                     Collections.reverse(values);
@@ -64,8 +64,10 @@ public class LogParser {
 
     private String concatenateRegex(LogConfig config) {
         String lineRegex = "";
-        Collections.reverse(config.getColumnComponents());
-        for(ColumnComponent c : config.getColumnComponents()) {
+        sortedColumns = new TreeMap<>(Collections.reverseOrder());
+        sortedColumns.putAll(config.getColumnComponents());
+
+        for(ColumnComponent c : sortedColumns.values()) {
             lineRegex = String.format("(?<%s>%s)%s%s", convertNameForCapturingGroup(c), c.getFormat(),
                                       config.getSeparator(), lineRegex);
         }
