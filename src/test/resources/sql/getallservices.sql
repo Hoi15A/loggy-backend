@@ -1,2 +1,2 @@
-insert into services (id, description, image, log_directory, log_service_location, name, log_config_name) values (1, 'Test service 1', null, '/var/log/service1', 1, 'Service1', null);
-insert into services (id, description, image, log_directory, log_service_location, name, log_config_name) values (2, 'Test service 2', null, '/var/log/service1', 1, 'Service2', null);
+insert into services (id, description, image, log_directory, log_service_location, name, log_config_name) values (1, 'Test service 1', null, '/var/log/service1', 1, 'Service1', 'nginx');
+insert into services (id, description, image, log_directory, log_service_location, name, log_config_name) values (2, 'Test service 2', null, '/var/log/service1', 1, 'Service2', 'vsftpd');
