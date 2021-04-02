@@ -2,6 +2,7 @@ package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
+import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.repository.LogConfigRepository;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
@@ -10,13 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.*;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogService;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogServiceToDTO;
 
 @Service
 @Transactional
@@ -27,11 +27,11 @@ public class LogServiceService {
     private final LogConfigRepository logConfigRepository;
 
     public void createLogService(LogServiceDTO logServiceDTO) {
-        if (logConfigRepository.existsById(logServiceDTO.getLogConfig())) {
-            LogService service = mapDTOToLogService(logServiceDTO);
-            service.setLogConfig(logConfigRepository.getOne(logServiceDTO.getLogConfig()));
-            logServiceRepository.save(service);
-        }
+        Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(logServiceDTO.getLogConfig());
+        if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException(logServiceDTO.getLogConfig());
+        LogService service = mapDTOToLogService(logServiceDTO);
+        service.setLogConfig(optionalLogConfig.get());
+        logServiceRepository.save(service);
     }
 
     /**
