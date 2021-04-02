@@ -71,6 +71,7 @@ class LogServiceServiceTest {
     }
 
     @Test
+    @Sql("classpath:sql/getlogconfigs.sql")
     @Sql("classpath:sql/getallservices.sql")
     void testGetAllLogServices() {
         LogServiceDTO logService1 = new LogServiceDTO();
@@ -78,6 +79,7 @@ class LogServiceServiceTest {
         logService1.setLogDirectory("/var/log/service1");
         logService1.setName("Service1");
         logService1.setLocation(LogServiceLocation.LOCAL);
+        logService1.setLogConfig("nginx");
         logService1.setId(1);
 
         LogServiceDTO logService2 = new LogServiceDTO();
@@ -85,6 +87,7 @@ class LogServiceServiceTest {
         logService2.setLogDirectory("/var/log/service1");
         logService2.setName("Service2");
         logService2.setLocation(LogServiceLocation.LOCAL);
+        logService2.setLogConfig("vsftpd");
         logService2.setId(2);
 
         Set<LogServiceDTO> compareSet = new HashSet<>();
@@ -98,6 +101,7 @@ class LogServiceServiceTest {
     }
 
     @Test
+    @Sql("classpath:sql/getlogconfigs.sql")
     @Sql("classpath:sql/getallservices.sql")
     void testDeleteLogServiceById() {
         LogServiceDTO compareDTO = new LogServiceDTO();
@@ -105,6 +109,7 @@ class LogServiceServiceTest {
         compareDTO.setLogDirectory("/var/log/service1");
         compareDTO.setName("Service1");
         compareDTO.setLocation(LogServiceLocation.LOCAL);
+        compareDTO.setLogConfig("nginx");
         compareDTO.setId(1);
 
         Assertions.assertEquals(2, logServiceRepository.count());
@@ -114,6 +119,7 @@ class LogServiceServiceTest {
     }
 
     @Test
+    @Sql("classpath:sql/getlogconfigs.sql")
     @Sql("classpath:sql/getallservices.sql")
     void testDeleteLogServiceById_IdNotFound() {
         Assertions.assertEquals(2, logServiceRepository.count());
@@ -122,6 +128,7 @@ class LogServiceServiceTest {
     }
 
     @Test
+    @Sql("classpath:sql/getlogconfigs.sql")
     @Sql("classpath:sql/getallservices.sql")
     void testGetLogServiceById() {
         LogServiceDTO compareDTO = new LogServiceDTO();
@@ -129,6 +136,7 @@ class LogServiceServiceTest {
         compareDTO.setLogDirectory("/var/log/service1");
         compareDTO.setName("Service1");
         compareDTO.setLocation(LogServiceLocation.LOCAL);
+        compareDTO.setLogConfig("nginx");
         compareDTO.setId(1);
 
         LogServiceDTO logServiceDTO = logService.getLogServiceById(1);
@@ -136,7 +144,6 @@ class LogServiceServiceTest {
     }
 
     @Test
-    @Sql("classpath:sql/getallservices.sql")
     void testGetLogServiceById_IdNotFound() {
         Assertions.assertThrows(RecordNotFoundException.class, () -> logService.getLogServiceById(999));
     }
