@@ -15,7 +15,7 @@ public class LogService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private LogConfig logConfig;
     private String logDirectory;
     private String name;
