@@ -49,6 +49,7 @@ public class DTOMapper {
         dto.setImage(logService.getImage());
         dto.setLogDirectory(logService.getLogDirectory());
         dto.setLocation(logService.getLogServiceLocation());
+        dto.setLogConfig(logService.getLogConfig().getName());
         return dto;
     }
 }
