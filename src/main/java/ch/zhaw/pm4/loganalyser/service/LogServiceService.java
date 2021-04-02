@@ -5,6 +5,7 @@ import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.repository.LogConfigRepository;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
+import ch.zhaw.pm4.loganalyser.util.DTOMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ch.zhaw.pm4.loganalyser.util.DTOMapper.*;
 
@@ -38,8 +40,11 @@ public class LogServiceService {
      */
     public Set<LogServiceDTO> getAllLogServices()
     {
-        List<LogService> logs = logServiceRepository.findAll();
-        return mapLogServicesToDTOs(new HashSet<>(logs));
+        return logServiceRepository
+                .findAll()
+                .stream()
+                .map(DTOMapper::mapLogServiceToDTO)
+                .collect(Collectors.toSet());
     }
 
     /**
