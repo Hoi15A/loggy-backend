@@ -8,7 +8,9 @@ import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,10 +26,13 @@ import java.util.logging.Logger;
 @RequiredArgsConstructor
 public class QueryService {
 
-    private final LogServiceRepository logServiceRepository;
+    @Setter
+    @NonNull
+    private LogServiceRepository logServiceRepository;
 
     private final Logger logger = Logger.getLogger(QueryService.class.getName());
-    private final LogParser lp = new LogParser();
+    @Setter
+    private LogParser logParser = new LogParser();
 
      public TableDTO getSampleLogsByQuery() {
 
@@ -61,7 +66,7 @@ public class QueryService {
         if(logService.isEmpty()) throw new RecordNotFoundException(String.valueOf(serviceId));
 
         try {
-            return lp.read(null, logService.get());
+            return logParser.read(null, logService.get());
         } catch (IOException e) {
             e.printStackTrace();
             throw new FileNotFoundException("Logservice file not found");
