@@ -12,11 +12,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogConfig;
+
 @Service
 @AllArgsConstructor
 public class LogConfigService {
 
     private final LogConfigRepository logConfigRepository;
+
+    public void createLogConfig(LogConfigDTO logConfigDTO) {
+        LogConfig config = mapDTOToLogConfig(logConfigDTO);
+        logConfigRepository.save(config);
+    }
 
     public List<LogConfigDTO> getAllLogConfigs() {
         return logConfigRepository
