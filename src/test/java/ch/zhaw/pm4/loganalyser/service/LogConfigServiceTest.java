@@ -54,4 +54,17 @@ class LogConfigServiceTest {
     void testGetConfigNotAvailable() {
         Assertions.assertThrows(RecordNotFoundException.class, () -> logConfigService.getLogConfigById("doesnotexist"));
     }
+
+    @Test
+    void testCreateConfig() {
+        LogConfigDTO sampleConfig = new LogConfigDTO();
+        sampleConfig.setName("sample");
+        sampleConfig.setSeparator(" ");
+        sampleConfig.setColumnCount(0);
+        sampleConfig.setHeaderLength(0);
+
+        logConfigService.createLogConfig(sampleConfig);
+
+        Assertions.assertEquals(1, logConfigRepository.count());
+    }
 }

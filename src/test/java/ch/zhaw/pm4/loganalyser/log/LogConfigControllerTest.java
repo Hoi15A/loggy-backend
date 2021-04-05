@@ -15,7 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,6 +98,25 @@ class LogConfigControllerTest {
         }
         Mockito.verify(logConfigService, Mockito.times(1)).getLogConfigById(Mockito.any());
 
+    }
+
+    @Test
+    void testCreateLogConfig() {
+        try {
+            File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogConfig.json");
+            String content = new String(Files.readAllBytes(jsonFile.toPath()));
+            Mockito.doNothing().when(logConfigService).createLogConfig(Mockito.any());
+
+            mockMvc.perform(MockMvcRequestBuilders
+                    .post("/config/")
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isCreated());
+
+            Mockito.verify(logConfigService, Mockito.times(1)).createLogConfig(Mockito.any());
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
 }
