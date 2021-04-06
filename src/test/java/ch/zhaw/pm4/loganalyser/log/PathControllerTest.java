@@ -5,7 +5,6 @@ import ch.zhaw.pm4.loganalyser.service.PathService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,9 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.File;
-import java.nio.file.Path;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class PathControllerTest {
@@ -28,9 +24,6 @@ class PathControllerTest {
     MockMvc mockMvc;
     PathController pathController;
 
-    @TempDir
-    static Path rootFolder;
-
     @Autowired
     public PathControllerTest(MockMvc mockMvc, PathController pathController) {
         this.mockMvc = mockMvc;
@@ -38,27 +31,24 @@ class PathControllerTest {
     }
 
     @Test
-    void testGetContentOfFolder() {
-        System.out.println(rootFolder);
-        File testFile = Path.of(rootFolder.toString(), "folder").toFile();
-        File[] testFolders = {Path.of(testFile.getPath(), "subfolder1").toFile(),
-                Path.of(testFile.getPath(), "subfolder2").toFile()};
-
-        Mockito.when(pathService.getContentOfFolder(Mockito.any())).thenReturn(testFolders);
+    void testGetRootFolderContent() {
+        String[][] files = {{"/var", "/home", "/etc"}};
+        Mockito.when(pathService.getRootFolder()).thenReturn(files);
 
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                    .get("/path?folder=/var/www"))
+                    .get("/path"))
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
                     .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*]",
-                            Matchers.anyOf(Matchers.hasItem(testFolders[0].toString()),
-                                    Matchers.hasItem(testFolders[1].toString()))));
-
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].[*]").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].[*]",
+                            Matchers.allOf(Matchers.hasItem(files[0][0]), Matchers.hasItem(files[0][1]), Matchers.hasItem(files[0][2]))));
         } catch (Exception e) {
             Assertions.fail(e);
         }
+
+        Mockito.verify(pathService, Mockito.times(1)).getRootFolder();
     }
 }

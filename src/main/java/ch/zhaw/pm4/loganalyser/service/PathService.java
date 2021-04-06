@@ -5,19 +5,37 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 @Service
 @Data
 public class PathService {
-    public File[] getContentOfFolder(String folder) {
-        return Path.of(folder).toFile().listFiles();
+    private Function<File[], String[]> mapFileArrayToStringArray = files -> {
+        List<String> strings = new ArrayList<>();
+        for (File file : files) {
+            if (file.isDirectory())
+                strings.add(file.toString());
+        }
+        return strings.toArray(String[]::new);
+    };
+
+    public String[][] getContentOfFolder(String folder) {
+        return new String[][] {Arrays.stream(Objects.requireNonNull(Path.of(folder).toFile().listFiles()))
+                .filter(File::isDirectory)
+                .map(File::toString)
+                .toArray(String[]::new)};
     }
 
-    public File[] getRootFolder() {
-        String rootFolder = "/";
-        if (System.getProperty("os.name").toUpperCase().startsWith("WIN")) {
-            rootFolder = "C:";
-        }
-        return Path.of(rootFolder).toFile().listFiles();
+    public String[][] getRootFolder() {
+        return Arrays.stream(File.listRoots())
+                .filter(File::isDirectory)
+                .map(File::listFiles)
+                .filter(Objects::nonNull)
+                .map(mapFileArrayToStringArray)
+                .toArray(String[][]::new);
     }
 }
