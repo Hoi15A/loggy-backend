@@ -2,6 +2,7 @@ package ch.zhaw.pm4.loganalyser.log;
 
 import ch.zhaw.pm4.loganalyser.controller.QueryController;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class QueryControllerTest {
+class QueryControllerTest {
 
     @MockBean
     private QueryService queryService;
@@ -53,7 +54,17 @@ public class QueryControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
                     .andExpect(MockMvcResultMatchers.jsonPath("$[*]").isNotEmpty())
-                    // TODO: actually validate contents
+                    .andExpect(MockMvcResultMatchers.jsonPath("$[*].[*]").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$[0].[*]", Matchers.allOf(
+                            Matchers.hasItem(mockRow1[0]),
+                            Matchers.hasItem(mockRow1[1]),
+                            Matchers.hasItem(mockRow1[2])
+                    )))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$[1].[*]", Matchers.allOf(
+                            Matchers.hasItem(mockRow2[0]),
+                            Matchers.hasItem(mockRow2[1]),
+                            Matchers.hasItem(mockRow2[2])
+                    )))
                     .andDo(MockMvcResultHandlers.print());
         } catch (Exception e) {
             fail(e);
