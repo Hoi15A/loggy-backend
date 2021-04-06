@@ -23,12 +23,12 @@ public class LogConfigController {
     private final LogConfigService logConfigService;
 
     /**
-     * Creates a log service and saves into the database based on the provided {@link LogConfigDTO}.
+     * Creates a log config and saves into the database based on the provided {@link LogConfigDTO}.
      * @param logConfigDTO Data transfer object containing the data that should be saved in the database.
      * @return {@link ResponseEntity} with status 201 and an empty body.
      */
     @PostMapping("/")
-    public ResponseEntity<String> createService(@Valid @RequestBody final LogConfigDTO logConfigDTO) {
+    public ResponseEntity<String> createConfig(@Valid @RequestBody final LogConfigDTO logConfigDTO) {
         logConfigService.createLogConfig(logConfigDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
