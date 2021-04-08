@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("column")
-public class ColumnController {
+public class ColumnComponentController {
 
     private final ColumnComponentService columnComponentService;
 
