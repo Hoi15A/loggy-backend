@@ -1,9 +1,11 @@
 package ch.zhaw.pm4.loganalyser.util;
 
+import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
+import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import lombok.experimental.UtilityClass;
 
 /**
@@ -50,6 +52,25 @@ public class DTOMapper {
         dto.setLogDirectory(logService.getLogDirectory());
         dto.setLocation(logService.getLogServiceLocation());
         dto.setLogConfig(logService.getLogConfig().getName());
+        return dto;
+    }
+
+    public static ColumnComponent mapDTOToColumnComponent(ColumnComponentDTO columnComponentDTO) {
+        return ColumnComponent.builder()
+                .name(columnComponentDTO.getName())
+                .columnType(columnComponentDTO.getColumnType())
+                .id(columnComponentDTO.getId())
+                .format(columnComponentDTO.getFormat())
+                .build();
+
+    }
+
+    public static ColumnComponentDTO mapColumnComponentToDTO(ColumnComponent columnComponent) {
+        ColumnComponentDTO dto = new ColumnComponentDTO();
+        dto.setColumnType(columnComponent.getColumnType());
+        dto.setFormat(columnComponent.getFormat());
+        dto.setId(columnComponent.getId());
+        dto.setName(columnComponent.getName());
         return dto;
     }
 }
