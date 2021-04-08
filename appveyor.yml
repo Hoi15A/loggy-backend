@@ -29,7 +29,6 @@ build_script:
 test_script:
   # Run tests and CheckStyle audit.
   - gradle --console=plain check
-  - gradle sonarqube -Dsonar.projectKey=ch.zhaw.pm4.loganalyser -Dsonar.host.url=https://sonar.zhaw.neat.moe -Dsonar.login=$SONAR_TOKEN
 
 artifacts:
   # Collect all JARs that have been built and upload them to the CI server. Can be downloaded via
@@ -40,6 +39,7 @@ on_finish:
   # Search the 'build' folder for all JUnit test reports and upload them to the CI server.
   - sh: |
       find "$APPVEYOR_BUILD_FOLDER/build" -type f -name 'TEST*.xml' -print0 | xargs -0 -I '{}' curl -F 'file=@{}' "https://ci.cloudlab.zhaw.ch/api/testresults/junit/$APPVEYOR_JOB_ID"
+      gradle sonarqube -Dsonar.projectKey=ch.zhaw.pm4.loganalyser -Dsonar.host.url=https://sonar.zhaw.neat.moe -Dsonar.login=$SONAR_TOKEN; exit 0
 
 deploy_script:
   - sh: ./deploy.sh
