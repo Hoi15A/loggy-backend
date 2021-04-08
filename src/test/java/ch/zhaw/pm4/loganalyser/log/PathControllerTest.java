@@ -3,6 +3,7 @@ package ch.zhaw.pm4.loganalyser.log;
 import ch.zhaw.pm4.loganalyser.controller.PathController;
 import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
 import ch.zhaw.pm4.loganalyser.service.PathService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,13 +36,11 @@ class PathControllerTest {
 
     @Test
     void testGetRootFolderContent() {
-        String[][] files = {{"/var", "/home", "/etc"}};
         int i = 0;
         List<FileTreeDTO> fileTreeDTOS = new ArrayList<>();
         fileTreeDTOS.add(new FileTreeDTO(++i, "var", "/var", new ArrayList<>()));
         fileTreeDTOS.add(new FileTreeDTO(++i, "home", "/home", new ArrayList<>()));
         fileTreeDTOS.add(new FileTreeDTO(++i, "etc", "/etc", new ArrayList<>()));
-
 
         Mockito.when(pathService.getRootFolder()).thenReturn(fileTreeDTOS);
 
@@ -51,16 +50,33 @@ class PathControllerTest {
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(MockMvcResultMatchers.status().isOk())
                     .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").isNotEmpty());
-                //todo
-                /*
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*]",
-                            Matchers.allOf(Matchers.hasItem(
-                                    fileTreeDTOS.get(0)), Matchers.hasItem(fileTreeDTOS.get(1)),
-                                    Matchers.hasItem(fileTreeDTOS.get(2)
-                                    ))));
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].id",
+                                                              Matchers.contains(
+                                                                      fileTreeDTOS.get(0).getId(),
+                                                                      fileTreeDTOS.get(1).getId(),
+                                                                      fileTreeDTOS.get(2).getId()
+                                                              )))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].name",
+                                                              Matchers.contains(
+                                                                      fileTreeDTOS.get(0).getName(),
+                                                                      fileTreeDTOS.get(1).getName(),
+                                                                      fileTreeDTOS.get(2).getName()
+                                                              )))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].fullpath",
+                                                              Matchers.contains(
+                                                                      fileTreeDTOS.get(0).getFullpath(),
+                                                                      fileTreeDTOS.get(1).getFullpath(),
+                                                                      fileTreeDTOS.get(2).getFullpath()
+                                                              )))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].children",
+                                                              Matchers.contains(
+                                                                      fileTreeDTOS.get(0).getChildren(),
+                                                                      fileTreeDTOS.get(1).getChildren(),
+                                                                      fileTreeDTOS.get(2).getChildren()
+                                                              )))
+            ;
 
-                 */
         } catch (Exception e) {
             Assertions.fail(e);
         }
