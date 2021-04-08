@@ -38,6 +38,9 @@ class PathServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        pathService.setFileSystem(fsMock);
+
         when(varFolderMock.getName()).thenReturn("var");
         when(varFolderMock.getPath()).thenReturn("/var");
         when(varFolderMock.isDirectory()).thenReturn(true);
@@ -82,7 +85,7 @@ class PathServiceTest {
         // mock fs.getRootDirectories() or fs.getRootDirectories().spliterator()
         when(fsMock.getRootDirectories()).thenReturn(List.of(rootFolderPathMock));
 
-        Assertions.assertIterableEquals(expected, pathService.getRootFolder(fsMock));
+        Assertions.assertIterableEquals(expected, pathService.getRootFolder());
 
         // verify
         verify(fsMock, times(1)).getRootDirectories();
@@ -90,7 +93,7 @@ class PathServiceTest {
 
     @Test
     void testSubFolderContents() {
-        Assertions.assertIterableEquals(expected, pathService.getContentOfFolder("", fsMock));
+        Assertions.assertIterableEquals(expected, pathService.getContentOfFolder(""));
     }
 
 }

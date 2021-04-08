@@ -23,28 +23,20 @@ public class PathService {
     private Function<File, FileTreeDTO> mapFileToFileTreeDTO = file ->
             new FileTreeDTO(++fileIdCounter, file.getName(), file.getPath(), new ArrayList<>());
 
-    public List<FileTreeDTO> getContentOfFolder(String folder) {
-        return getContentOfFolder(folder, FileSystems.getDefault());
-    }
+    private FileSystem fileSystem = FileSystems.getDefault();
 
-    public List<FileTreeDTO> getContentOfFolder(String folder, FileSystem fs) {
-        return Arrays.stream(Objects.requireNonNull(fs.getPath(folder).toFile().listFiles()))
+    public List<FileTreeDTO> getContentOfFolder(String folder) {
+        return Arrays.stream(Objects.requireNonNull(fileSystem.getPath(folder).toFile().listFiles()))
                 .filter(File::isDirectory)
                 .map(mapFileToFileTreeDTO)
                 .collect(Collectors.toList());
     }
-
     public List<FileTreeDTO> getRootFolder() {
-        return getRootFolder(FileSystems.getDefault());
-    }
-
-    public List<FileTreeDTO> getRootFolder(FileSystem fs) {
         fileIdCounter = 0;
-        return StreamSupport.stream(fs.getRootDirectories().spliterator(), false)
+        return StreamSupport.stream(fileSystem.getRootDirectories().spliterator(), false)
                 .filter(Objects::nonNull)
-                .map(file -> getContentOfFolder(file.toString(), fs))
+                .map(file -> getContentOfFolder(file.toString()))
                 .collect(ArrayList::new, List::addAll, List::addAll);
-
     }
 
 }
