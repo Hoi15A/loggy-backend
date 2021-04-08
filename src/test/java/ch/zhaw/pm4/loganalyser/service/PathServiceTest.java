@@ -41,18 +41,9 @@ class PathServiceTest {
 
         pathService.setFileSystem(fsMock);
 
-        when(varFolderMock.getName()).thenReturn("var");
-        when(varFolderMock.getPath()).thenReturn("/var");
-        when(varFolderMock.isDirectory()).thenReturn(true);
-
-        when(homeFolderMock.getName()).thenReturn("home");
-        when(homeFolderMock.getPath()).thenReturn("/home");
-        when(homeFolderMock.isDirectory()).thenReturn(true);
-
-        when(etcFolderMock.getName()).thenReturn("etc");
-        when(etcFolderMock.getPath()).thenReturn("/etc");
-        when(etcFolderMock.isDirectory()).thenReturn(true);
-
+        setUpFolderMock(varFolderMock, "var", "/var");
+        setUpFolderMock(homeFolderMock, "home", "/home");
+        setUpFolderMock(etcFolderMock, "etc", "/etc");
 
         int i = 0;
         expected = new ArrayList<>();
@@ -66,6 +57,12 @@ class PathServiceTest {
         when(fsMock.getPath(anyString())).thenReturn(rootFolderPathMock);
         when(rootFolderPathMock.toFile()).thenReturn(rootFolderMock);
         when(rootFolderMock.listFiles()).thenReturn(subFolders);
+    }
+
+    private void setUpFolderMock(File fileMock, String name, String fullPath) {
+        when(fileMock.getName()).thenReturn(name);
+        when(fileMock.getPath()).thenReturn(fullPath);
+        when(fileMock.isDirectory()).thenReturn(true);
     }
 
     @AfterEach
