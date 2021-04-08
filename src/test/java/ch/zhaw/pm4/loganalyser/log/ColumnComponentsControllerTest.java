@@ -77,7 +77,29 @@ public class ColumnComponentsControllerTest {
     }
 
     @Test
-    void testCreateColumnComponentById() {
+    void testGetColumnComponentById() {
+        ColumnComponentDTO dto = new ColumnComponentDTO(1L, ColumnType.MESSAGE, "-|[a-zA-Z]+", "User");
+
+        Mockito.when(columnComponentService.getColumnComponentById(Mockito.anyLong())).thenReturn(dto);
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .get("/column/10")
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.format").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.columnType").isNotEmpty())
+                    .andDo(MockMvcResultHandlers.print());
+        } catch (Exception e) {
+            fail(e);
+        }
+        Mockito.verify(columnComponentService, Mockito.times(1)).getColumnComponentById(Mockito.anyLong());
+    }
+
+    @Test
+    void testCreateColumnComponent() {
         try {
             File columnFile = ResourceUtils.getFile("classpath:testfiles/testCreateColumnComponent.json");
             String content = new String(Files.readAllBytes(columnFile.toPath()));

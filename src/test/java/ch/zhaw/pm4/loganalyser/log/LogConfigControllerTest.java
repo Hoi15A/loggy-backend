@@ -97,7 +97,6 @@ class LogConfigControllerTest {
             fail(e);
         }
         Mockito.verify(logConfigService, Mockito.times(1)).getLogConfigById(Mockito.any());
-
     }
 
     @Test
