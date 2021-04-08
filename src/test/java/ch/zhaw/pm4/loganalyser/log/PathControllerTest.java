@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +18,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -77,33 +77,29 @@ class PathControllerTest {
     private void performAndCheck(String apiRequest, List<FileTreeDTO> fileTreeDTOS) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(apiRequest))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*].id",
-                                                          contains(
-                                                                  fileTreeDTOS.get(0).getId(),
-                                                                  fileTreeDTOS.get(1).getId(),
-                                                                  fileTreeDTOS.get(2).getId()
-                                                          )))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*].name",
-                                                          contains(
-                                                                  fileTreeDTOS.get(0).getName(),
-                                                                  fileTreeDTOS.get(1).getName(),
-                                                                  fileTreeDTOS.get(2).getName()
-                                                          )))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*].fullpath",
-                                                          contains(
-                                                                  fileTreeDTOS.get(0).getFullpath(),
-                                                                  fileTreeDTOS.get(1).getFullpath(),
-                                                                  fileTreeDTOS.get(2).getFullpath()
-                                                          )))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*].children",
-                                                          contains(
-                                                                  fileTreeDTOS.get(0).getChildren(),
-                                                                  fileTreeDTOS.get(1).getChildren(),
-                                                                  fileTreeDTOS.get(2).getChildren()
-                                                          )));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.[*]").isNotEmpty())
+                .andExpect(jsonPath("$.[*].id", contains(
+                                        fileTreeDTOS.get(0).getId(),
+                                        fileTreeDTOS.get(1).getId(),
+                                        fileTreeDTOS.get(2).getId()
+                                    )))
+                .andExpect(jsonPath("$.[*].name", contains(
+                                        fileTreeDTOS.get(0).getName(),
+                                        fileTreeDTOS.get(1).getName(),
+                                        fileTreeDTOS.get(2).getName()
+                                    )))
+                .andExpect(jsonPath("$.[*].fullpath", contains(
+                                        fileTreeDTOS.get(0).getFullpath(),
+                                        fileTreeDTOS.get(1).getFullpath(),
+                                        fileTreeDTOS.get(2).getFullpath()
+                                    )))
+                .andExpect(jsonPath("$.[*].children", contains(
+                                        fileTreeDTOS.get(0).getChildren(),
+                                        fileTreeDTOS.get(1).getChildren(),
+                                        fileTreeDTOS.get(2).getChildren()
+                                    )));
     }
 
 }
