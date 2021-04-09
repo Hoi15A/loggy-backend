@@ -39,4 +39,16 @@ public class LogConfigService {
         return DTOMapper.mapLogConfigToDTO(logConfigOptional.get());
     }
 
+    /**
+     * Deletes a {@link LogConfigService} by it's name
+     * @param id of the {@link LogConfigService}
+     * @return deleted {@link LogConfigService}
+     */
+    public LogConfigDTO deleteLogConfigById(String id) {
+        Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(id);
+        if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException(id);
+        LogConfig logConfig = optionalLogConfig.get();
+        logConfigRepository.delete(logConfig);
+        return DTOMapper.mapLogConfigToDTO(optionalLogConfig.get());
+    }
 }
