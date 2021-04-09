@@ -5,6 +5,7 @@ import ch.zhaw.pm4.loganalyser.service.LogConfigService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,17 @@ public class LogConfigController {
     @GetMapping("/{id}")
     public ResponseEntity<LogConfigDTO> getLogConfigById(@PathVariable String id) {
         return ResponseEntity.ok(logConfigService.getLogConfigById(id));
+    }
+
+    /**
+     * Takes a logconfig id and deletes the config object from the database.
+     * The deleted {@link LogConfigDTO} will be returned.
+     * @param id of the {@link LogConfigDTO}
+     * @return ResponseEntity<LogConfigDTO>
+     */
+    @DeleteMapping("{id}")
+    public ResponseEntity<LogConfigDTO> deleteLogService(@PathVariable("id") final String id) {
+        return ResponseEntity.ok(logConfigService.deleteLogConfigById(id));
     }
 
 }
