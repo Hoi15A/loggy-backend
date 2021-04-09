@@ -118,4 +118,23 @@ class LogConfigControllerTest {
         }
     }
 
+    @Test
+    void TestDeleteLogConfigByExistingName() {
+        LogConfigDTO logConfigDTO1 = new LogConfigDTO();
+        logConfigDTO1.setName("Test1");
+
+        Mockito.when(logConfigService.deleteLogConfigById("Test1")).thenReturn(logConfigDTO1);
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .delete("/config/Test1")
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty())
+                    .andDo(MockMvcResultHandlers.print());
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
 }
