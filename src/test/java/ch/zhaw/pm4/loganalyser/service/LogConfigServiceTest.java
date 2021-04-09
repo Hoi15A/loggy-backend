@@ -67,4 +67,21 @@ class LogConfigServiceTest {
 
         Assertions.assertEquals(1, logConfigRepository.count());
     }
+
+    @Test
+    @Sql("classpath:sql/getlogconfigs.sql")
+    void testDeleteLogConfigById() {
+        LogConfigDTO compareDTO = new LogConfigDTO();
+        compareDTO.setName("nginx");
+        compareDTO.setColumnCount(8);
+        compareDTO.setHeaderLength(0);
+
+        Assertions.assertEquals(2, logConfigRepository.count());
+        LogConfigDTO deletedService = logConfigService.deleteLogConfigById("nginx");
+        Assertions.assertEquals(1, logConfigRepository.count());
+        Assertions.assertEquals(compareDTO.getName(), deletedService.getName());
+        Assertions.assertEquals(compareDTO.getColumnCount(), deletedService.getColumnCount());
+        Assertions.assertEquals(compareDTO.getHeaderLength(), deletedService.getHeaderLength());
+        Assertions.assertEquals(" ", deletedService.getSeparator());
+    }
 }
