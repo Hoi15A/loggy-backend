@@ -20,6 +20,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -40,8 +41,8 @@ class LogConfigControllerTest {
     @Test
     void testGetAllLogConfigs() {
         List<LogConfigDTO> dtos = new ArrayList<>();
-        dtos.add(new LogConfigDTO("test1", 0, 0, " "));
-        dtos.add(new LogConfigDTO("test2", 0, 0, " "));
+        dtos.add(new LogConfigDTO("test1", 0, 0, " ", new HashMap<>()));
+        dtos.add(new LogConfigDTO("test2", 0, 0, " ", new HashMap<>()));
 
         Mockito.when(logConfigService.getAllLogConfigs()).thenReturn(dtos);
         try {
@@ -75,7 +76,7 @@ class LogConfigControllerTest {
 
     @Test
     void testGetLogConfigById() {
-        LogConfigDTO dto = new LogConfigDTO("test1", 1, 2, "|");
+        LogConfigDTO dto = new LogConfigDTO("test1", 1, 2, "|", new HashMap<>());
 
         Mockito.when(logConfigService.getLogConfigById(Mockito.any())).thenReturn(dto);
         try {

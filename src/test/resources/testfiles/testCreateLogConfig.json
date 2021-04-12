@@ -2,5 +2,13 @@
   "name": "Nginx",
   "columnCount": 0,
   "headerLength": 0,
-  "separator": "|"
+  "separator": "|",
+  "columnComponents": {
+    "1": {
+      "id": 100,
+      "name": "TestColumn",
+      "ColumnType": 0,
+      "format": ".*"
+    }
+  }
 }

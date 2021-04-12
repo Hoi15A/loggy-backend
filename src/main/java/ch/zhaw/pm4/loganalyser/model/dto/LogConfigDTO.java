@@ -8,6 +8,8 @@ import lombok.Setter;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,4 +23,6 @@ public class LogConfigDTO {
     private int headerLength;
     @NotEmpty
     private String separator;
+    @NotNull
+    private Map<Integer, ColumnComponentDTO> columnComponents;
 }
