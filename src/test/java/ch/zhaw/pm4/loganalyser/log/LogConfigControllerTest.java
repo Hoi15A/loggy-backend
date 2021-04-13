@@ -120,7 +120,7 @@ class LogConfigControllerTest {
     }
 
     @Test
-    void testDeleteLogConfigByExistingName() {
+    void testDeleteLogConfigByExistingId() {
         LogConfigDTO logConfigDTO1 = new LogConfigDTO();
         logConfigDTO1.setName("Test1");
 
