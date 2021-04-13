@@ -8,9 +8,8 @@ import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import lombok.experimental.UtilityClass;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  * Utility to map model and data transfer objects.
@@ -50,15 +49,15 @@ public class DTOMapper {
     }
 
     private static Map<Integer, ColumnComponentDTO> mapColumnComponentsMapToDtoMap(Map<Integer, ColumnComponent> columnComponentMap) {
-        Map<Integer, ColumnComponentDTO> dtoMap = new HashMap<>();
-        columnComponentMap.forEach((key, value) -> dtoMap.put(key, mapColumnComponentToDTO(value)));
-        return dtoMap;
+        return columnComponentMap.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                                          entry -> mapColumnComponentToDTO(entry.getValue())));
     }
 
     private static Map<Integer, ColumnComponent> mapColumnComponentsDtoMapToColumnComponentsMap(Map<Integer, ColumnComponentDTO> dtoMap) {
-        Map<Integer, ColumnComponent> map = new HashMap<>();
-        dtoMap.forEach((key, value) -> map.put(key, mapDTOToColumnComponent(value)));
-        return map;
+        return dtoMap.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                                          entry -> mapDTOToColumnComponent(entry.getValue())));
     }
 
     public static LogServiceDTO mapLogServiceToDTO(LogService logService) {
