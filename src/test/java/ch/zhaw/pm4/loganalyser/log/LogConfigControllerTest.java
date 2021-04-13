@@ -1,9 +1,9 @@
 package ch.zhaw.pm4.loganalyser.log;
 
 import ch.zhaw.pm4.loganalyser.controller.LogConfigController;
+import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.service.LogConfigService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -22,9 +21,13 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,9 +43,15 @@ class LogConfigControllerTest {
 
     @Test
     void testGetAllLogConfigs() {
+        Map<Integer, ColumnComponentDTO> components1 = new HashMap<>();
+        components1.put(1, null);
+
+        Map<Integer, ColumnComponentDTO> components2 = new HashMap<>();
+        components2.put(2, null);
+
         List<LogConfigDTO> dtos = new ArrayList<>();
-        dtos.add(new LogConfigDTO("test1", 0, 0, " ", new HashMap<>()));
-        dtos.add(new LogConfigDTO("test2", 0, 0, " ", new HashMap<>()));
+        dtos.add(new LogConfigDTO("test1", 0, 0, " ", components1));
+        dtos.add(new LogConfigDTO("test2", 0, 0, " ", components2));
 
         Mockito.when(logConfigService.getAllLogConfigs()).thenReturn(dtos);
         try {
@@ -50,54 +59,64 @@ class LogConfigControllerTest {
                     .get("/config")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].name").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].columnCount").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].headerLength").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].separator").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].name",
-                            Matchers.anyOf(Matchers.hasItem(dtos.get(0).getName()),
-                                    Matchers.hasItem(dtos.get(1).getName()))))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].separator",
-                            Matchers.anyOf(Matchers.hasItem(dtos.get(0).getSeparator()),
-                                    Matchers.hasItem(dtos.get(1).getSeparator()))))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].columnCount",
-                            Matchers.anyOf(Matchers.hasItem(dtos.get(0).getColumnCount()),
-                                    Matchers.hasItem(dtos.get(1).getColumnCount()))))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].headerLength",
-                            Matchers.anyOf(Matchers.hasItem(dtos.get(0).getHeaderLength()),
-                                    Matchers.hasItem(dtos.get(1).getHeaderLength()))))
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].columnCount").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].headerLength").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].separator").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].columnComponents").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].name", anyOf(
+                            hasItem(dtos.get(0).getName()),
+                            hasItem(dtos.get(1).getName())
+                    )))
+                    .andExpect(jsonPath("$.[*].separator", anyOf(
+                            hasItem(dtos.get(0).getSeparator()),
+                            hasItem(dtos.get(1).getSeparator())
+                    )))
+                    .andExpect(jsonPath("$.[*].columnCount", anyOf(
+                            hasItem(dtos.get(0).getColumnCount()),
+                            hasItem(dtos.get(1).getColumnCount())
+                    )))
+                    .andExpect(jsonPath("$.[*].headerLength", anyOf(
+                            hasItem(dtos.get(0).getHeaderLength()),
+                            hasItem(dtos.get(1).getHeaderLength())
+                    )))
+                    .andExpect(jsonPath("$.[*].columnComponents.[*]", anyOf(
+                            hasItem(components1.get(1)),
+                            hasItem(components2.get(2))
+                    )))
                     .andDo(MockMvcResultHandlers.print());
         } catch (Exception e) {
             fail(e);
         }
-        Mockito.verify(logConfigService, Mockito.times(1)).getAllLogConfigs();
+        verify(logConfigService, times(1)).getAllLogConfigs();
     }
 
     @Test
     void testGetLogConfigById() {
         LogConfigDTO dto = new LogConfigDTO("test1", 1, 2, "|", new HashMap<>());
 
-        Mockito.when(logConfigService.getLogConfigById(Mockito.any())).thenReturn(dto);
+        Mockito.when(logConfigService.getLogConfigById(any())).thenReturn(dto);
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .get("/config/test1")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isString())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.columnCount").isNumber())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.headerLength").isNumber())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.separator").isString())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.equalTo(dto.getName())))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.columnCount", Matchers.equalTo(dto.getColumnCount())))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.headerLength", Matchers.equalTo(dto.getHeaderLength())))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.separator", Matchers.equalTo(dto.getSeparator())))
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.name").isString())
+                    .andExpect(jsonPath("$.columnCount").isNumber())
+                    .andExpect(jsonPath("$.headerLength").isNumber())
+                    .andExpect(jsonPath("$.separator").isString())
+                    .andExpect(jsonPath("$.name", equalTo(dto.getName())))
+                    .andExpect(jsonPath("$.columnCount", equalTo(dto.getColumnCount())))
+                    .andExpect(jsonPath("$.headerLength", equalTo(dto.getHeaderLength())))
+                    .andExpect(jsonPath("$.separator", equalTo(dto.getSeparator())))
+                    .andExpect(jsonPath("$.columnComponents", equalTo(dto.getColumnComponents())))
                     .andDo(MockMvcResultHandlers.print());
         } catch (Exception e) {
             fail(e);
         }
-        Mockito.verify(logConfigService, Mockito.times(1)).getLogConfigById(Mockito.any());
+        verify(logConfigService, times(1)).getLogConfigById(any());
     }
 
     @Test
@@ -105,7 +124,7 @@ class LogConfigControllerTest {
         try {
             File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogConfig.json");
             String content = new String(Files.readAllBytes(jsonFile.toPath()));
-            Mockito.doNothing().when(logConfigService).createLogConfig(Mockito.any());
+            Mockito.doNothing().when(logConfigService).createLogConfig(any());
 
             mockMvc.perform(MockMvcRequestBuilders
                     .post("/config/")
@@ -113,7 +132,7 @@ class LogConfigControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated());
 
-            Mockito.verify(logConfigService, Mockito.times(1)).createLogConfig(Mockito.any());
+            verify(logConfigService, times(1)).createLogConfig(any());
         } catch (Exception e) {
             fail(e);
         }
@@ -130,8 +149,8 @@ class LogConfigControllerTest {
                     .delete("/config/Test1")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.name").isNotEmpty())
                     .andDo(MockMvcResultHandlers.print());
         } catch (Exception e) {
             fail(e);

@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
+import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.repository.LogConfigRepository;
 import org.junit.jupiter.api.Assertions;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @DataJpaTest
 class LogConfigServiceTest {
@@ -62,6 +65,7 @@ class LogConfigServiceTest {
         sampleConfig.setSeparator(" ");
         sampleConfig.setColumnCount(0);
         sampleConfig.setHeaderLength(0);
+        sampleConfig.setColumnComponents(new HashMap<>());
 
         logConfigService.createLogConfig(sampleConfig);
 

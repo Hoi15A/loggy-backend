@@ -8,6 +8,10 @@ import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import lombok.experimental.UtilityClass;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
 /**
  * Utility to map model and data transfer objects.
  */
@@ -31,6 +35,7 @@ public class DTOMapper {
                 .columnCount(logConfigDTO.getColumnCount())
                 .headerLength(logConfigDTO.getHeaderLength())
                 .separator(logConfigDTO.getSeparator())
+                .columnComponents(mapColumnComponentsDtoMapToColumnComponentsMap(logConfigDTO.getColumnComponents()))
                 .build();
     }
 
@@ -40,7 +45,20 @@ public class DTOMapper {
         logConfigDTO.setColumnCount(logConfig.getColumnCount());
         logConfigDTO.setHeaderLength(logConfig.getHeaderLength());
         logConfigDTO.setSeparator(logConfig.getSeparator());
+        logConfigDTO.setColumnComponents(mapColumnComponentsMapToDtoMap(logConfig.getColumnComponents()));
         return logConfigDTO;
+    }
+
+    private static Map<Integer, ColumnComponentDTO> mapColumnComponentsMapToDtoMap(Map<Integer, ColumnComponent> columnComponentMap) {
+        Map<Integer, ColumnComponentDTO> dtoMap = new HashMap<>();
+        columnComponentMap.forEach((key, value) -> dtoMap.put(key, mapColumnComponentToDTO(value)));
+        return dtoMap;
+    }
+
+    private static Map<Integer, ColumnComponent> mapColumnComponentsDtoMapToColumnComponentsMap(Map<Integer, ColumnComponentDTO> dtoMap) {
+        Map<Integer, ColumnComponent> map = new HashMap<>();
+        dtoMap.forEach((key, value) -> map.put(key, mapDTOToColumnComponent(value)));
+        return map;
     }
 
     public static LogServiceDTO mapLogServiceToDTO(LogService logService) {
