@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.controller;
 
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,11 @@ public class ColumnComponentController {
     public ResponseEntity<String> createColumn(@Valid @RequestBody final ColumnComponentDTO columnComponentDTO) {
         columnComponentService.createColumn(columnComponentDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ColumnComponentDTO> deleteColumnComponentById(@PathVariable long id) {
+        return ResponseEntity.ok(columnComponentService.deleteColumnComponentById(id));
     }
 
     /**

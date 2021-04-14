@@ -26,6 +26,14 @@ public class ColumnComponentService {
         columnComponentRepository.save(columnComponent);
     }
 
+    public ColumnComponentDTO deleteColumnComponentById(long id) {
+        Optional<ColumnComponent> optionalColumnComponent = columnComponentRepository.findById(id);
+        if (optionalColumnComponent.isEmpty()) throw new RecordNotFoundException("Could not delete id: " + id);
+        ColumnComponent columnComponent = optionalColumnComponent.get();
+        columnComponentRepository.delete(columnComponent);
+        return DTOMapper.mapColumnComponentToDTO(columnComponent);
+    }
+
     public List<ColumnComponentDTO> getAllColumnComponents() {
         return columnComponentRepository
                 .findAll()
