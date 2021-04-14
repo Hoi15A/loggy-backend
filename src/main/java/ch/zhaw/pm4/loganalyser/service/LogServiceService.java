@@ -67,7 +67,11 @@ public class LogServiceService {
         Optional<LogService> optionalLogService = logServiceRepository.findById(id);
         if (optionalLogService.isEmpty()) throw new RecordNotFoundException(String.valueOf(id));
         LogService logService = optionalLogService.get();
+        LogConfig logConfig = logService.getLogConfig();
+        logService.setLogConfig(null);
+        logServiceRepository.save(logService);
         logServiceRepository.delete(logService);
+        logService.setLogConfig(logConfig);
         return mapLogServiceToDTO(optionalLogService.get());
     }
 }
