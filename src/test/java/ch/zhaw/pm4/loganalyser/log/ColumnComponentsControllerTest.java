@@ -2,6 +2,7 @@ package ch.zhaw.pm4.loganalyser.log;
 
 import ch.zhaw.pm4.loganalyser.controller.ColumnComponentController;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
 import org.hamcrest.Matchers;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -114,6 +116,25 @@ public class ColumnComponentsControllerTest {
             Mockito.verify(columnComponentService, Mockito.times(1)).createColumn(Mockito.any());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testDeleteColumnComponentById() {
+        ColumnComponentDTO columnComponentDTO = new ColumnComponentDTO();
+        columnComponentDTO.setId(1);
+
+        Mockito.when(columnComponentService.deleteColumnComponentById(1)).thenReturn(columnComponentDTO);
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .delete("/column/1")
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.id").isNotEmpty())
+                    .andDo(MockMvcResultHandlers.print());
+        } catch (Exception e) {
+            fail(e);
         }
     }
 }
