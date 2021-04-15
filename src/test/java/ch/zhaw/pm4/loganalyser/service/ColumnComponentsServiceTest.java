@@ -2,6 +2,7 @@ package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.repository.ColumnComponentRepository;
 import org.junit.jupiter.api.Assertions;
@@ -53,6 +54,24 @@ class ColumnComponentsServiceTest {
     @Test
     void testGetConfigNotAvailable() {
         Assertions.assertThrows(RecordNotFoundException.class, () -> columnComponentService.getColumnComponentById(5L));
+    }
+
+    @Test
+    @Sql("classpath:sql/getcolumncomponents.sql")
+    void testDeleteColumnComponentById() {
+        ColumnComponentDTO compareDTO = new ColumnComponentDTO();
+        compareDTO.setName("Host");
+        compareDTO.setId(1);
+        compareDTO.setFormat("ff");
+        compareDTO.setColumnType(ColumnType.DATE);
+
+        Assertions.assertEquals(2, columnComponentRepository.count());
+        ColumnComponentDTO deletedColumnComponent = columnComponentService.deleteColumnComponentById(1);
+        Assertions.assertEquals(1, columnComponentRepository.count());
+        Assertions.assertEquals(compareDTO.getName(), deletedColumnComponent.getName());
+        Assertions.assertEquals(compareDTO.getFormat(), deletedColumnComponent.getFormat());
+        Assertions.assertEquals(compareDTO.getColumnType(), deletedColumnComponent.getColumnType());
+        Assertions.assertEquals(compareDTO.getId(), deletedColumnComponent.getId());
     }
 
     @Test
