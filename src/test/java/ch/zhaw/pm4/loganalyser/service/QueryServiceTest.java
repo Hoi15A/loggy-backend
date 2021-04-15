@@ -86,8 +86,7 @@ class QueryServiceTest {
 
         Assertions.assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, null));
     }
-
-    @Test
+    
     void mapTest(Map<Integer, ColumnComponent> providedMap, Map<Integer, ColumnComponent> receivedMap) {
         assertEquals(providedMap.size(), receivedMap.size());
         Assertions.assertNotNull(providedMap, "Provided Map is null;");
