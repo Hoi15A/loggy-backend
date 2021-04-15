@@ -75,6 +75,40 @@ class ColumnComponentsServiceTest {
     }
 
     @Test
+    @Sql("classpath:sql/getcolumncomponents.sql")
+    void testCountOfUpdateColumnComponentById() {
+        ColumnComponentDTO testColumn = new ColumnComponentDTO();
+        testColumn.setName("newName");
+        testColumn.setFormat("newFormat");
+        testColumn.setId(2L); // is an existing id
+        testColumn.setColumnType(ColumnType.MESSAGE);
+
+        columnComponentService.updateColumn(testColumn);
+
+        Assertions.assertEquals(2, columnComponentRepository.count());
+    }
+
+    @Test
+    @Sql("classpath:sql/getcolumncomponents.sql")
+    void testContentOfUpdateColumnComponentById() {
+        ColumnComponentDTO testColumn = new ColumnComponentDTO();
+        testColumn.setName("newName");
+        testColumn.setFormat("newFormat");
+        testColumn.setId(2L); // is an existing id
+        testColumn.setColumnType(ColumnType.MESSAGE);
+
+        columnComponentService.updateColumn(testColumn);
+
+        ColumnComponentDTO updatedDTO = columnComponentService.getColumnComponentById(2L);
+        Assertions.assertEquals(testColumn.getId(), updatedDTO.getId());
+        Assertions.assertEquals(testColumn.getColumnType(), updatedDTO.getColumnType());
+        Assertions.assertEquals(testColumn.getFormat(), updatedDTO.getFormat());
+        Assertions.assertEquals(testColumn.getName(), updatedDTO.getName());
+
+        Assertions.assertEquals(2, columnComponentRepository.count());
+    }
+
+    @Test
     void testCreateColumnComponent() {
         ColumnComponentDTO testColumn = new ColumnComponentDTO();
         testColumn.setName("Host1");
@@ -85,6 +119,5 @@ class ColumnComponentsServiceTest {
         columnComponentService.createColumn(testColumn);
 
         Assertions.assertEquals(1, columnComponentRepository.count());
-
     }
 }

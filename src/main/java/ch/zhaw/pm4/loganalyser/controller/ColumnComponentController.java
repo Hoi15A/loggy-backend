@@ -29,6 +29,13 @@ public class ColumnComponentController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ColumnComponentDTO> updateColumn(@Valid @RequestBody final ColumnComponentDTO componentDTO) {
+        columnComponentService.updateColumn(componentDTO);
+        return ResponseEntity.ok(componentDTO);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ColumnComponentDTO> deleteColumnComponentById(@PathVariable long id) {
         return ResponseEntity.ok(columnComponentService.deleteColumnComponentById(id));

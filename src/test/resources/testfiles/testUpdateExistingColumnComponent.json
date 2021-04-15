@@ -1,0 +1,6 @@
+{
+  "name": "New Name",
+  "id": 11,
+  "columnType": 3,
+  "format": "-|[a-zA-Z]+"
+}

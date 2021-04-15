@@ -34,6 +34,12 @@ public class ColumnComponentService {
         return DTOMapper.mapColumnComponentToDTO(columnComponent);
     }
 
+    public void updateColumn(ColumnComponentDTO columnComponentDTO) {
+        Optional<ColumnComponent> oldColumnComponent = columnComponentRepository.findById(columnComponentDTO.getId());
+        if(oldColumnComponent.isEmpty()) throw new RecordNotFoundException(columnComponentDTO.getName());
+        columnComponentRepository.save(mapDTOToColumnComponent(columnComponentDTO));
+    }
+
     public List<ColumnComponentDTO> getAllColumnComponents() {
         return columnComponentRepository
                 .findAll()
