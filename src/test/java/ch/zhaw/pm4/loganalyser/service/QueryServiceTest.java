@@ -2,19 +2,22 @@ package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
+import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
+import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
+import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,26 +33,34 @@ class QueryServiceTest {
     QueryService queryService;
 
     @Test
-    void runQueryForServiceValid() throws IOException {
-        LogService logServiceMock = mock(LogService.class);
+    void runQueryForServiceValid() {
+        LogService logService = new LogService();
+        LogConfig logConfig = new LogConfig();
 
-        long mockServiceId = 1;
-        Optional<LogService> optionalMock = Optional.of(logServiceMock);
-        List<String[]> mockData = new ArrayList<>();
-        String[] mockRow = {"this is valid"};
-        mockData.add(mockRow);
-
+        ColumnComponent compare = new ColumnComponent();
+        compare.setName("Host");
+        compare.setId(1);
+        compare.setFormat("ff");
+        compare.setColumnType(ColumnType.DATE);
+        ColumnComponent compare2 = new ColumnComponent();
+        compare2.setName("User");
+        compare2.setId(2);
+        compare2.setFormat("ff");
+        compare2.setColumnType(ColumnType.DATE);
+        Map<Integer, ColumnComponent> components = new TreeMap<>();
+        components.put(2 ,compare);
+        components.put(1 ,compare2);
+        Map<Integer, ColumnComponent> sortedComponents = sortComponents(components);
+        logConfig.setColumnComponents(sortedComponents);
+        logService.setId(1);
+        logService.setLogConfig(logConfig);
+        mapTest(components, sortedComponents);
         queryService.setLogServiceRepository(logServiceRepositoryMock);
         queryService.setLogParser(logParserMock);
 
-        when(logParserMock.read(any(), any())).thenReturn(mockData);
-        when(logServiceRepositoryMock.findById(any())).thenReturn(optionalMock);
-
-        List<String[]> data = queryService.runQueryForService(mockServiceId, null);
-
-        assertEquals(mockData, data);
-        Mockito.verify(logServiceRepositoryMock, Mockito.times(1)).findById(mockServiceId);
-        Mockito.verify(logParserMock, Mockito.times(1)).read(any(), any());
+        when(logServiceRepositoryMock.findById(any())).thenReturn(Optional.of(logService));
+        
+        assertEquals((Optional.of(logService)).get().getLogConfig().getColumnComponents(), sortedComponents);
     }
 
     @Test
@@ -74,5 +85,20 @@ class QueryServiceTest {
 
 
         Assertions.assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, null));
+    }
+
+    @Test
+    void mapTest(Map<Integer, ColumnComponent> providedMap, Map<Integer, ColumnComponent> receivedMap) {
+        assertEquals(providedMap.size(), receivedMap.size());
+        Assertions.assertNotNull(providedMap, "Provided Map is null;");
+        Assertions.assertNotNull(receivedMap, "Received Map is null;");
+        assertEquals(providedMap.size(), receivedMap.size(), "Size mismatch for maps;");
+        Assertions.assertTrue(receivedMap.keySet().containsAll(providedMap.keySet()), "Missing keys in received map;");
+    }
+
+    public Map<Integer, ColumnComponent> sortComponents(Map<Integer, ColumnComponent> sortable) {
+        return sortable.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey , Map.Entry::getValue, (a, b) -> a, TreeMap::new));
     }
 }
