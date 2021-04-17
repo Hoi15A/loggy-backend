@@ -1,6 +1,6 @@
 package ch.zhaw.pm4.loganalyser.service;
 
-import ch.zhaw.pm4.loganalyser.exception.RecordAlreadyExsistsException;
+import ch.zhaw.pm4.loganalyser.exception.RecordAlreadyExistsException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
@@ -24,7 +24,7 @@ public class LogConfigService {
     /**
      * Saves a new {@link LogConfig} to the database
      * @param logConfigDTO
-     * @throws RecordAlreadyExsistsException If a config with the same name already exists this exception will be thrown
+     * @throws RecordAlreadyExistsException If a config with the same name already exists this exception will be thrown
      */
     public void createLogConfig(LogConfigDTO logConfigDTO) {
         LogConfig config = mapDTOToLogConfig(logConfigDTO);
@@ -33,10 +33,14 @@ public class LogConfigService {
         if (logConfigOptional.isEmpty()) {
             logConfigRepository.save(config);
         } else {
-            throw new RecordAlreadyExsistsException("A config with the name " + config.getName() + " already exists.");
+            throw new RecordAlreadyExistsException("A config with the name " + config.getName() + " already exists.");
         }
     }
 
+    /**
+     * Updates an existing {@link LogConfig}
+     * @param logConfigDTO
+     */
     public void updateLogConfig(LogConfigDTO logConfigDTO) {
         LogConfig config = mapDTOToLogConfig(logConfigDTO);
 
