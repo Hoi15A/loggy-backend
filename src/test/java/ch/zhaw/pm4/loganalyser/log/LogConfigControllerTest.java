@@ -25,9 +25,11 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -157,4 +159,25 @@ class LogConfigControllerTest {
         }
     }
 
+    @Test
+    void testPutLogConfigValid() {
+        Mockito.doNothing().when(logConfigService).updateLogConfig(any());
+
+        try {
+            File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogConfig.json");
+            String content = new String(Files.readAllBytes(jsonFile.toPath()));
+
+            mockMvc.perform(MockMvcRequestBuilders
+                    .put("/config/")
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNoContent())
+                    .andDo(MockMvcResultHandlers.print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        verify(logConfigService, times(1)).updateLogConfig(any());
+    }
 }
