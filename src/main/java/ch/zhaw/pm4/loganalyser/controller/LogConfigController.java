@@ -59,13 +59,12 @@ public class LogConfigController {
     }
 
     /**
-     *
-     * @param id
-     * @param logConfigDTO
-     * @return
+     * Takes a logconfig DTO and updates it in the database.
+     * @param logConfigDTO the data transfer object to be updated.
+     * @return {@link ResponseEntity} with status 204.
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<String> putLogConfigById(@PathVariable String id, @Valid @RequestBody final LogConfigDTO logConfigDTO) {
+    @PutMapping("/")
+    public ResponseEntity<String> putLogConfig(@Valid @RequestBody final LogConfigDTO logConfigDTO) {
         logConfigService.updateLogConfig(logConfigDTO);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
