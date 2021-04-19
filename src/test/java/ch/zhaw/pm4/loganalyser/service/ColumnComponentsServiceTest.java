@@ -68,10 +68,7 @@ class ColumnComponentsServiceTest {
         Assertions.assertEquals(2, columnComponentRepository.count());
         ColumnComponentDTO deletedColumnComponent = columnComponentService.deleteColumnComponentById(1);
         Assertions.assertEquals(1, columnComponentRepository.count());
-        Assertions.assertEquals(compareDTO.getName(), deletedColumnComponent.getName());
-        Assertions.assertEquals(compareDTO.getFormat(), deletedColumnComponent.getFormat());
-        Assertions.assertEquals(compareDTO.getColumnType(), deletedColumnComponent.getColumnType());
-        Assertions.assertEquals(compareDTO.getId(), deletedColumnComponent.getId());
+        Assertions.assertEquals(compareDTO, deletedColumnComponent);
     }
 
     @Test
