@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.service;
 
+import ch.zhaw.pm4.loganalyser.exception.RecordAlreadyExistsException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
@@ -20,9 +21,36 @@ public class LogConfigService {
 
     private final LogConfigRepository logConfigRepository;
 
+    /**
+     * Saves a new {@link LogConfig} to the database
+     * @param logConfigDTO
+     * @throws RecordAlreadyExistsException If a config with the same name already exists this exception will be thrown
+     */
     public void createLogConfig(LogConfigDTO logConfigDTO) {
         LogConfig config = mapDTOToLogConfig(logConfigDTO);
-        logConfigRepository.save(config);
+
+        Optional<LogConfig> logConfigOptional = logConfigRepository.findById(config.getName());
+        if (logConfigOptional.isEmpty()) {
+            logConfigRepository.save(config);
+        } else {
+            throw new RecordAlreadyExistsException("A config with the name " + config.getName() + " already exists.");
+        }
+    }
+
+    /**
+     * Updates an existing {@link LogConfig}
+     * @param logConfigDTO
+     */
+    public void updateLogConfig(LogConfigDTO logConfigDTO) {
+        LogConfig config = mapDTOToLogConfig(logConfigDTO);
+
+        Optional<LogConfig> logConfigOptional= logConfigRepository.findById(config.getName());
+
+        if (logConfigOptional.isEmpty()) {
+            throw new RecordNotFoundException("A config with the name " + config.getName() + " does not exist and cant be updated.");
+        } else {
+            logConfigRepository.save(config);
+        }
     }
 
     public List<LogConfigDTO> getAllLogConfigs() {

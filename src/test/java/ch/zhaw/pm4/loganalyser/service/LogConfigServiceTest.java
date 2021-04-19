@@ -1,8 +1,8 @@
 package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
-import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
+import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.repository.LogConfigRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @DataJpaTest
 class LogConfigServiceTest {
@@ -87,5 +87,49 @@ class LogConfigServiceTest {
         Assertions.assertEquals(compareDTO.getColumnCount(), deletedService.getColumnCount());
         Assertions.assertEquals(compareDTO.getHeaderLength(), deletedService.getHeaderLength());
         Assertions.assertEquals(" ", deletedService.getSeparator());
+    }
+
+    @Test
+    void updateLogConfigValid() {
+        String logConfigID = "sample";
+        LogConfigDTO sampleConfig = new LogConfigDTO();
+        sampleConfig.setName(logConfigID);
+        sampleConfig.setSeparator(" ");
+        sampleConfig.setColumnCount(0);
+        sampleConfig.setHeaderLength(0);
+        sampleConfig.setColumnComponents(new HashMap<>());
+
+        logConfigService.createLogConfig(sampleConfig);
+
+        sampleConfig.setSeparator("-");
+        sampleConfig.setColumnCount(3);
+        sampleConfig.setHeaderLength(1);
+
+        logConfigService.updateLogConfig(sampleConfig);
+
+        Optional<LogConfig> optional = logConfigRepository.findById(logConfigID);
+
+        if (optional.isEmpty()) {
+            Assertions.fail("Config not in repo");
+        }
+
+        LogConfig logConfigAfter = optional.get();
+
+        Assertions.assertEquals(sampleConfig.getName(), logConfigAfter.getName());
+        Assertions.assertEquals(sampleConfig.getSeparator(), logConfigAfter.getSeparator());
+        Assertions.assertEquals(sampleConfig.getColumnCount(), logConfigAfter.getColumnCount());
+        Assertions.assertEquals(sampleConfig.getHeaderLength(), logConfigAfter.getHeaderLength());
+    }
+
+    @Test
+    void upateNonExistantLogConfig() {
+        LogConfigDTO sampleConfig = new LogConfigDTO();
+        sampleConfig.setName("nginx");
+        sampleConfig.setSeparator("|");
+        sampleConfig.setColumnCount(5);
+        sampleConfig.setHeaderLength(1);
+        sampleConfig.setColumnComponents(new HashMap<>());
+
+        Assertions.assertThrows(RecordNotFoundException.class, () -> logConfigService.updateLogConfig(sampleConfig));
     }
 }
