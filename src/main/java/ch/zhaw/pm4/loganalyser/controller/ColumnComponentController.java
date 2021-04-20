@@ -67,7 +67,7 @@ public class ColumnComponentController {
 
     /**
      * Returns a transformed column component with the matching id.
-     * @param id of {@link ResponseEntity} that should be fetched from the database.
+     * @param id of {@link ColumnComponentDTO} that should be fetched from the database.
      * @return {@link ResponseEntity} with status 200 and a {@link ColumnComponentDTO} inside the body.
      */
     @GetMapping("/{id}")
