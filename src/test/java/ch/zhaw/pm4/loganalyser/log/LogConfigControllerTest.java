@@ -61,26 +61,26 @@ class LogConfigControllerTest  extends ControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$.[*].name").isNotEmpty())
-                    .andExpect(jsonPath("$.[*].columnCount").isNotEmpty())
-                    .andExpect(jsonPath("$.[*].headerLength").isNotEmpty())
-                    .andExpect(jsonPath("$.[*].separator").isNotEmpty())
-                    .andExpect(jsonPath("$.[*].columnComponents").isNotEmpty())
                     .andExpect(jsonPath("$.[*].name", anyOf(
                             hasItem(dtos.get(0).getName()),
                             hasItem(dtos.get(1).getName())
                     )))
-                    .andExpect(jsonPath("$.[*].separator", anyOf(
-                            hasItem(dtos.get(0).getSeparator()),
-                            hasItem(dtos.get(1).getSeparator())
-                    )))
+                    .andExpect(jsonPath("$.[*].columnCount").isNotEmpty())
                     .andExpect(jsonPath("$.[*].columnCount", anyOf(
                             hasItem(dtos.get(0).getColumnCount()),
                             hasItem(dtos.get(1).getColumnCount())
                     )))
+                    .andExpect(jsonPath("$.[*].headerLength").isNotEmpty())
                     .andExpect(jsonPath("$.[*].headerLength", anyOf(
                             hasItem(dtos.get(0).getHeaderLength()),
                             hasItem(dtos.get(1).getHeaderLength())
                     )))
+                    .andExpect(jsonPath("$.[*].separator").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].separator", anyOf(
+                            hasItem(dtos.get(0).getSeparator()),
+                            hasItem(dtos.get(1).getSeparator())
+                    )))
+                    .andExpect(jsonPath("$.[*].columnComponents").isNotEmpty())
                     .andExpect(jsonPath("$.[*].columnComponents.[*]", anyOf(
                             hasItem(components1.get(1)),
                             hasItem(components2.get(2))
@@ -109,12 +109,12 @@ class LogConfigControllerTest  extends ControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$.name").isString())
-                    .andExpect(jsonPath("$.columnCount").isNumber())
-                    .andExpect(jsonPath("$.headerLength").isNumber())
-                    .andExpect(jsonPath("$.separator").isString())
                     .andExpect(jsonPath("$.name", equalTo(dto.getName())))
+                    .andExpect(jsonPath("$.columnCount").isNumber())
                     .andExpect(jsonPath("$.columnCount", equalTo(dto.getColumnCount())))
+                    .andExpect(jsonPath("$.headerLength").isNumber())
                     .andExpect(jsonPath("$.headerLength", equalTo(dto.getHeaderLength())))
+                    .andExpect(jsonPath("$.separator").isString())
                     .andExpect(jsonPath("$.separator", equalTo(dto.getSeparator())))
                     .andExpect(jsonPath("$.columnComponents", equalTo(dto.getColumnComponents())))
                     .andDo(print());
@@ -138,8 +138,8 @@ class LogConfigControllerTest  extends ControllerTest {
                     .post("/config/")
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isCreated());
-
+                    .andExpect(status().isCreated())
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }

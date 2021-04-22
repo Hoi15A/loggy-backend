@@ -133,7 +133,8 @@ class ColumnComponentsControllerTest extends ControllerTest {
                     .post("/column/")
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isCreated());
+                    .andExpect(status().isCreated())
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
@@ -157,7 +158,8 @@ class ColumnComponentsControllerTest extends ControllerTest {
                     .put("/column/" + dto.getId())
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }

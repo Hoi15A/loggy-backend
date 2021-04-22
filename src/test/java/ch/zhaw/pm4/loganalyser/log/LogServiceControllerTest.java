@@ -47,7 +47,8 @@ class LogServiceControllerTest extends ControllerTest {
                     .post("/service/")
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isCreated());
+                    .andExpect(status().isCreated())
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
@@ -68,7 +69,8 @@ class LogServiceControllerTest extends ControllerTest {
                     .post("/service/")
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
@@ -92,7 +94,8 @@ class LogServiceControllerTest extends ControllerTest {
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").exists())
-                    .andExpect(jsonPath("$.name").isNotEmpty());
+                    .andExpect(jsonPath("$.name").isNotEmpty())
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
