@@ -34,6 +34,10 @@ class LogConfigControllerTest  extends ControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    /* ****************************************************************************************************************
+     * POSITIV TESTS
+     * ****************************************************************************************************************/
+
     @Test
     void testGetAllLogConfigs() {
         // prepare
@@ -125,8 +129,8 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testCreateLogConfig() {
         // prepare
+        String content = loadResourceContent("testCreateLogConfig.json");
         doNothing().when(logConfigService).createLogConfig(any());
-        String content = loadResourceContent("classpath:testfiles/testCreateLogConfig.json");
 
         // execute
         try {
@@ -170,10 +174,10 @@ class LogConfigControllerTest  extends ControllerTest {
     }
 
     @Test
-    void testPutLogConfigValid() {
+    void testUpdateLogConfigValid() {
         // prepare
+        String content = loadResourceContent("testCreateLogConfig.json");
         doNothing().when(logConfigService).updateLogConfig(any());
-        String content = loadResourceContent("classpath:testfiles/testCreateLogConfig.json");
 
         // execute
         try {
@@ -191,5 +195,10 @@ class LogConfigControllerTest  extends ControllerTest {
         // verify
         verify(logConfigService, times(1)).updateLogConfig(any());
     }
+
+    /* ****************************************************************************************************************
+     * NEGATIV TESTS
+     * ****************************************************************************************************************/
+
 
 }

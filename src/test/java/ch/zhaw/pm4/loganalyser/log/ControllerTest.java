@@ -8,9 +8,9 @@ import java.nio.file.Files;
 
 class ControllerTest {
 
-    String loadResourceContent(String resourceLocation) {
+    String loadResourceContent(String relativeResourceLocation) {
         try {
-            File columnFile = ResourceUtils.getFile(resourceLocation);
+            File columnFile = ResourceUtils.getFile("classpath:testfiles/" + relativeResourceLocation);
             return new String(Files.readAllBytes(columnFile.toPath()));
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -31,11 +31,15 @@ class LogServiceControllerTest extends ControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    /* ****************************************************************************************************************
+     * POSITIV TESTS
+     * ****************************************************************************************************************/
+
     @Test
     void testCreateLogService() {
         // prepare
         doNothing().when(logServiceService).createLogService(any());
-        String content = loadResourceContent("classpath:testfiles/testCreateLogService.json");
+        String content = loadResourceContent("testCreateLogService.json");
 
         // execute
         try {
@@ -56,7 +60,7 @@ class LogServiceControllerTest extends ControllerTest {
     void testCreateLogService_ConfigMissing() {
         //prepare
         doNothing().when(logServiceService).createLogService(any());
-        String content = loadResourceContent("classpath:testfiles/testCreateLogService_ConfigMissing.json");
+        String content = loadResourceContent("testCreateLogService_ConfigMissing.json");
 
         //execute
         try {
@@ -155,5 +159,10 @@ class LogServiceControllerTest extends ControllerTest {
         // verify
         verify(logServiceService, times(1)).deleteLogServiceById(anyLong());
     }
+
+    /* ****************************************************************************************************************
+     * NEGATIV TESTS
+     * ****************************************************************************************************************/
+
 
 }
