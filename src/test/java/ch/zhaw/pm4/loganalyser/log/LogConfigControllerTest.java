@@ -1,5 +1,8 @@
 package ch.zhaw.pm4.loganalyser.log;
 
+import ch.zhaw.pm4.loganalyser.exception.ApiExceptionHandler;
+import ch.zhaw.pm4.loganalyser.exception.RecordAlreadyExistsException;
+import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.service.LogConfigService;
@@ -33,7 +36,7 @@ class LogConfigControllerTest  extends ControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-
+    
     /* ****************************************************************************************************************
      * POSITIV TESTS
      * ****************************************************************************************************************/
@@ -99,12 +102,12 @@ class LogConfigControllerTest  extends ControllerTest {
         // prepare
         LogConfigDTO dto = new LogConfigDTO("test1", 1, 2, "|", new HashMap<>());
 
-        when(logConfigService.getLogConfigById(any())).thenReturn(dto);
+        when(logConfigService.getLogConfigById(dto.getName())).thenReturn(dto);
 
         // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                    .get("/config/test1")
+                    .get("/config/" + dto.getName())
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").exists())
@@ -123,13 +126,13 @@ class LogConfigControllerTest  extends ControllerTest {
         }
 
         // verify
-        verify(logConfigService, times(1)).getLogConfigById(any());
+        verify(logConfigService, times(1)).getLogConfigById(dto.getName());
     }
 
     @Test
     void testCreateLogConfig() {
         // prepare
-        String content = loadResourceContent("testCreateLogConfig.json");
+        String content = loadResourceContent("LogConfig/testCreateLogConfig.json");
         doNothing().when(logConfigService).createLogConfig(any());
 
         // execute
@@ -149,17 +152,17 @@ class LogConfigControllerTest  extends ControllerTest {
     }
 
     @Test
-    void testDeleteLogConfigByExistingId() {
+    void testDeleteLogConfig() {
         // prepare
-        LogConfigDTO logConfigDTO1 = new LogConfigDTO();
-        logConfigDTO1.setName("Test1");
+        LogConfigDTO dto = new LogConfigDTO();
+        dto.setName("Test1");
 
-        when(logConfigService.deleteLogConfigById(anyString())).thenReturn(logConfigDTO1);
+        when(logConfigService.deleteLogConfigById(dto.getName())).thenReturn(dto);
 
         // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                    .delete("/config/Test1")
+                    .delete("/config/" + dto.getName())
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").exists())
@@ -170,13 +173,13 @@ class LogConfigControllerTest  extends ControllerTest {
         }
 
         // verify
-        verify(logConfigService, times(1)).deleteLogConfigById(anyString());
+        verify(logConfigService, times(1)).deleteLogConfigById(dto.getName());
     }
 
     @Test
-    void testUpdateLogConfigValid() {
+    void testUpdateLogConfig() {
         // prepare
-        String content = loadResourceContent("testCreateLogConfig.json");
+        String content = loadResourceContent("LogConfig/testUpdateExistingLogConfig.json");
         doNothing().when(logConfigService).updateLogConfig(any());
 
         // execute
@@ -200,5 +203,151 @@ class LogConfigControllerTest  extends ControllerTest {
      * NEGATIV TESTS
      * ****************************************************************************************************************/
 
+    @Test
+    void testCreateAlreadyExistingLogConfig() {
+        // prepare
+        String content = loadResourceContent("LogConfig/testCreateLogConfig.json");
 
+        String exceptionMessage = "A config with this name already exists.";
+
+        doThrow(new RecordAlreadyExistsException(exceptionMessage)).when(logConfigService).createLogConfig(any());
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .post("/config/")
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isConflict())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_ALREADY_EXISTS_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(logConfigService, times(1)).createLogConfig(any());
+    }
+
+    @Test
+    void testGetNonExistingLogConfig() {
+        // prepare
+        String content = loadResourceContent("LogConfig/testUpdateNonExistingLogConfig.json");
+
+        String exceptionMessage = "ID was not found";
+
+        doThrow(new RecordNotFoundException(exceptionMessage)).when(logConfigService).getLogConfigById(anyString());
+
+        // execute
+        try {
+            // todo: check for non existing id in dto and path variable
+            mockMvc.perform(MockMvcRequestBuilders
+                    .get("/config/nginx") // non existing column id
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_NOT_FOUND_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(logConfigService, times(1)).getLogConfigById(anyString());
+    }
+
+    @Test
+    void testDeleteNonExistingLogConfig() {
+        // prepare
+        String content = loadResourceContent("LogConfig/testUpdateNonExistingLogConfig.json");
+
+        String exceptionMessage = "This record does not exist";
+
+        doThrow(new RecordNotFoundException(exceptionMessage)).when(logConfigService).deleteLogConfigById(anyString());
+
+        // execute
+        try {
+            // todo: check for non existing id in dto and path variable
+            mockMvc.perform(MockMvcRequestBuilders
+                    .delete("/config/abc")
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_NOT_FOUND_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(logConfigService, times(1)).deleteLogConfigById(anyString());
+    }
+
+    @Test
+    void testUpdateNonExistingLogConfig() {
+        // prepare
+        String content = loadResourceContent("LogConfig/testUpdateNonExistingLogConfig.json");
+
+        String exceptionMessage = "This record does not exist";
+
+        doThrow(new RecordNotFoundException(exceptionMessage)).when(logConfigService).updateLogConfig(any());
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .put("/config/") // non existing config id
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_NOT_FOUND_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(logConfigService, times(1)).updateLogConfig(any());
+    }
+
+    @Test
+    void testUpdateLogConfigWithCorruptedJSON() {
+        // prepare
+        String content = loadResourceContent("LogConfig/testUpdateLogConfigWithCorruptedJSON.json");
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .put("/config/")
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.METHOD_ARGUMENT_NOT_VALID_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]", containsInAnyOrder(
+                            LogConfigDTO.NAME_VALIDATION_MESSAGE,
+                            LogConfigDTO.COLUMN_COUNT_VALIDATION_MESSAGE,
+                            LogConfigDTO.HEADER_LENGTH_VALIDATION_MESSAGE,
+                            LogConfigDTO.SEPARATOR_VALIDATION_MESSAGE,
+                            LogConfigDTO.COLUMN_COMPONENTS_VALIDATION_MESSAGE
+                    )))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(logConfigService, times(0)).updateLogConfig(any());
+    }
+    
 }

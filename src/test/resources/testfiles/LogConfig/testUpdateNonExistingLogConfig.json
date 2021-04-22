@@ -1,0 +1,20 @@
+{
+  "name": "abc",
+  "columnCount": 0,
+  "headerLength": 0,
+  "separator": "|",
+  "columnComponents": {
+    "1": {
+      "id": 100,
+      "name": "TestColumn",
+      "ColumnType": 0,
+      "format": ".*"
+    },
+    "2": {
+      "id": 200,
+      "name": "TestColumn 2",
+      "ColumnType": 3,
+      "format": "\\d+"
+    }
+  }
+}
