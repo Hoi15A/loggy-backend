@@ -1,5 +1,7 @@
 package ch.zhaw.pm4.loganalyser.log;
 
+import ch.zhaw.pm4.loganalyser.exception.ApiExceptionHandler;
+import ch.zhaw.pm4.loganalyser.exception.PathNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
 import ch.zhaw.pm4.loganalyser.service.PathService;
 import org.junit.jupiter.api.Test;
@@ -9,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -70,7 +72,7 @@ class PathControllerTest {
                             fileTreeDTOS.get(1).getChildren(),
                             fileTreeDTOS.get(2).getChildren()
                     )))
-                    .andDo(MockMvcResultHandlers.print());
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
@@ -89,7 +91,7 @@ class PathControllerTest {
         fileTreeDTOS.add(new FileTreeDTO(++i, "www", rootFolder + "/www", new ArrayList<>()));
         fileTreeDTOS.add(new FileTreeDTO(++i, "xyz", rootFolder + "/xyz", new ArrayList<>()));
         
-        when(pathService.getContentOfFolder(anyString())).thenReturn(fileTreeDTOS);
+        when(pathService.getContentOfFolder(rootFolder)).thenReturn(fileTreeDTOS);
 
         // execute
         try {
@@ -117,7 +119,7 @@ class PathControllerTest {
                             fileTreeDTOS.get(1).getChildren(),
                             fileTreeDTOS.get(2).getChildren()
                     )))
-                    .andDo(MockMvcResultHandlers.print());
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
@@ -130,5 +132,28 @@ class PathControllerTest {
      * NEGATIV TESTS
      * ****************************************************************************************************************/
 
+    @Test
+    void testGetSubFolderDoesNotExists() {
+        // prepare
+        String rootFolder = "/abc";
+        String exceptionMessage = "Folder " + rootFolder + " does not exist";
+        doThrow(new PathNotFoundException(exceptionMessage)).when(pathService).getContentOfFolder(rootFolder);
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders.get("/path?folder=" + rootFolder))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.PATH_NOT_FOUND_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(pathService, times(1)).getContentOfFolder(rootFolder);
+    }
 
 }

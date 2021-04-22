@@ -25,6 +25,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String RECORD_NOT_FOUND_MESSAGE = "Eintrag nicht gefunden";
     public static final String RECORD_ALREADY_EXISTS_MESSAGE = "Eintrag existiert bereits";
     public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "Validierung fehlgeschlagen";
+    public static final String PATH_NOT_FOUND_MESSAGE = "Der angegebene Pfad wurde nicht gefunden";
 
     /**
      * Catches all {@link Exception} and returns it with the information what went wrong.
@@ -59,6 +60,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RecordAlreadyExistsException.class)
     public ResponseEntity<Object> handleRecordAlreadyExistsException(RecordAlreadyExistsException ex, WebRequest request) {
         return handleCustomException(HttpStatus.CONFLICT, RECORD_ALREADY_EXISTS_MESSAGE, ex);
+    }
+
+    /**
+     * Catches a {@link PathNotFoundException} and returns it with
+     * additional details which path wasn't found.
+     * @param ex {@link PathNotFoundException}
+     * @param request {@link WebRequest}
+     * @return ResponseEntity<Object>
+     */
+    @ExceptionHandler(PathNotFoundException.class)
+    public ResponseEntity<Object> handlePathNotFoundExceptionException(PathNotFoundException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.NOT_FOUND, PATH_NOT_FOUND_MESSAGE, ex);
     }
 
     private ResponseEntity<Object> handleCustomException(HttpStatus httpStatus, String errorMessage, Exception ex) {
