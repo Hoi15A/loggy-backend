@@ -29,6 +29,7 @@ public class LogServiceService {
     public void createLogService(LogServiceDTO logServiceDTO) {
         Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(logServiceDTO.getLogConfig());
         if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException(logServiceDTO.getLogConfig());
+
         LogService service = mapDTOToLogService(logServiceDTO);
         service.setLogConfig(optionalLogConfig.get());
         logServiceRepository.save(service);
@@ -38,8 +39,7 @@ public class LogServiceService {
      * Returns all LogServices.
      * @return list of {@link LogServiceDTO}
      */
-    public Set<LogServiceDTO> getAllLogServices()
-    {
+    public Set<LogServiceDTO> getAllLogServices() {
         return logServiceRepository
                 .findAll()
                 .stream()
@@ -55,6 +55,7 @@ public class LogServiceService {
     public LogServiceDTO getLogServiceById(long id) {
         Optional<LogService> logService = logServiceRepository.findById(id);
         if(logService.isEmpty()) throw new RecordNotFoundException(String.valueOf(id));
+
         return mapLogServiceToDTO(logService.get());
     }
     
@@ -66,6 +67,7 @@ public class LogServiceService {
     public LogServiceDTO deleteLogServiceById(long id) {
         Optional<LogService> optionalLogService = logServiceRepository.findById(id);
         if (optionalLogService.isEmpty()) throw new RecordNotFoundException(String.valueOf(id));
+
         LogService logService = optionalLogService.get();
         LogConfig logConfig = logService.getLogConfig();
         logService.setLogConfig(null);
