@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.log;
 
 import ch.zhaw.pm4.loganalyser.exception.ApiExceptionHandler;
+import ch.zhaw.pm4.loganalyser.exception.RecordAlreadyExistsException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
@@ -200,6 +201,35 @@ class ColumnComponentsControllerTest extends ControllerTest {
      * ****************************************************************************************************************/
 
     @Test
+    void testCreateAlreadyExistingColumnComponent() {
+        // prepare
+        String content = loadResourceContent("ColumnComponent/testCreateColumnComponent.json");
+        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
+
+        String exceptionMessage = String.format("The column component with id [%d] already exists", dto.getId());
+
+        doThrow(new RecordAlreadyExistsException(exceptionMessage)).when(columnComponentService).createColumn(dto);
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .post("/column/")
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isConflict())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_ALREADY_EXISTS_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(columnComponentService, times(1)).createColumn(dto);
+    }
+
+    @Test
     void testGetNonExistingColumnComponent() {
         // prepare
         String content = loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
@@ -213,7 +243,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
         try {
             // todo: check for non existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
-                    .get("/column/" + dto.getId()) // non existing column id
+                    .get("/column/" + dto.getId())
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
@@ -244,7 +274,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
         try {
             // todo: check for non existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
-                    .put("/column/" + dto.getId()) // non existing column id
+                    .put("/column/" + dto.getId())
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
@@ -275,7 +305,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
         try {
             // todo: check for non existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
-                    .delete("/column/" + dto.getId()) // non existing column id
+                    .delete("/column/" + dto.getId())
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
@@ -311,7 +341,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
         try {
             // todo: check for (non) existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
-                    .put("/column/" + dto.getId()) // non existing column id
+                    .put("/column/" + dto.getId())
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
