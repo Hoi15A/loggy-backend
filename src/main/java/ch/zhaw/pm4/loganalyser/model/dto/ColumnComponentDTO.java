@@ -12,11 +12,20 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ColumnComponentDTO {
+
+    public static final String COLUMN_TYPE_VALIDATION_MESSAGE = "Der Spaltentyp wurde nicht gesetzt";
+    public static final String FORMAT_VALIDATION_MESSAGE = "Das Format wurde nicht gesetzt";
+    public static final String NAME_VALIDATION_MESSAGE = "Der Name darf nicht leer sein";
+
     private long id;
-    @NotNull
+
+    @NotNull(message = COLUMN_TYPE_VALIDATION_MESSAGE)
     private ColumnType columnType;
-    @NotNull
+
+    @NotNull(message = FORMAT_VALIDATION_MESSAGE)
     private String format;
-    @NotBlank
+
+    @NotBlank(message = NAME_VALIDATION_MESSAGE)
     private String name;
+
 }

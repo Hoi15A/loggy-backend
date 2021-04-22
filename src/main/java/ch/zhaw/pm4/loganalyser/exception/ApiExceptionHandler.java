@@ -21,6 +21,11 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+    public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Server Error";
+    public static final String RECORD_NOT_FOUND_MESSAGE = "Eintrag nicht gefunden";
+    public static final String RECORD_ALREADY_EXISTS_MESSAGE = "Eintrag existiert bereits";
+    public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "Validierung fehlgeschlagen";
+
     /**
      * Catches all {@link Exception} and returns it with the information what went wrong.
      * @param ex {@link Exception}
@@ -29,7 +34,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
-        return handleCustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error", ex);
+        return handleCustomException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE, ex);
     }
 
     /**
@@ -40,8 +45,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity<Object>
      */
     @ExceptionHandler(RecordNotFoundException.class)
-    public ResponseEntity<Object> handleUserNotFoundException(RecordNotFoundException ex, WebRequest request) {
-        return handleCustomException(HttpStatus.NOT_FOUND, "Eintrag nicht gefunden", ex);
+    public ResponseEntity<Object> handleRecordNotFoundException(RecordNotFoundException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.NOT_FOUND, RECORD_NOT_FOUND_MESSAGE, ex);
     }
 
     /**
@@ -52,8 +57,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity<Object>
      */
     @ExceptionHandler(RecordAlreadyExistsException.class)
-    public ResponseEntity<Object> handleUserNotFoundException(RecordAlreadyExistsException ex, WebRequest request) {
-        return handleCustomException(HttpStatus.CONFLICT, "Eintrag existiert bereits", ex);
+    public ResponseEntity<Object> handleRecordAlreadyExistsException(RecordAlreadyExistsException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.CONFLICT, RECORD_ALREADY_EXISTS_MESSAGE, ex);
     }
 
     private ResponseEntity<Object> handleCustomException(HttpStatus httpStatus, String errorMessage, Exception ex) {
@@ -69,7 +74,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(ObjectError::getDefaultMessage)
                 .collect(Collectors.toList());
-        ErrorResponse error = new ErrorResponse("Validierung fehlgeschlagen", details);
+        ErrorResponse error = new ErrorResponse(METHOD_ARGUMENT_NOT_VALID_MESSAGE, details);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
