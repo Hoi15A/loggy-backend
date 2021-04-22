@@ -2,7 +2,6 @@ package ch.zhaw.pm4.loganalyser.log;
 
 import ch.zhaw.pm4.loganalyser.controller.ColumnComponentController;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
-import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
 import org.hamcrest.Matchers;
@@ -25,7 +24,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ColumnComponentsControllerTest {
+
+    public final static String BAD_REQUEST_MESSAGE = "Validierung fehlgeschlagen";
 
     @MockBean
     ColumnComponentService columnComponentService;
@@ -170,7 +171,9 @@ public class ColumnComponentsControllerTest {
                     .put("/column/222222") //non existing column id
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isBadRequest())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST_MESSAGE)));
 
             Mockito.verify(columnComponentService, Mockito.times(0)).updateColumn(Mockito.any());
         } catch (Exception e) {

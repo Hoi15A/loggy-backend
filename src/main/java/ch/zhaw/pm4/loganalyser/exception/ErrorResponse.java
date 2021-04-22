@@ -1,9 +1,10 @@
 package ch.zhaw.pm4.loganalyser.exception;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
@@ -11,7 +12,8 @@ import java.util.List;
  * custom error responses.
  */
 @Data
-@XmlRootElement(name = "error")
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class ErrorResponse {
     @NonNull private String message;
     @NonNull private List<String> details;
