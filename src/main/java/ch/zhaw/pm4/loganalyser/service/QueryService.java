@@ -71,7 +71,12 @@ public class QueryService {
         if (logService.isEmpty()) throw new RecordNotFoundException(String.valueOf(serviceId));
         try {
             LogService service = logService.get();
-            List<String[]> logEntries = logParser.read(null, service);
+            List<String[]> logEntries = logParser.read(service);
+
+            // create criterias based on query
+
+
+
             Map<Integer, ColumnComponent> sortedComponents = sortComponents(service.getLogConfig().getColumnComponents());
             String[] header = new String[sortedComponents.size()];
             sortedComponents.forEach((key, value) -> header[key] = String.valueOf(sortedComponents.values().toArray(ColumnComponent[]::new)[key]));

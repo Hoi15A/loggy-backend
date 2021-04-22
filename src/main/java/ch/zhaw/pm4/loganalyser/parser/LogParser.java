@@ -1,6 +1,5 @@
 package ch.zhaw.pm4.loganalyser.parser;
 
-import ch.zhaw.pm4.loganalyser.model.filter.Filter;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
@@ -15,7 +14,7 @@ public class LogParser {
 
     private Map<Integer, ColumnComponent> sortedColumns;
 
-    public List<String[]> read(List<Filter> filters, LogService service) throws IOException {
+    public List<String[]> read(LogService service) throws IOException {
         Path logDir = Path.of(service.getLogDirectory());
 
         List<String[]> rows = new ArrayList<>();

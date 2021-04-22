@@ -7,7 +7,6 @@ import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -31,7 +30,7 @@ class LogParserTest {
         LogParser parser = new LogParser();
 
         // execute
-        List<String[]> result = parser.read(new ArrayList<>(), serviceMock);
+        List<String[]> result = parser.read(serviceMock);
 
         // validate
         assertEquals("192.168.1.1", result.get(0)[0]);

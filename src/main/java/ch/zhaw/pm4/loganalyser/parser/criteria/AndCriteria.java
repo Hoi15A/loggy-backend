@@ -13,9 +13,9 @@ public class AndCriteria implements Criteria {
     }
 
     @Override
-    public List<String[]> meetCriteria(List<String[]> rows) {
+    public List<String[]> meetCriteria(List<String[]> rows, int key) {
 
-        List<String[]> firstCriteriaPersons = criteria.meetCriteria(rows);
-        return otherCriteria.meetCriteria(firstCriteriaPersons);
+        List<String[]> firstCriteriaRows = criteria.meetCriteria(rows, key);
+        return otherCriteria.meetCriteria(firstCriteriaRows, key);
     }
 }

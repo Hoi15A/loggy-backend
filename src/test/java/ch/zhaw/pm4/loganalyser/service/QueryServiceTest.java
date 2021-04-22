@@ -80,7 +80,7 @@ class QueryServiceTest {
         queryService.setLogServiceRepository(logServiceRepositoryMock);
         queryService.setLogParser(logParserMock);
 
-        when(logParserMock.read(any(), any())).thenThrow(new IOException());
+        when(logParserMock.read(any())).thenThrow(new IOException());
         when(logServiceRepositoryMock.findById(any())).thenReturn(optionalMock);
 
 
