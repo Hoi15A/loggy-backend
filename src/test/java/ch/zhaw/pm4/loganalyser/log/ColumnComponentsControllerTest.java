@@ -212,10 +212,8 @@ class ColumnComponentsControllerTest extends ControllerTest {
 
         // execute
         try {
-            // todo: check for non existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
                     .get("/column/" + dto.getId())
-                    .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$").exists())
@@ -274,10 +272,8 @@ class ColumnComponentsControllerTest extends ControllerTest {
 
         // execute
         try {
-            // todo: check for non existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
                     .delete("/column/" + dto.getId())
-                    .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$").exists())
@@ -318,6 +314,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$.message", is(ApiExceptionHandler.METHOD_ARGUMENT_NOT_VALID_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
                     .andExpect(jsonPath("$.details.[*]", containsInAnyOrder(
                             ColumnComponentDTO.FORMAT_VALIDATION_MESSAGE,
                             ColumnComponentDTO.NAME_VALIDATION_MESSAGE,

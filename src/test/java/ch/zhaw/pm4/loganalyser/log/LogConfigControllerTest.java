@@ -234,18 +234,14 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testGetNonExistingLogConfig() {
         // prepare
-        String content = loadResourceContent("LogConfig/testUpdateNonExistingLogConfig.json");
-
         String exceptionMessage = "ID was not found";
 
         doThrow(new RecordNotFoundException(exceptionMessage)).when(logConfigService).getLogConfigById(anyString());
 
         // execute
         try {
-            // todo: check for non existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
                     .get("/config/nginx") // non existing column id
-                    .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$").exists())
@@ -264,18 +260,14 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testDeleteNonExistingLogConfig() {
         // prepare
-        String content = loadResourceContent("LogConfig/testUpdateNonExistingLogConfig.json");
-
         String exceptionMessage = "This record does not exist";
 
         doThrow(new RecordNotFoundException(exceptionMessage)).when(logConfigService).deleteLogConfigById(anyString());
 
         // execute
         try {
-            // todo: check for non existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
                     .delete("/config/abc")
-                    .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$").exists())
@@ -334,6 +326,7 @@ class LogConfigControllerTest  extends ControllerTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$.message", is(ApiExceptionHandler.METHOD_ARGUMENT_NOT_VALID_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
                     .andExpect(jsonPath("$.details.[*]", containsInAnyOrder(
                             LogConfigDTO.NAME_VALIDATION_MESSAGE,
                             LogConfigDTO.COLUMN_COUNT_VALIDATION_MESSAGE,
