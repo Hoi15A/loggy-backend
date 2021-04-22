@@ -201,35 +201,6 @@ class ColumnComponentsControllerTest extends ControllerTest {
      * ****************************************************************************************************************/
 
     @Test
-    void testCreateAlreadyExistingColumnComponent() {
-        // prepare
-        String content = loadResourceContent("ColumnComponent/testCreateColumnComponent.json");
-        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
-
-        String exceptionMessage = String.format("The column component with id [%d] already exists", dto.getId());
-
-        doThrow(new RecordAlreadyExistsException(exceptionMessage)).when(columnComponentService).createColumn(dto);
-
-        // execute
-        try {
-            mockMvc.perform(MockMvcRequestBuilders
-                    .post("/column/")
-                    .content(content)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isConflict())
-                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_ALREADY_EXISTS_MESSAGE)))
-                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
-                    .andDo(print());
-        } catch (Exception e) {
-            fail(e);
-        }
-
-        // verify
-        verify(columnComponentService, times(1)).createColumn(dto);
-    }
-
-    @Test
     void testGetNonExistingColumnComponent() {
         // prepare
         String content = loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");

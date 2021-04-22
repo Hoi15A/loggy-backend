@@ -1,6 +1,5 @@
 package ch.zhaw.pm4.loganalyser.service;
 
-import ch.zhaw.pm4.loganalyser.exception.RecordAlreadyExistsException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
@@ -22,9 +21,6 @@ public class ColumnComponentService {
     private final ColumnComponentRepository columnComponentRepository;
 
     public void createColumn(ColumnComponentDTO dto) {
-        Optional<ColumnComponent> optional = columnComponentRepository.findById(dto.getId());
-        if(optional.isPresent()) throw new RecordAlreadyExistsException(String.format("The column component with id [%d] already exists", dto.getId()));
-
         ColumnComponent columnComponent = mapDTOToColumnComponent(dto);
         columnComponentRepository.save(columnComponent);
     }
