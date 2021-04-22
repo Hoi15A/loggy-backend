@@ -44,6 +44,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleCustomException(HttpStatus.NOT_FOUND, "Eintrag nicht gefunden", ex);
     }
 
+    /**
+     * Catches a {@link RecordAlreadyExistsException} and returns it with
+     * additional details which record already exists.
+     * @param ex {@link RecordAlreadyExistsException}
+     * @param request {@link WebRequest}
+     * @return ResponseEntity<Object>
+     */
+    @ExceptionHandler(RecordAlreadyExistsException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(RecordAlreadyExistsException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.CONFLICT, "Eintrag existiert bereits", ex);
+    }
+
     private ResponseEntity<Object> handleCustomException(HttpStatus httpStatus, String errorMessage, Exception ex) {
         List<String> details = List.of(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse(errorMessage, details);
