@@ -1,11 +1,8 @@
 package ch.zhaw.pm4.loganalyser.log;
 
-import ch.zhaw.pm4.loganalyser.controller.LogServiceController;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
 import ch.zhaw.pm4.loganalyser.service.LogServiceService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,95 +10,96 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LogServiceControllerTest {
+class LogServiceControllerTest extends ControllerTest {
 
     @MockBean
-    private LogServiceService logServiceService;
-    private static final String JLOCATION = "testfiles";
-    LogServiceController logServiceController;
-    MockMvc mockMvc;
-
+    LogServiceService logServiceService;
 
     @Autowired
-    public LogServiceControllerTest(LogServiceController logServiceController, MockMvc mockMvc) {
-        this.logServiceController = logServiceController;
-        this.mockMvc = mockMvc;
-    }
+    MockMvc mockMvc;
 
     @Test
     void testCreateLogService() {
-        try {
-            File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogService.json");
-            String content = new String(Files.readAllBytes(jsonFile.toPath()));
-            Mockito.doNothing().when(logServiceService).createLogService(Mockito.any());
+        // prepare
+        doNothing().when(logServiceService).createLogService(any());
+        String content = loadResourceContent("classpath:testfiles/testCreateLogService.json");
 
+        // execute
+        try {
             mockMvc.perform(MockMvcRequestBuilders
                     .post("/service/")
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated());
-
-            Mockito.verify(logServiceService, Mockito.times(1)).createLogService(Mockito.any());
         } catch (Exception e) {
             fail(e);
         }
+
+        // verify
+        verify(logServiceService, times(1)).createLogService(any());
     }
 
     @Test
     void testCreateLogService_ConfigMissing() {
-        try {
-            File jsonFile = ResourceUtils.getFile("classpath:testfiles/testCreateLogService_ConfigMissing.json");
-            String content = new String(Files.readAllBytes(jsonFile.toPath()));
-            Mockito.doNothing().when(logServiceService).createLogService(Mockito.any());
+        //prepare
+        doNothing().when(logServiceService).createLogService(any());
+        String content = loadResourceContent("classpath:testfiles/testCreateLogService_ConfigMissing.json");
 
+        //execute
+        try {
             mockMvc.perform(MockMvcRequestBuilders
                     .post("/service/")
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
-
-            Mockito.verify(logServiceService, Mockito.times(0)).createLogService(Mockito.any());
         } catch (Exception e) {
             fail(e);
         }
+
+        //verify
+        verify(logServiceService, times(0)).createLogService(any());
     }
 
     @Test
     void testGetServiceLogById() {
+        // prepare
         LogServiceDTO logServiceDTO1 = new LogServiceDTO();
         logServiceDTO1.setName("Test1");
 
-        Mockito.when(logServiceService.getLogServiceById(2)).thenReturn(logServiceDTO1);
+        when(logServiceService.getLogServiceById(anyLong())).thenReturn(logServiceDTO1);
+
+        // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .get("/service/2")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty());
-        }
-        catch (Exception e) {
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.name").isNotEmpty());
+        } catch (Exception e) {
             fail(e);
         }
+
+        // verify
+        verify(logServiceService, times(1)).getLogServiceById(anyLong());
     }
 
     @Test
     void getAllLogServices() {
-
+        // prepare
         Set<LogServiceDTO> data = new HashSet<>();
         LogServiceDTO logServiceDTO1 = new LogServiceDTO();
         LogServiceDTO logServiceDTO2 = new LogServiceDTO();
@@ -110,42 +108,52 @@ class LogServiceControllerTest {
         data.add(logServiceDTO1);
         data.add(logServiceDTO2);
 
-        Mockito.when(logServiceService.getAllLogServices()).thenReturn(data);
+        when(logServiceService.getAllLogServices()).thenReturn(data);
 
+        // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .get("/service/all")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].name").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].name",
-                            Matchers.anyOf(Matchers.hasItem(logServiceDTO1.getName()),
-                                    Matchers.hasItem(logServiceDTO2.getName()))))
-                    .andDo(MockMvcResultHandlers.print());
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].name", anyOf(
+                            hasItem(logServiceDTO1.getName()),
+                            hasItem(logServiceDTO2.getName())
+                    )))
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
-        Mockito.verify(logServiceService, Mockito.times(1)).getAllLogServices();
+
+        // verify
+        verify(logServiceService, times(1)).getAllLogServices();
     }
 
     @Test
     void deleteLogServiceByExistingId() {
+        // prepare
         LogServiceDTO logServiceDTO1 = new LogServiceDTO();
         logServiceDTO1.setName("Test1");
 
-        Mockito.when(logServiceService.deleteLogServiceById(2)).thenReturn(logServiceDTO1);
+        when(logServiceService.deleteLogServiceById(anyLong())).thenReturn(logServiceDTO1);
+
+        // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .delete("/service/2")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty())
-                    .andDo(MockMvcResultHandlers.print());
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.name").isNotEmpty())
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
+
+        // verify
+        verify(logServiceService, times(1)).deleteLogServiceById(anyLong());
     }
 
 }

@@ -1,6 +1,5 @@
 package ch.zhaw.pm4.loganalyser.log;
 
-import ch.zhaw.pm4.loganalyser.controller.PathController;
 import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
 import ch.zhaw.pm4.loganalyser.service.PathService;
 import org.junit.jupiter.api.Test;
@@ -26,17 +25,13 @@ class PathControllerTest {
 
     @MockBean
     PathService pathService;
-    MockMvc mockMvc;
-    PathController pathController;
 
     @Autowired
-    public PathControllerTest(MockMvc mockMvc, PathController pathController) {
-        this.mockMvc = mockMvc;
-        this.pathController = pathController;
-    }
+    MockMvc mockMvc;
 
     @Test
     void testGetRootFolderContent() {
+        // prepare
         int i = 0;
         List<FileTreeDTO> fileTreeDTOS = new ArrayList<>();
         fileTreeDTOS.add(new FileTreeDTO(++i, "var", "/var", new ArrayList<>()));
@@ -45,17 +40,44 @@ class PathControllerTest {
 
         when(pathService.getRootFolder()).thenReturn(fileTreeDTOS);
 
+        // execute
         try {
-            performAndCheck("/path", fileTreeDTOS);
+            mockMvc.perform(MockMvcRequestBuilders.get("/path"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].id", contains(
+                            fileTreeDTOS.get(0).getId(),
+                            fileTreeDTOS.get(1).getId(),
+                            fileTreeDTOS.get(2).getId()
+                    )))
+                    .andExpect(jsonPath("$.[*].name", contains(
+                            fileTreeDTOS.get(0).getName(),
+                            fileTreeDTOS.get(1).getName(),
+                            fileTreeDTOS.get(2).getName()
+                    )))
+                    .andExpect(jsonPath("$.[*].fullpath", contains(
+                            fileTreeDTOS.get(0).getFullpath(),
+                            fileTreeDTOS.get(1).getFullpath(),
+                            fileTreeDTOS.get(2).getFullpath()
+                    )))
+                    .andExpect(jsonPath("$.[*].children", contains(
+                            fileTreeDTOS.get(0).getChildren(),
+                            fileTreeDTOS.get(1).getChildren(),
+                            fileTreeDTOS.get(2).getChildren()
+                    )))
+                    .andDo(MockMvcResultHandlers.print());
         } catch (Exception e) {
             fail(e);
         }
 
+        // verify
         verify(pathService, times(1)).getRootFolder();
     }
 
     @Test
     void testGetSubFolderContent() {
+        // prepare
         String rootFolder = "/var";
         int i = 4;
         List<FileTreeDTO> fileTreeDTOS = new ArrayList<>();
@@ -65,41 +87,39 @@ class PathControllerTest {
         
         when(pathService.getContentOfFolder(anyString())).thenReturn(fileTreeDTOS);
 
+        // execute
         try {
-            performAndCheck("/path?folder=" + rootFolder, fileTreeDTOS);
+            mockMvc.perform(MockMvcRequestBuilders.get("/path?folder=" + rootFolder))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].id", contains(
+                            fileTreeDTOS.get(0).getId(),
+                            fileTreeDTOS.get(1).getId(),
+                            fileTreeDTOS.get(2).getId()
+                    )))
+                    .andExpect(jsonPath("$.[*].name", contains(
+                            fileTreeDTOS.get(0).getName(),
+                            fileTreeDTOS.get(1).getName(),
+                            fileTreeDTOS.get(2).getName()
+                    )))
+                    .andExpect(jsonPath("$.[*].fullpath", contains(
+                            fileTreeDTOS.get(0).getFullpath(),
+                            fileTreeDTOS.get(1).getFullpath(),
+                            fileTreeDTOS.get(2).getFullpath()
+                    )))
+                    .andExpect(jsonPath("$.[*].children", contains(
+                            fileTreeDTOS.get(0).getChildren(),
+                            fileTreeDTOS.get(1).getChildren(),
+                            fileTreeDTOS.get(2).getChildren()
+                    )))
+                    .andDo(MockMvcResultHandlers.print());
         } catch (Exception e) {
             fail(e);
         }
-        
-        verify(pathService, times(1)).getContentOfFolder(rootFolder);
-    }
 
-    private void performAndCheck(String apiRequest, List<FileTreeDTO> fileTreeDTOS) throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(apiRequest))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").exists())
-                .andExpect(jsonPath("$.[*]").isNotEmpty())
-                .andExpect(jsonPath("$.[*].id", contains(
-                                        fileTreeDTOS.get(0).getId(),
-                                        fileTreeDTOS.get(1).getId(),
-                                        fileTreeDTOS.get(2).getId()
-                                    )))
-                .andExpect(jsonPath("$.[*].name", contains(
-                                        fileTreeDTOS.get(0).getName(),
-                                        fileTreeDTOS.get(1).getName(),
-                                        fileTreeDTOS.get(2).getName()
-                                    )))
-                .andExpect(jsonPath("$.[*].fullpath", contains(
-                                        fileTreeDTOS.get(0).getFullpath(),
-                                        fileTreeDTOS.get(1).getFullpath(),
-                                        fileTreeDTOS.get(2).getFullpath()
-                                    )))
-                .andExpect(jsonPath("$.[*].children", contains(
-                                        fileTreeDTOS.get(0).getChildren(),
-                                        fileTreeDTOS.get(1).getChildren(),
-                                        fileTreeDTOS.get(2).getChildren()
-                                    )));
+        // verify
+        verify(pathService, times(1)).getContentOfFolder(rootFolder);
     }
 
 }

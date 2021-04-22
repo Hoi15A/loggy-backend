@@ -1,12 +1,9 @@
 package ch.zhaw.pm4.loganalyser.log;
 
-import ch.zhaw.pm4.loganalyser.controller.ColumnComponentController;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,24 +11,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.ResourceUtils;
 
-
-import java.io.File;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ColumnComponentsControllerTest {
+class ColumnComponentsControllerTest extends ControllerTest {
 
     public final static String BAD_REQUEST_MESSAGE = "Validierung fehlgeschlagen";
 
@@ -39,154 +32,173 @@ public class ColumnComponentsControllerTest {
     ColumnComponentService columnComponentService;
 
     @Autowired
-    ColumnComponentController columnComponentController;
-
-    @Autowired
     MockMvc mockMvc;
 
     @Test
     void testGetAllColumnComponents() {
+        // prepare
         List<ColumnComponentDTO> dtos = new ArrayList<>();
         dtos.add(new ColumnComponentDTO(1L, ColumnType.MESSAGE, "-|[a-zA-Z]+", "User"));
         dtos.add(new ColumnComponentDTO(2L, ColumnType.MESSAGE, "-", "Custom Separator"));
 
-        Mockito.when(columnComponentService.getAllColumnComponents()).thenReturn(dtos);
+        when(columnComponentService.getAllColumnComponents()).thenReturn(dtos);
+
+        // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .get("/column")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].name").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].format").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].id").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].columnType").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].name",
-                            Matchers.anyOf(hasItem(dtos.get(0).getName()),
-                                    hasItem(dtos.get(1).getName()))))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].format",
-                            Matchers.anyOf(hasItem(dtos.get(0).getFormat()),
-                                    hasItem(dtos.get(1).getFormat()))))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id",
-                            Matchers.is((int) dtos.get(0).getId())))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.[*].columnType",
-                            Matchers.contains((dtos.get(0).getColumnType().toString()),
-                                    (dtos.get(1).getColumnType().toString()))))
-                    .andDo(MockMvcResultHandlers.print());
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.[*].name").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].format").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].id").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].columnType").isNotEmpty())
+                    .andExpect(jsonPath("$.[*].name", anyOf(
+                            hasItem(dtos.get(0).getName()),
+                            hasItem(dtos.get(1).getName())
+                    )))
+                    .andExpect(jsonPath("$.[*].format", anyOf(
+                            hasItem(dtos.get(0).getFormat()),
+                            hasItem(dtos.get(1).getFormat())
+                    )))
+                    .andExpect(jsonPath("$.[0].id", equalTo(dtos.get(0).getId()), Long.class))
+                    .andExpect(jsonPath("$.[1].id", equalTo(dtos.get(1).getId()), Long.class))
+                    .andExpect(jsonPath("$.[*].columnType", contains(
+                            dtos.get(0).getColumnType().toString(),
+                            dtos.get(1).getColumnType().toString()
+                    )))
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
-        Mockito.verify(columnComponentService, Mockito.times(1)).getAllColumnComponents();
+
+        // verify
+        verify(columnComponentService, times(1)).getAllColumnComponents();
     }
 
     @Test
     void testGetColumnComponentById() {
+        // prepare
         ColumnComponentDTO dto = new ColumnComponentDTO(1L, ColumnType.MESSAGE, "-|[a-zA-Z]+", "User");
 
-        Mockito.when(columnComponentService.getColumnComponentById(Mockito.anyLong())).thenReturn(dto);
+        when(columnComponentService.getColumnComponentById(anyLong())).thenReturn(dto);
+
+        // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .get("/column/10")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.name").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.format").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.columnType").isNotEmpty())
-                    .andDo(MockMvcResultHandlers.print());
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.name").isNotEmpty())
+                    .andExpect(jsonPath("$.format").isNotEmpty())
+                    .andExpect(jsonPath("$.id").isNotEmpty())
+                    .andExpect(jsonPath("$.columnType").isNotEmpty())
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
-        Mockito.verify(columnComponentService, Mockito.times(1)).getColumnComponentById(Mockito.anyLong());
+
+        // verify
+        verify(columnComponentService, times(1)).getColumnComponentById(anyLong());
     }
 
     @Test
     void testCreateColumnComponent() {
-        try {
-            File columnFile = ResourceUtils.getFile("classpath:testfiles/testCreateColumnComponent.json");
-            String content = new String(Files.readAllBytes(columnFile.toPath()));
-            Mockito.doNothing().when(columnComponentService).createColumn(Mockito.any());
+        // prepare
+        doNothing().when(columnComponentService).createColumn(any());
+        String content = loadResourceContent("classpath:testfiles/testCreateColumnComponent.json");
 
+        // execute
+        try {
             mockMvc.perform(MockMvcRequestBuilders
                     .post("/column/")
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated());
-
-            Mockito.verify(columnComponentService, Mockito.times(1)).createColumn(Mockito.any());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // verify
+        verify(columnComponentService, times(1)).createColumn(any());
     }
 
     @Test
     void testUpdateExistingColumnComponent() {
-        try {
-            File columnFile = ResourceUtils.getFile("classpath:testfiles/testUpdateExistingColumnComponent.json");
-            String content = new String(Files.readAllBytes(columnFile.toPath()));
-            Mockito.doNothing().when(columnComponentService).updateColumn(Mockito.any());
+        // prepare
+        doNothing().when(columnComponentService).updateColumn(any());
+        String content = loadResourceContent("classpath:testfiles/testUpdateExistingColumnComponent.json");
 
+        // execute
+        try {
             mockMvc.perform(MockMvcRequestBuilders
                     .put("/column/1")
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
-
-            Mockito.verify(columnComponentService, Mockito.times(1)).updateColumn(Mockito.any());
         } catch (Exception e) {
             fail(e);
         }
+
+        // verify
+        verify(columnComponentService, times(1)).updateColumn(any());
     }
 
     @Test
     void testUpdateExistingColumnComponentWithCorruptedJSON() {
-        try {
-            File columnFile = ResourceUtils.getFile(
-                    "classpath:testfiles/corruptedColumnComponent.json");
-            String content = new String(Files.readAllBytes(columnFile.toPath()));
-            Mockito.doNothing().when(columnComponentService).updateColumn(Mockito.any());
+        // prepare
+        doNothing().when(columnComponentService).updateColumn(any());
+        String content = loadResourceContent("classpath:testfiles/corruptedColumnComponent.json");
 
+        // execute
+        try {
             mockMvc.perform(MockMvcRequestBuilders
                     .put("/column/1") //existing column id
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
-
-            Mockito.verify(columnComponentService, Mockito.times(0)).updateColumn(Mockito.any());
         } catch (Exception e) {
             fail(e);
         }
+
+        // verify
+        verify(columnComponentService, times(0)).updateColumn(any());
     }
 
     @Test
     void testUpdateNonExistingColumnComponentWithCorruptedJSON() {
-        try {
-            File columnFile = ResourceUtils.getFile(
-                    "classpath:testfiles/corruptedColumnComponent.json");
-            String content = new String(Files.readAllBytes(columnFile.toPath()));
-            Mockito.doNothing().when(columnComponentService).updateColumn(Mockito.any());
+        // prepare
+        doNothing().when(columnComponentService).updateColumn(any());
+        String content = loadResourceContent("classpath:testfiles/corruptedColumnComponent.json");
 
+        // execute
+        try {
             mockMvc.perform(MockMvcRequestBuilders
                     .put("/column/222222") //non existing column id
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(BAD_REQUEST_MESSAGE)));
-
-            Mockito.verify(columnComponentService, Mockito.times(0)).updateColumn(Mockito.any());
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(BAD_REQUEST_MESSAGE)));
         } catch (Exception e) {
             fail(e);
         }
+
+        // verify
+        verify(columnComponentService, times(0)).updateColumn(any());
     }
 
     @Test
     void testDeleteColumnComponentById() {
+        // prepare
         ColumnComponentDTO columnComponentDTO = new ColumnComponentDTO();
         columnComponentDTO.setId(1);
 
-        Mockito.when(columnComponentService.deleteColumnComponentById(1)).thenReturn(columnComponentDTO);
+        when(columnComponentService.deleteColumnComponentById(anyLong())).thenReturn(columnComponentDTO);
+
+        // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
                     .delete("/column/1")
@@ -194,9 +206,13 @@ public class ColumnComponentsControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$.id").isNotEmpty())
-                    .andDo(MockMvcResultHandlers.print());
+                    .andDo(print());
         } catch (Exception e) {
             fail(e);
         }
+
+        // verify
+        verify(columnComponentService, times(1)).deleteColumnComponentById(anyLong());
     }
+
 }
