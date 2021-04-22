@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser.filter;
+package ch.zhaw.pm4.loganalyser.test.model.filter;
 
 import ch.zhaw.pm4.loganalyser.model.filter.DateFilter;
 import ch.zhaw.pm4.loganalyser.model.filter.Filter;

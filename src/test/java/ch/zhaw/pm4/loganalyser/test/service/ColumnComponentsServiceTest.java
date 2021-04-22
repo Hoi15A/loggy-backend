@@ -1,10 +1,11 @@
-package ch.zhaw.pm4.loganalyser.service;
+package ch.zhaw.pm4.loganalyser.test.service;
 
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.repository.ColumnComponentRepository;
+import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

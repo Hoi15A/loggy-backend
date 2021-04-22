@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser.log;
+package ch.zhaw.pm4.loganalyser.test.controller;
 
 import ch.zhaw.pm4.loganalyser.service.QueryService;
 import org.junit.jupiter.api.Test;

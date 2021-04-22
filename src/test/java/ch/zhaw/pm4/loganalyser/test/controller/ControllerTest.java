@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser.log;
+package ch.zhaw.pm4.loganalyser.test.controller;
 
 import org.springframework.util.ResourceUtils;
 

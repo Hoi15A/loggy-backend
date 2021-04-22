@@ -1,7 +1,6 @@
-package ch.zhaw.pm4.loganalyser.log;
+package ch.zhaw.pm4.loganalyser.test.controller;
 
 import ch.zhaw.pm4.loganalyser.exception.ApiExceptionHandler;
-import ch.zhaw.pm4.loganalyser.exception.RecordAlreadyExistsException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;

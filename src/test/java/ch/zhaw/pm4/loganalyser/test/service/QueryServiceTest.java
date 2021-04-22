@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser.service;
+package ch.zhaw.pm4.loganalyser.test.service;
 
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
@@ -8,6 +8,7 @@ import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
+import ch.zhaw.pm4.loganalyser.service.QueryService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
