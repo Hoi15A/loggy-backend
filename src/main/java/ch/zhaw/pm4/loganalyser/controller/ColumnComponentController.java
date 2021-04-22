@@ -42,6 +42,7 @@ public class ColumnComponentController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ColumnComponentDTO> updateColumn(@Valid @RequestBody final ColumnComponentDTO columnComponentDTO) {
+        // TODO: check or set dto id with pathvariable
         columnComponentService.updateColumn(columnComponentDTO);
         return ResponseEntity.ok(columnComponentDTO);
     }
