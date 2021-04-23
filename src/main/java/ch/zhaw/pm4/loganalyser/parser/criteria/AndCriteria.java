@@ -1,16 +1,14 @@
 package ch.zhaw.pm4.loganalyser.parser.criteria;
 
+import lombok.AllArgsConstructor;
+
 import java.util.List;
 
+@AllArgsConstructor
 public class AndCriteria implements Criteria {
 
     private final Criteria criteria;
     private final Criteria otherCriteria;
-
-    public AndCriteria(Criteria criteria, Criteria otherCriteria) {
-        this.criteria = criteria;
-        this.otherCriteria = otherCriteria;
-    }
 
     @Override
     public List<String[]> meetCriteria(List<String[]> rows, int key) {
