@@ -3,8 +3,10 @@ package ch.zhaw.pm4.loganalyser.util;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
+import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import lombok.experimental.UtilityClass;
 
@@ -89,5 +91,16 @@ public class DTOMapper {
         dto.setId(columnComponent.getId());
         dto.setName(columnComponent.getName());
         return dto;
+    }
+
+    public static QueryComponent mapDTOToQueryComponent(QueryComponentDTO queryComponentDTO) {
+        return QueryComponent.builder()
+                .id(queryComponentDTO.getId())
+                .from(queryComponentDTO.getFrom())
+                .to(queryComponentDTO.getTo())
+                .regex(queryComponentDTO.getRegex())
+                .exact(queryComponentDTO.getExact())
+                .contains(queryComponentDTO.getContains())
+                .build();
     }
 }

@@ -1,14 +1,13 @@
 package ch.zhaw.pm4.loganalyser.controller;
 
+import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,12 +24,14 @@ public class QueryController {
 
     /**
      * Runs a query for a certain log service
+     *
      * @param logServiceId
      * @return
      */
-    @GetMapping("{logServiceId}/{query}")
-    public ResponseEntity<List<String[]>> getQueryForLogservice(@PathVariable("logServiceId") final long logServiceId
-                                                             /*@PathVariable("query") final String query */) {
-        return ResponseEntity.ok(queryService.runQueryForService(logServiceId, null));
+    @GetMapping("{logServiceId}")
+    public ResponseEntity<List<String[]>> getQueryForLogService(
+            @PathVariable("logServiceId") final long logServiceId,
+            @Valid @RequestBody final List<QueryComponentDTO> queryComponents) {
+        return ResponseEntity.ok(queryService.runQueryForService(logServiceId, queryComponents));
     }
 }
