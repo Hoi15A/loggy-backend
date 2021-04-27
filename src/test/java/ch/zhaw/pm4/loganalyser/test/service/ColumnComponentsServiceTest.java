@@ -79,7 +79,7 @@ class ColumnComponentsServiceTest {
         testColumn.setName("newName");
         testColumn.setFormat("newFormat");
         testColumn.setId(2L); // is an existing id
-        testColumn.setColumnType(ColumnType.MESSAGE);
+        testColumn.setColumnType(ColumnType.TEXT);
 
         columnComponentService.updateColumn(testColumn);
 
@@ -93,7 +93,7 @@ class ColumnComponentsServiceTest {
         testColumn.setName("newName");
         testColumn.setFormat("newFormat");
         testColumn.setId(2L); // is an existing id
-        testColumn.setColumnType(ColumnType.MESSAGE);
+        testColumn.setColumnType(ColumnType.TEXT);
 
         columnComponentService.updateColumn(testColumn);
 
@@ -112,7 +112,7 @@ class ColumnComponentsServiceTest {
         testColumn.setName("Host1");
         testColumn.setFormat("-");
         testColumn.setId(3L);
-        testColumn.setColumnType(ColumnType.MESSAGE);
+        testColumn.setColumnType(ColumnType.TEXT);
 
         columnComponentService.createColumn(testColumn);
 

@@ -20,16 +20,17 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class QueryControllerTest {
+class QueryControllerTest extends ControllerTest {
 
-    public static final String GET_REQUEST_ID_QUERY = "/query/%d/%s";
-    public static final int VALID_SERVICE_ID = 1;
-    public static final int INVALID_SERVICE_ID = -1;
+    public static final String GET_REQUEST_ID = "/query/%d";
+    public static final long VALID_SERVICE_ID = 1;
+    public static final long INVALID_SERVICE_ID = -1;
 
     @MockBean
     QueryService queryService;
@@ -38,27 +39,27 @@ class QueryControllerTest {
     MockMvc mockMvc;
 
     /* ****************************************************************************************************************
-     * POSITIV TESTS
+     * POSITIVE TESTS
      * ****************************************************************************************************************/
 
     @Test
     void testGetQueryForLogService() {
         // prepare
+        String content = loadResourceContent("QueryComponent/query.json");
         List<String[]> mockData = new ArrayList<>();
-        String[] mockRow1 = {"30.03.2021","INFO","Loggy started"};
-        String[] mockRow2 = {"31.03.2021","ERROR","Server is on fire"};
+        String[] mockRow1 = {"30.03.2021", "INFO", "Loggy started"};
+        String[] mockRow2 = {"31.03.2021", "ERROR", "Server is on fire"};
         mockData.add(mockRow1);
         mockData.add(mockRow2);
 
-        String queryString = "null";
-
-        when(queryService.runQueryForService(VALID_SERVICE_ID, queryString)).thenReturn(mockData);
+        when(queryService.runQueryForService(eq(VALID_SERVICE_ID), anyList())).thenReturn(mockData);
 
         // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                    .get(String.format(GET_REQUEST_ID_QUERY, VALID_SERVICE_ID, queryString))
-                    .accept(MediaType.APPLICATION_JSON))
+                    .post(String.format(GET_REQUEST_ID, VALID_SERVICE_ID))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$[*]").isNotEmpty())
@@ -79,7 +80,7 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(VALID_SERVICE_ID, queryString);
+        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList());
     }
 
     /* ****************************************************************************************************************
@@ -88,16 +89,18 @@ class QueryControllerTest {
 
     @Test
     void testGetQueryForLogServiceServiceNotFound() {
-        String queryString = "null";
+        String content = loadResourceContent("QueryComponent/query.json");
         String exceptionMessage = String.format("The service with id %d does not exist", INVALID_SERVICE_ID);
 
-        doThrow(new RecordNotFoundException(exceptionMessage)).when(queryService).runQueryForService(INVALID_SERVICE_ID, queryString);
+        doThrow(new RecordNotFoundException(exceptionMessage))
+                .when(queryService).runQueryForService(eq(INVALID_SERVICE_ID), anyList());
 
         // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                    .get(String.format(GET_REQUEST_ID_QUERY, INVALID_SERVICE_ID, queryString))
-                    .accept(MediaType.APPLICATION_JSON))
+                    .post(String.format(GET_REQUEST_ID, INVALID_SERVICE_ID))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_NOT_FOUND_MESSAGE)))
@@ -109,22 +112,23 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(INVALID_SERVICE_ID, queryString);
+        verify(queryService, times(1)).runQueryForService(eq(INVALID_SERVICE_ID), anyList());
     }
 
     @Test
     void testGetQueryForLogServiceFileNotFound() {
-        long serviceId = VALID_SERVICE_ID;
-        String queryString = "null";
+        String content = loadResourceContent("QueryComponent/query.json");
         String exceptionMessage = "The file wanted to process has not been found";
 
-        doThrow(new FileNotFoundException(exceptionMessage)).when(queryService).runQueryForService(serviceId, queryString);
+        doThrow(new FileNotFoundException(exceptionMessage))
+                .when(queryService).runQueryForService(eq(VALID_SERVICE_ID), anyList());
 
         // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                                    .get(String.format(GET_REQUEST_ID_QUERY, serviceId, queryString))
-                                    .accept(MediaType.APPLICATION_JSON))
+                    .post(String.format(GET_REQUEST_ID, VALID_SERVICE_ID))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isInternalServerError())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$.message", is(ApiExceptionHandler.INTERNAL_SERVER_ERROR_MESSAGE)))
@@ -136,22 +140,22 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(serviceId, queryString);
+        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList());
     }
 
     @Test
     void testGetQueryForLogServiceReadError() {
-        long serviceId = VALID_SERVICE_ID;
-        String queryString = "null";
+        String content = loadResourceContent("QueryComponent/query.json");
         String exceptionMessage = "The file wanted to process had an error while reading";
 
-        doThrow(new FileReadException(exceptionMessage)).when(queryService).runQueryForService(serviceId, queryString);
+        doThrow(new FileReadException(exceptionMessage)).when(queryService).runQueryForService(eq(VALID_SERVICE_ID), anyList());
 
         // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                                    .get(String.format(GET_REQUEST_ID_QUERY, serviceId, queryString))
-                                    .accept(MediaType.APPLICATION_JSON))
+                    .post(String.format(GET_REQUEST_ID, VALID_SERVICE_ID))
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isInternalServerError())
                     .andExpect(jsonPath("$").exists())
                     .andExpect(jsonPath("$.message", is(ApiExceptionHandler.INTERNAL_SERVER_ERROR_MESSAGE)))
@@ -163,7 +167,7 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(serviceId, queryString);
+        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList());
     }
 
     // todo: query invalid

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -71,7 +72,7 @@ class QueryServiceTest {
         queryService.setLogServiceRepository(logServiceRepositoryMock);
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> queryService.runQueryForService(-12L, null));
+        assertThrows(RecordNotFoundException.class, () -> queryService.runQueryForService(-12L, List.of()));
     }
 
     @Test
@@ -87,7 +88,7 @@ class QueryServiceTest {
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(optionalMock);
 
 
-        assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, null));
+        assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, List.of()));
     }
 
     @Test
@@ -103,7 +104,7 @@ class QueryServiceTest {
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(optionalMock);
 
 
-        assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, null));
+        assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, List.of()));
     }
     
     void mapTest(Map<Integer, ColumnComponent> providedMap, Map<Integer, ColumnComponent> receivedMap) {

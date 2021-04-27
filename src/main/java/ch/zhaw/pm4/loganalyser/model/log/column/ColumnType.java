@@ -10,7 +10,7 @@ public enum ColumnType {
 
     private final FilterType[] filterTypes;
 
-    ColumnType(FilterType ...filterTypes) {
+    ColumnType(FilterType... filterTypes) {
         this.filterTypes = filterTypes;
     }
 

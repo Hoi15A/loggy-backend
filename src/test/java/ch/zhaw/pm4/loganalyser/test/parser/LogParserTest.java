@@ -45,15 +45,15 @@ class LogParserTest {
         // register columns
         Map<Integer, ColumnComponent> columnComponentMap = new TreeMap<>();
         int i = 0;
-        columnComponentMap.put(++i, new ColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));
-        columnComponentMap.put(++i, new ColumnComponent(9L, "Custom Seperator", ColumnType.CUSTOM, "-"));
-        columnComponentMap.put(++i, new ColumnComponent(2L, "User", ColumnType.CUSTOM, "-|[a-zA-Z]+"));
+        columnComponentMap.put(++i, new ColumnComponent(1L, "Host", ColumnType.IP, "(\\d{1,3}\\.){3}\\d{1,3}"));
+        columnComponentMap.put(++i, new ColumnComponent(9L, "Custom Seperator", ColumnType.TEXT, "-"));
+        columnComponentMap.put(++i, new ColumnComponent(2L, "User", ColumnType.TEXT, "-|[a-zA-Z]+"));
         columnComponentMap.put(++i, new ColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
-        columnComponentMap.put(++i, new ColumnComponent(4L, "Request", ColumnType.MESSAGE, "\\\".+\\\""));
-        columnComponentMap.put(++i, new ColumnComponent(5L, "Response Code", ColumnType.CUSTOM, "\\d{1,3}"));
-        columnComponentMap.put(++i, new ColumnComponent(6L, "Byte Size", ColumnType.CUSTOM, "\\d+"));
-        columnComponentMap.put(++i, new ColumnComponent(7L, "Something", ColumnType.CUSTOM, "\\\".+\\\""));
-        columnComponentMap.put(++i, new ColumnComponent(8L, "Request Client", ColumnType.CUSTOM, "\\\".+\\\""));
+        columnComponentMap.put(++i, new ColumnComponent(4L, "Request", ColumnType.TEXT, "\\\".+\\\""));
+        columnComponentMap.put(++i, new ColumnComponent(5L, "Response Code", ColumnType.INTEGER, "\\d{1,3}"));
+        columnComponentMap.put(++i, new ColumnComponent(6L, "Byte Size", ColumnType.INTEGER, "\\d+"));
+        columnComponentMap.put(++i, new ColumnComponent(7L, "Something", ColumnType.TEXT, "\\\".+\\\""));
+        columnComponentMap.put(++i, new ColumnComponent(8L, "Request Client", ColumnType.TEXT, "\\\".+\\\""));
 
         //register config
         LogConfig config = new LogConfig();

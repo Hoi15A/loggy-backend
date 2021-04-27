@@ -28,7 +28,7 @@ public class QueryController {
      * @param logServiceId
      * @return
      */
-    @GetMapping("{logServiceId}")
+    @PostMapping("{logServiceId}")
     public ResponseEntity<List<String[]>> getQueryForLogService(
             @PathVariable("logServiceId") final long logServiceId,
             @Valid @RequestBody final List<QueryComponentDTO> queryComponents) {

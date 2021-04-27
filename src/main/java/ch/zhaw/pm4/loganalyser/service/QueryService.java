@@ -78,8 +78,11 @@ public class QueryService {
         List<QueryComponent> queryComponents = queryComponentDTOS.stream()
                 .map(DTOMapper::mapDTOToQueryComponent)
                 .collect(Collectors.toList());
+
         Optional<LogService> logService = logServiceRepository.findById(serviceId);
-        if (logService.isEmpty()) throw new RecordNotFoundException(String.format("The service with id %d does not exist", serviceId));
+        if (logService.isEmpty())
+            throw new RecordNotFoundException(String.format("The service with id %d does not exist", serviceId));
+
         try {
             LogService service = logService.get();
             List<String[]> logEntries = logParser.read(service);
