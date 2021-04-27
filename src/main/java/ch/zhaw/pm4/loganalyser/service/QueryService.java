@@ -11,7 +11,7 @@ import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import ch.zhaw.pm4.loganalyser.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.parser.criteria.Criteria;
-import ch.zhaw.pm4.loganalyser.parser.criteria.IsAboveCriteria;
+import ch.zhaw.pm4.loganalyser.parser.criteria.RegexCriteria;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import ch.zhaw.pm4.loganalyser.util.DTOMapper;
 import lombok.NonNull;
@@ -22,15 +22,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -93,7 +88,7 @@ public class QueryService {
             for (QueryComponent component : queryComponents) {
                 int componentIndex = getComponentIndex(component, sortedComponents);
                 Criteria criteria = createCriteria(component);
-                logEntries = criteria.meetCriteria(logEntries, componentIndex);
+                logEntries = criteria.apply(logEntries, componentIndex);
             }
 
             return logEntries;
@@ -112,6 +107,6 @@ public class QueryService {
 
     private Criteria createCriteria(QueryComponent component) {
         // TODO: Create Factory for Criteria
-        return new IsAboveCriteria();
+        return new RegexCriteria("<regex here>");
     }
 }
