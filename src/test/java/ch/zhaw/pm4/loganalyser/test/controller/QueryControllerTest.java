@@ -166,6 +166,4 @@ class QueryControllerTest {
         verify(queryService, times(1)).runQueryForService(serviceId, queryString);
     }
 
-    // todo: query invalid
-
 }
