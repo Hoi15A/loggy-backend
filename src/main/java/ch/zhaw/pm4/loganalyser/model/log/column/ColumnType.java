@@ -1,6 +1,10 @@
 package ch.zhaw.pm4.loganalyser.model.log.column;
 
+import lombok.Getter;
+
+@Getter
 public enum ColumnType {
+
     DATE(FilterType.RANGE, FilterType.EXACT),
     ENUM(FilterType.EXACT),
     TEXT(FilterType.REGEX, FilterType.CONTAINS),
@@ -14,14 +18,4 @@ public enum ColumnType {
         this.filterTypes = filterTypes;
     }
 
-    public FilterType[] getFilterTypes() {
-        return filterTypes;
-    }
-}
-
-enum FilterType {
-    RANGE,
-    REGEX,
-    CONTAINS,
-    EXACT
 }
