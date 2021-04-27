@@ -13,9 +13,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class ColumnComponentDTO {
 
-    public static final String COLUMN_TYPE_VALIDATION_MESSAGE = "Der Spaltentyp wurde nicht gesetzt";
-    public static final String FORMAT_VALIDATION_MESSAGE = "Das Format wurde nicht gesetzt";
-    public static final String NAME_VALIDATION_MESSAGE = "Der Name darf nicht leer sein";
+    public static final String COLUMN_TYPE_VALIDATION_MESSAGE = "Column type is not set";
+    public static final String FORMAT_VALIDATION_MESSAGE = "Format is not set";
+    public static final String NAME_VALIDATION_MESSAGE = "Name cannot have only whitespaces or be empty";
 
     private long id;
 

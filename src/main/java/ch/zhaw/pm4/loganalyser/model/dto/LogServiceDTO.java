@@ -13,10 +13,10 @@ import java.net.URI;
 @ToString
 public class LogServiceDTO {
 
-    public static final String LOG_DIRECTORY_VALIDATION_MESSAGE = "Der Pfad zur Logdatei darf nicht leer sein und auch nicht nur aus Leerzeichen bestehen";
-    public static final String NAME_VALIDATION_MESSAGE = "Der Name des Log-Service darf nicht leer sein und auch nicht nur aus Leerzeichen bestehen";
-    public static final String LOG_CONFIG_VALIDATION_MESSAGE = "Der Name der Log-Konfiguration darf nicht leer sein und auch nicht nur aus Leerzeichen bestehen";
-    public static final String LOCATION_VALIDATION_MESSAGE = "Der Standort wurde nicht gesetzt";
+    public static final String LOG_DIRECTORY_VALIDATION_MESSAGE = "The log directory path cannot have only whitespaces or be empty";
+    public static final String NAME_VALIDATION_MESSAGE = "Name cannot have only whitespaces or be empty";
+    public static final String LOG_CONFIG_VALIDATION_MESSAGE = "The name of the log configuration cannot have only whitespaces or be empty";
+    public static final String LOCATION_VALIDATION_MESSAGE = "Location of the log service has not been set";
 
     private long id;
 

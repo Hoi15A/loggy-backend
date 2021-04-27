@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
-    public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Server Error";
-    public static final String RECORD_NOT_FOUND_MESSAGE = "Eintrag nicht gefunden";
-    public static final String RECORD_ALREADY_EXISTS_MESSAGE = "Eintrag existiert bereits";
-    public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "Validierung fehlgeschlagen";
-    public static final String PATH_NOT_FOUND_MESSAGE = "Der angegebene Pfad wurde nicht gefunden";
+    public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Server error";
+    public static final String RECORD_NOT_FOUND_MESSAGE = "Record not found";
+    public static final String RECORD_ALREADY_EXISTS_MESSAGE = "Record already exists";
+    public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "Validation failed";
+    public static final String PATH_NOT_FOUND_MESSAGE = "The path has not been found";
 
     /**
      * Catches all {@link Exception} and returns it with the information what went wrong.

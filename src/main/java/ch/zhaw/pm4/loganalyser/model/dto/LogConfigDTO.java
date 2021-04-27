@@ -16,11 +16,11 @@ import java.util.Map;
 @Getter @Setter
 public class LogConfigDTO {
 
-    public static final String NAME_VALIDATION_MESSAGE = "Der Name der Log-Konfiguration darf nicht leer sein und nicht nur aus Leerzeichen bestehen";
-    public static final String COLUMN_COUNT_VALIDATION_MESSAGE = "Die Anzahl Spalten dar nicht negativ sein";
-    public static final String HEADER_LENGTH_VALIDATION_MESSAGE = "Die Header-Länge darf nicht negativ sein";
-    public static final String SEPARATOR_VALIDATION_MESSAGE = "Das Separiersymbol darf nicht leer sein";
-    public static final String COLUMN_COMPONENTS_VALIDATION_MESSAGE = "Die Spalten-Komponenten wurden nicht gesetzt";
+    public static final String NAME_VALIDATION_MESSAGE = "Name cannot have only whitespaces or be empty";
+    public static final String COLUMN_COUNT_VALIDATION_MESSAGE = "Column count cannot be a negativ number";
+    public static final String HEADER_LENGTH_VALIDATION_MESSAGE = "Header length cannot be a negativ number";
+    public static final String SEPARATOR_VALIDATION_MESSAGE = "Separator cannot be empty";
+    public static final String COLUMN_COMPONENTS_VALIDATION_MESSAGE = "Column components is not set";
 
     @NotBlank(message = NAME_VALIDATION_MESSAGE)
     private String name;
