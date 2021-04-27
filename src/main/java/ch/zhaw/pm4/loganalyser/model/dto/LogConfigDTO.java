@@ -15,14 +15,26 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter @Setter
 public class LogConfigDTO {
-    @NotBlank
+
+    public static final String NAME_VALIDATION_MESSAGE = "Name cannot have only whitespaces or be empty";
+    public static final String COLUMN_COUNT_VALIDATION_MESSAGE = "Column count cannot be a negativ number";
+    public static final String HEADER_LENGTH_VALIDATION_MESSAGE = "Header length cannot be a negativ number";
+    public static final String SEPARATOR_VALIDATION_MESSAGE = "Separator cannot be empty";
+    public static final String COLUMN_COMPONENTS_VALIDATION_MESSAGE = "Column components is not set";
+
+    @NotBlank(message = NAME_VALIDATION_MESSAGE)
     private String name;
-    @Min(0)
+
+    @Min(value = 0, message = COLUMN_COUNT_VALIDATION_MESSAGE)
     private int columnCount;
-    @Min(0)
+
+    @Min(value = 0, message = HEADER_LENGTH_VALIDATION_MESSAGE)
     private int headerLength;
-    @NotEmpty
+
+    @NotEmpty(message = SEPARATOR_VALIDATION_MESSAGE)
     private String separator;
-    @NotNull
+
+    @NotNull(message = COLUMN_COMPONENTS_VALIDATION_MESSAGE)
     private Map<Integer, ColumnComponentDTO> columnComponents;
+
 }

@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.service;
 
+import ch.zhaw.pm4.loganalyser.exception.PathNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,10 @@ public class PathService {
     private FileSystem fileSystem = FileSystems.getDefault();
 
     public List<FileTreeDTO> getContentOfFolder(String folder) {
-        return Arrays.stream(Objects.requireNonNull(fileSystem.getPath(folder).toFile().listFiles()))
+        File folderFile = fileSystem.getPath(folder).toFile();
+        if (!folderFile.exists()) throw new PathNotFoundException("The provided path (" + folder + ") does not exist");
+
+        return Arrays.stream(Objects.requireNonNull(folderFile.listFiles()))
                 .filter(File::isDirectory)
                 .map(mapFileToFileTreeDTO)
                 .collect(Collectors.toList());

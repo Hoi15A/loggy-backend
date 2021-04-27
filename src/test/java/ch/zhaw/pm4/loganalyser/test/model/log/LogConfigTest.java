@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser;
+package ch.zhaw.pm4.loganalyser.test.model.log;
 
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;

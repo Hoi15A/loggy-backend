@@ -1,6 +1,7 @@
-package ch.zhaw.pm4.loganalyser.service;
+package ch.zhaw.pm4.loganalyser.test.service;
 
 import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
+import ch.zhaw.pm4.loganalyser.service.PathService;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +18,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -79,18 +81,33 @@ class PathServiceTest {
     @Test
     void testRootContents() {
         // prepare
-        // mock fs.getRootDirectories() or fs.getRootDirectories().spliterator()
         when(fsMock.getRootDirectories()).thenReturn(List.of(rootFolderPathMock));
+        when(fsMock.getPath(any())).thenReturn(rootFolderPathMock);
+        when(rootFolderPathMock.toFile()).thenReturn(rootFolderMock);
+        when(rootFolderMock.exists()).thenReturn(true);
 
-        Assertions.assertIterableEquals(expected, pathService.getRootFolder());
+        assertIterableEquals(expected, pathService.getRootFolder());
 
         // verify
         verify(fsMock, times(1)).getRootDirectories();
+        verify(fsMock, times(1)).getPath(any());
+        verify(rootFolderPathMock, times(1)).toFile();
+        verify(rootFolderMock, times(1)).exists();
     }
 
     @Test
     void testSubFolderContents() {
-        Assertions.assertIterableEquals(expected, pathService.getContentOfFolder(""));
+        // prepare
+        when(fsMock.getPath(any())).thenReturn(rootFolderPathMock);
+        when(rootFolderPathMock.toFile()).thenReturn(rootFolderMock);
+        when(rootFolderMock.exists()).thenReturn(true);
+
+        // verify
+        assertIterableEquals(expected, pathService.getContentOfFolder(""));
+
+        verify(fsMock, times(1)).getPath(any());
+        verify(rootFolderPathMock, times(1)).toFile();
+        verify(rootFolderMock, times(1)).exists();
     }
 
 }

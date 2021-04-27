@@ -21,6 +21,12 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+    public static final String INTERNAL_SERVER_ERROR_MESSAGE = "Server error";
+    public static final String RECORD_NOT_FOUND_MESSAGE = "Record not found";
+    public static final String RECORD_ALREADY_EXISTS_MESSAGE = "Record already exists";
+    public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "Validation failed";
+    public static final String PATH_NOT_FOUND_MESSAGE = "The path has not been found";
+
     /**
      * Catches all {@link Exception} and returns it with the information what went wrong.
      * @param ex {@link Exception}
@@ -29,7 +35,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
-        return handleCustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Server Error", ex);
+        return handleCustomException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE, ex);
     }
 
     /**
@@ -40,8 +46,32 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity<Object>
      */
     @ExceptionHandler(RecordNotFoundException.class)
-    public ResponseEntity<Object> handleUserNotFoundException(RecordNotFoundException ex, WebRequest request) {
-        return handleCustomException(HttpStatus.NOT_FOUND, "Eintrag nicht gefunden", ex);
+    public ResponseEntity<Object> handleRecordNotFoundException(RecordNotFoundException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.NOT_FOUND, RECORD_NOT_FOUND_MESSAGE, ex);
+    }
+
+    /**
+     * Catches a {@link RecordAlreadyExistsException} and returns it with
+     * additional details which record already exists.
+     * @param ex {@link RecordAlreadyExistsException}
+     * @param request {@link WebRequest}
+     * @return ResponseEntity<Object>
+     */
+    @ExceptionHandler(RecordAlreadyExistsException.class)
+    public ResponseEntity<Object> handleRecordAlreadyExistsException(RecordAlreadyExistsException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.CONFLICT, RECORD_ALREADY_EXISTS_MESSAGE, ex);
+    }
+
+    /**
+     * Catches a {@link PathNotFoundException} and returns it with
+     * additional details which path wasn't found.
+     * @param ex {@link PathNotFoundException}
+     * @param request {@link WebRequest}
+     * @return ResponseEntity<Object>
+     */
+    @ExceptionHandler(PathNotFoundException.class)
+    public ResponseEntity<Object> handlePathNotFoundExceptionException(PathNotFoundException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.NOT_FOUND, PATH_NOT_FOUND_MESSAGE, ex);
     }
 
     private ResponseEntity<Object> handleCustomException(HttpStatus httpStatus, String errorMessage, Exception ex) {
@@ -57,7 +87,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(ObjectError::getDefaultMessage)
                 .collect(Collectors.toList());
-        ErrorResponse error = new ErrorResponse("Validierung fehlgeschlagen", details);
+        ErrorResponse error = new ErrorResponse(METHOD_ARGUMENT_NOT_VALID_MESSAGE, details);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 

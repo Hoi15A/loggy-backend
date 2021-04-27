@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogConfig;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.*;
 
 @Service
 @AllArgsConstructor
@@ -27,14 +27,11 @@ public class LogConfigService {
      * @throws RecordAlreadyExistsException If a config with the same name already exists this exception will be thrown
      */
     public void createLogConfig(LogConfigDTO logConfigDTO) {
-        LogConfig config = mapDTOToLogConfig(logConfigDTO);
+        Optional<LogConfig> logConfigOptional = logConfigRepository.findById(logConfigDTO.getName());
+        if (logConfigOptional.isPresent()) throw new RecordAlreadyExistsException("A config with the name " + logConfigDTO.getName() + " already exists.");
 
-        Optional<LogConfig> logConfigOptional = logConfigRepository.findById(config.getName());
-        if (logConfigOptional.isEmpty()) {
-            logConfigRepository.save(config);
-        } else {
-            throw new RecordAlreadyExistsException("A config with the name " + config.getName() + " already exists.");
-        }
+        LogConfig config = mapDTOToLogConfig(logConfigDTO);
+        logConfigRepository.save(config);
     }
 
     /**
@@ -42,15 +39,11 @@ public class LogConfigService {
      * @param logConfigDTO
      */
     public void updateLogConfig(LogConfigDTO logConfigDTO) {
+        Optional<LogConfig> logConfigOptional= logConfigRepository.findById(logConfigDTO.getName());
+        if (logConfigOptional.isEmpty()) throw new RecordNotFoundException("A config with the name " + logConfigDTO.getName() + " does not exist and cant be updated.");
+
         LogConfig config = mapDTOToLogConfig(logConfigDTO);
-
-        Optional<LogConfig> logConfigOptional= logConfigRepository.findById(config.getName());
-
-        if (logConfigOptional.isEmpty()) {
-            throw new RecordNotFoundException("A config with the name " + config.getName() + " does not exist and cant be updated.");
-        } else {
-            logConfigRepository.save(config);
-        }
+        logConfigRepository.save(config);
     }
 
     public List<LogConfigDTO> getAllLogConfigs() {
@@ -64,7 +57,8 @@ public class LogConfigService {
     public LogConfigDTO getLogConfigById(String id) {
         Optional<LogConfig> logConfigOptional = logConfigRepository.findById(id);
         if (logConfigOptional.isEmpty()) throw new RecordNotFoundException(id);
-        return DTOMapper.mapLogConfigToDTO(logConfigOptional.get());
+
+        return mapLogConfigToDTO(logConfigOptional.get());
     }
 
     /**
@@ -75,8 +69,9 @@ public class LogConfigService {
     public LogConfigDTO deleteLogConfigById(String id) {
         Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(id);
         if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException(id);
+
         LogConfig logConfig = optionalLogConfig.get();
         logConfigRepository.delete(logConfig);
-        return DTOMapper.mapLogConfigToDTO(optionalLogConfig.get());
+        return mapLogConfigToDTO(optionalLogConfig.get());
     }
 }

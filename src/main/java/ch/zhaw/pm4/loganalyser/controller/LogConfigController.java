@@ -64,7 +64,7 @@ public class LogConfigController {
      * @return {@link ResponseEntity} with status 204.
      */
     @PutMapping("/")
-    public ResponseEntity<String> putLogConfig(@Valid @RequestBody final LogConfigDTO logConfigDTO) {
+    public ResponseEntity<String> updateLogConfig(@Valid @RequestBody final LogConfigDTO logConfigDTO) {
         logConfigService.updateLogConfig(logConfigDTO);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -1,9 +1,10 @@
-package ch.zhaw.pm4.loganalyser.service;
+package ch.zhaw.pm4.loganalyser.test.service;
 
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.repository.LogConfigRepository;
+import ch.zhaw.pm4.loganalyser.service.LogConfigService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
