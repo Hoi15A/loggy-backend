@@ -1,5 +1,9 @@
 package ch.zhaw.pm4.loganalyser.test.controller;
 
+import ch.zhaw.pm4.loganalyser.exception.ApiExceptionHandler;
+import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
+import ch.zhaw.pm4.loganalyser.exception.FileReadException;
+import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class QueryControllerTest {
 
+    public static final String GET_REQUEST_ID_QUERY = "/query/%d/%s";
+    public static final int VALID_SERVICE_ID = 1;
+    public static final int INVALID_SERVICE_ID = -1;
+
     @MockBean
     QueryService queryService;
 
@@ -34,7 +42,7 @@ class QueryControllerTest {
      * ****************************************************************************************************************/
 
     @Test
-    void getQueryForLogfileTest() {
+    void testGetQueryForLogService() {
         // prepare
         List<String[]> mockData = new ArrayList<>();
         String[] mockRow1 = {"30.03.2021","INFO","Loggy started"};
@@ -42,12 +50,14 @@ class QueryControllerTest {
         mockData.add(mockRow1);
         mockData.add(mockRow2);
 
-        when(queryService.runQueryForService(1, null)).thenReturn(mockData);
+        String queryString = "null";
+
+        when(queryService.runQueryForService(VALID_SERVICE_ID, queryString)).thenReturn(mockData);
 
         // execute
         try {
             mockMvc.perform(MockMvcRequestBuilders
-                    .get("/query/1/null")
+                    .get(String.format(GET_REQUEST_ID_QUERY, VALID_SERVICE_ID, queryString))
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").exists())
@@ -69,12 +79,93 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(1, null);
+        verify(queryService, times(1)).runQueryForService(VALID_SERVICE_ID, queryString);
     }
 
     /* ****************************************************************************************************************
      * NEGATIV TESTS
      * ****************************************************************************************************************/
 
+    @Test
+    void testGetQueryForLogServiceServiceNotFound() {
+        String queryString = "null";
+        String exceptionMessage = String.format("The service with id %d does not exist", INVALID_SERVICE_ID);
+
+        doThrow(new RecordNotFoundException(exceptionMessage)).when(queryService).runQueryForService(INVALID_SERVICE_ID, queryString);
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .get(String.format(GET_REQUEST_ID_QUERY, INVALID_SERVICE_ID, queryString))
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_NOT_FOUND_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(queryService, times(1)).runQueryForService(INVALID_SERVICE_ID, queryString);
+    }
+
+    @Test
+    void testGetQueryForLogServiceFileNotFound() {
+        long serviceId = VALID_SERVICE_ID;
+        String queryString = "null";
+        String exceptionMessage = "The file wanted to process has not been found";
+
+        doThrow(new FileNotFoundException(exceptionMessage)).when(queryService).runQueryForService(serviceId, queryString);
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                                    .get(String.format(GET_REQUEST_ID_QUERY, serviceId, queryString))
+                                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.INTERNAL_SERVER_ERROR_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(queryService, times(1)).runQueryForService(serviceId, queryString);
+    }
+
+    @Test
+    void testGetQueryForLogServiceReadError() {
+        long serviceId = VALID_SERVICE_ID;
+        String queryString = "null";
+        String exceptionMessage = "The file wanted to process had an error while reading";
+
+        doThrow(new FileReadException(exceptionMessage)).when(queryService).runQueryForService(serviceId, queryString);
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                                    .get(String.format(GET_REQUEST_ID_QUERY, serviceId, queryString))
+                                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.INTERNAL_SERVER_ERROR_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(queryService, times(1)).runQueryForService(serviceId, queryString);
+    }
+
+    // todo: query invalid
 
 }

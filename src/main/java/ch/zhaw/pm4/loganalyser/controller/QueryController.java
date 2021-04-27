@@ -29,8 +29,8 @@ public class QueryController {
      * @return
      */
     @GetMapping("{logServiceId}/{query}")
-    public ResponseEntity<List<String[]>> getQueryForLogservice(@PathVariable("logServiceId") final long logServiceId
-                                                             /*@PathVariable("query") final String query */) {
-        return ResponseEntity.ok(queryService.runQueryForService(logServiceId, null));
+    public ResponseEntity<List<String[]>> getQueryForLogService(@PathVariable("logServiceId") final long logServiceId,
+                                                                @PathVariable("query") final String query) {
+        return ResponseEntity.ok(queryService.runQueryForService(logServiceId, query));
     }
 }
