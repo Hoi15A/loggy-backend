@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
+import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.HeaderDTO;
@@ -68,7 +69,7 @@ public class QueryService {
      */
     public List<String[]> runQueryForService(long serviceId, String query) {
         Optional<LogService> logService = logServiceRepository.findById(serviceId);
-        if (logService.isEmpty()) throw new RecordNotFoundException(String.valueOf(serviceId));
+        if (logService.isEmpty()) throw new RecordNotFoundException(String.format("The service with id %d does not exist", serviceId));
         try {
             LogService service = logService.get();
             List<String[]> logEntries = logParser.read(null, service);
@@ -77,10 +78,10 @@ public class QueryService {
             sortedComponents.forEach((key, value) -> header[key] = String.valueOf(sortedComponents.values().toArray(ColumnComponent[]::new)[key]));
             logEntries.add(0, header);
             return logEntries;
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            throw new FileNotFoundException("Logservice file not found");
+        } catch (java.io.FileNotFoundException ex1) {
+            throw new FileNotFoundException("Log service file not found");
+        } catch (IOException ex2) {
+            throw new FileReadException("Something went wrong while reading the file");
         }
     }
 

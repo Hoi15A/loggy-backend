@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.test.service;
 
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
+import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
@@ -20,8 +21,8 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +31,7 @@ class QueryServiceTest {
 
     LogServiceRepository logServiceRepositoryMock = mock(LogServiceRepository.class);
     LogParser logParserMock = mock(LogParser.class);
+
     @Autowired
     QueryService queryService;
 
@@ -59,7 +61,7 @@ class QueryServiceTest {
         queryService.setLogServiceRepository(logServiceRepositoryMock);
         queryService.setLogParser(logParserMock);
 
-        when(logServiceRepositoryMock.findById(any())).thenReturn(Optional.of(logService));
+        when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.of(logService));
         
         assertEquals((Optional.of(logService)).get().getLogConfig().getColumnComponents(), sortedComponents);
     }
@@ -67,9 +69,9 @@ class QueryServiceTest {
     @Test
     void runQueryForServiceInvalidServiceId() {
         queryService.setLogServiceRepository(logServiceRepositoryMock);
-        when(logServiceRepositoryMock.findById(any())).thenReturn(Optional.empty());
+        when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(RecordNotFoundException.class, () -> queryService.runQueryForService(-12L, null));
+        assertThrows(RecordNotFoundException.class, () -> queryService.runQueryForService(-12L, null));
     }
 
     @Test
@@ -81,11 +83,27 @@ class QueryServiceTest {
         queryService.setLogServiceRepository(logServiceRepositoryMock);
         queryService.setLogParser(logParserMock);
 
+        when(logParserMock.read(any(), any())).thenThrow(new java.io.FileNotFoundException());
+        when(logServiceRepositoryMock.findById(anyLong())).thenReturn(optionalMock);
+
+
+        assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, null));
+    }
+
+    @Test
+    void runQueryForServiceLogParserReadError() throws IOException {
+        LogService logServiceMock = mock(LogService.class);
+
+        Optional<LogService> optionalMock = Optional.of(logServiceMock);
+
+        queryService.setLogServiceRepository(logServiceRepositoryMock);
+        queryService.setLogParser(logParserMock);
+
         when(logParserMock.read(any(), any())).thenThrow(new IOException());
-        when(logServiceRepositoryMock.findById(any())).thenReturn(optionalMock);
+        when(logServiceRepositoryMock.findById(anyLong())).thenReturn(optionalMock);
 
 
-        Assertions.assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, null));
+        assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, null));
     }
     
     void mapTest(Map<Integer, ColumnComponent> providedMap, Map<Integer, ColumnComponent> receivedMap) {
