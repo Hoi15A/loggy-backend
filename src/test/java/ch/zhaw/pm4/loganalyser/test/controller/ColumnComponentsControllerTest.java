@@ -6,6 +6,7 @@ import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
+import ch.zhaw.pm4.loganalyser.test.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,14 +24,13 @@ import java.util.Objects;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ColumnComponentsControllerTest extends ControllerTest {
+class ColumnComponentsControllerTest {
 
     public static final long EXISTING_ID = 11L;
 
@@ -40,7 +40,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    final ObjectMapper objectMapper = new ObjectMapper();
 
     /* ****************************************************************************************************************
      * POSITIV TESTS
@@ -49,7 +49,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Test
     void testGetAllColumnComponents() {
         // prepare
-        String content = loadResourceContent("ColumnComponent/testGetAllColumnComponents.json");
+        String content = TestUtils.loadResourceContent("ColumnComponent/testGetAllColumnComponents.json");
         ColumnComponentDTO[] dtoArray = (ColumnComponentDTO[]) parseResourceContent(content, ColumnComponentDTO[].class);
         List<ColumnComponentDTO> dtos = Arrays.asList(dtoArray);
 
@@ -128,7 +128,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Test
     void testCreateColumnComponent() {
         // prepare
-        String content = loadResourceContent("ColumnComponent/testCreateColumnComponent.json");
+        String content = TestUtils.loadResourceContent("ColumnComponent/testCreateColumnComponent.json");
         ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
 
         doNothing().when(columnComponentService).createColumn(dto);
@@ -152,7 +152,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Test
     void testUpdateExistingColumnComponent() {
         // prepare
-        String content = loadResourceContent("ColumnComponent/testUpdateExistingColumnComponent.json");
+        String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateExistingColumnComponent.json");
         ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
 
         doNothing().when(columnComponentService).updateColumn(dto);
@@ -207,7 +207,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Test
     void testGetNonExistingColumnComponent() {
         // prepare
-        String content = loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
+        String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
         ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
 
         String exceptionMessage = "ID was not found";
@@ -236,7 +236,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Test
     void testUpdateNonExistingColumnComponent() {
         // prepare
-        String content = loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
+        String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
         ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
 
         String exceptionMessage = dto.getName();
@@ -266,7 +266,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Test
     void testUpdateExistingColumnComponentDifferentIdInRequest() {
         // prepare
-        String content = loadResourceContent("ColumnComponent/testUpdateExistingColumnComponent.json");
+        String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateExistingColumnComponent.json");
         ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
 
         doNothing().when(columnComponentService).updateColumn(dto);
@@ -294,7 +294,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Test
     void testDeleteNonExistingColumnComponent() {
         // prepare
-        String content = loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
+        String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
         ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
 
         String exceptionMessage = "Could not delete id: " + dto.getId();
@@ -332,7 +332,7 @@ class ColumnComponentsControllerTest extends ControllerTest {
 
     private void testUpdateWithCorruptedJSON(String relativeResourceLocation) {
         // prepare
-        String content = loadResourceContent(relativeResourceLocation);
+        String content = TestUtils.loadResourceContent(relativeResourceLocation);
         ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
 
         // execute

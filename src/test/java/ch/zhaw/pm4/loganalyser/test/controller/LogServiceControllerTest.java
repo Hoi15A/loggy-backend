@@ -4,6 +4,7 @@ import ch.zhaw.pm4.loganalyser.exception.ApiExceptionHandler;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
 import ch.zhaw.pm4.loganalyser.service.LogServiceService;
+import ch.zhaw.pm4.loganalyser.test.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,14 +19,13 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LogServiceControllerTest extends ControllerTest {
+class LogServiceControllerTest {
 
     public static final long NON_EXISTING_ID = -2L;
     public static final long EXISTING_ID = 2L;
@@ -104,7 +104,7 @@ class LogServiceControllerTest extends ControllerTest {
     @Test
     void testCreateLogService() {
         // prepare
-        String content = loadResourceContent("LogService/testCreateLogService.json");
+        String content = TestUtils.loadResourceContent("LogService/testCreateLogService.json");
 
         doNothing().when(logServiceService).createLogService(any());
 
@@ -218,7 +218,7 @@ class LogServiceControllerTest extends ControllerTest {
     @Test
     void testCreateLogServiceWithCorruptedJSON() {
         //prepare
-        String content = loadResourceContent("LogService/testCreateLogServiceWithCorruptedJSON.json");
+        String content = TestUtils.loadResourceContent("LogService/testCreateLogServiceWithCorruptedJSON.json");
 
         doNothing().when(logServiceService).createLogService(any());
 

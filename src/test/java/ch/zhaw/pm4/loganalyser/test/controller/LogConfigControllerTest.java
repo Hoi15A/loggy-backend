@@ -6,6 +6,7 @@ import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.service.LogConfigService;
+import ch.zhaw.pm4.loganalyser.test.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,14 +23,13 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LogConfigControllerTest  extends ControllerTest {
+class LogConfigControllerTest {
 
     @MockBean
     LogConfigService logConfigService;
@@ -138,7 +138,7 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testCreateLogConfig() {
         // prepare
-        String content = loadResourceContent("LogConfig/testCreateLogConfig.json");
+        String content = TestUtils.loadResourceContent("LogConfig/testCreateLogConfig.json");
         doNothing().when(logConfigService).createLogConfig(any());
 
         // execute
@@ -185,7 +185,7 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testUpdateLogConfig() {
         // prepare
-        String content = loadResourceContent("LogConfig/testUpdateExistingLogConfig.json");
+        String content = TestUtils.loadResourceContent("LogConfig/testUpdateExistingLogConfig.json");
         doNothing().when(logConfigService).updateLogConfig(any());
 
         // execute
@@ -212,7 +212,7 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testCreateAlreadyExistingLogConfig() {
         // prepare
-        String content = loadResourceContent("LogConfig/testCreateLogConfig.json");
+        String content = TestUtils.loadResourceContent("LogConfig/testCreateLogConfig.json");
 
         String exceptionMessage = "A config with this name already exists.";
 
@@ -292,7 +292,7 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testUpdateNonExistingLogConfig() {
         // prepare
-        String content = loadResourceContent("LogConfig/testUpdateNonExistingLogConfig.json");
+        String content = TestUtils.loadResourceContent("LogConfig/testUpdateNonExistingLogConfig.json");
 
         String exceptionMessage = "This record does not exist";
 
@@ -321,7 +321,7 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testUpdateLogConfigWithCorruptedJSON() {
         // prepare
-        String content = loadResourceContent("LogConfig/testUpdateLogConfigWithCorruptedJSON.json");
+        String content = TestUtils.loadResourceContent("LogConfig/testUpdateLogConfigWithCorruptedJSON.json");
 
         // execute
         try {
