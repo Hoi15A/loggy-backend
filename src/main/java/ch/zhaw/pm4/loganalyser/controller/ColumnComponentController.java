@@ -38,7 +38,7 @@ public class ColumnComponentController {
      */
     @PostMapping("/")
     public ResponseEntity<String> createColumn(@Valid @RequestBody final ColumnComponentDTO columnComponentDTO) {
-        columnComponentService.createColumn(columnComponentDTO);
+        columnComponentService.createColumnComponent(columnComponentDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

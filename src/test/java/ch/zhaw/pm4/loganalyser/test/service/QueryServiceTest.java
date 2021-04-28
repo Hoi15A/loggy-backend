@@ -10,7 +10,6 @@ import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,8 +20,12 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,39 +38,57 @@ class QueryServiceTest {
     @Autowired
     QueryService queryService;
 
-    @Test
-    void runQueryForServiceValid() {
-        LogService logService = new LogService();
-        LogConfig logConfig = new LogConfig();
+    /* ****************************************************************************************************************
+     * POSITIVE TESTS
+     * ****************************************************************************************************************/
 
-        ColumnComponent compare = new ColumnComponent();
-        compare.setName("Host");
-        compare.setId(1);
-        compare.setFormat("ff");
-        compare.setColumnType(ColumnType.DATE);
-        ColumnComponent compare2 = new ColumnComponent();
-        compare2.setName("User");
-        compare2.setId(2);
-        compare2.setFormat("ff");
-        compare2.setColumnType(ColumnType.DATE);
+    @Test
+    void testRunQueryForService() {
+        ColumnComponent compare = ColumnComponent.builder()
+                .id(1)
+                .name("Host")
+                .format("ff")
+                .columnType(ColumnType.DATE)
+                .build();
+
+        ColumnComponent compare2 = ColumnComponent.builder()
+                .id(1)
+                .name("User")
+                .format("ff")
+                .columnType(ColumnType.DATE)
+                .build();
+
         Map<Integer, ColumnComponent> components = new TreeMap<>();
-        components.put(2 ,compare);
-        components.put(1 ,compare2);
+        components.put(2, compare);
+        components.put(1, compare2);
+
         Map<Integer, ColumnComponent> sortedComponents = sortComponents(components);
+
+        LogConfig logConfig = new LogConfig();
         logConfig.setColumnComponents(sortedComponents);
+
+        LogService logService = new LogService();
         logService.setId(1);
         logService.setLogConfig(logConfig);
+
         mapTest(components, sortedComponents);
+
         queryService.setLogServiceRepository(logServiceRepositoryMock);
         queryService.setLogParser(logParserMock);
 
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.of(logService));
-        
+
+        // todo: execute runQueryForService and split this test into multiple test cases
+
         assertEquals((Optional.of(logService)).get().getLogConfig().getColumnComponents(), sortedComponents);
     }
 
+    /* ****************************************************************************************************************
+     * NEGATIVE TESTS
+     * ****************************************************************************************************************/
+
     @Test
-    void runQueryForServiceInvalidServiceId() {
+    void testRunQueryForService_RecordNotFound() {
         queryService.setLogServiceRepository(logServiceRepositoryMock);
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -75,7 +96,7 @@ class QueryServiceTest {
     }
 
     @Test
-    void runQueryForServiceLogParserFileNotFound() throws IOException {
+    void testRunQueryForService_FileNotFound() throws IOException {
         LogService logServiceMock = mock(LogService.class);
 
         Optional<LogService> optionalMock = Optional.of(logServiceMock);
@@ -86,12 +107,11 @@ class QueryServiceTest {
         when(logParserMock.read(any(), any())).thenThrow(new java.io.FileNotFoundException());
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(optionalMock);
 
-
         assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, null));
     }
 
     @Test
-    void runQueryForServiceLogParserReadError() throws IOException {
+    void testRunQueryForService_FileReadException() throws IOException {
         LogService logServiceMock = mock(LogService.class);
 
         Optional<LogService> optionalMock = Optional.of(logServiceMock);
@@ -102,21 +122,21 @@ class QueryServiceTest {
         when(logParserMock.read(any(), any())).thenThrow(new IOException());
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(optionalMock);
 
-
         assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, null));
     }
-    
-    void mapTest(Map<Integer, ColumnComponent> providedMap, Map<Integer, ColumnComponent> receivedMap) {
+
+    private void mapTest(Map<Integer, ColumnComponent> providedMap, Map<Integer, ColumnComponent> receivedMap) {
         assertEquals(providedMap.size(), receivedMap.size());
-        Assertions.assertNotNull(providedMap, "Provided Map is null;");
-        Assertions.assertNotNull(receivedMap, "Received Map is null;");
+        assertNotNull(providedMap, "Provided Map is null;");
+        assertNotNull(receivedMap, "Received Map is null;");
         assertEquals(providedMap.size(), receivedMap.size(), "Size mismatch for maps;");
-        Assertions.assertTrue(receivedMap.keySet().containsAll(providedMap.keySet()), "Missing keys in received map;");
+        assertTrue(receivedMap.keySet().containsAll(providedMap.keySet()), "Missing keys in received map;");
     }
 
-    public Map<Integer, ColumnComponent> sortComponents(Map<Integer, ColumnComponent> sortable) {
+    private Map<Integer, ColumnComponent> sortComponents(Map<Integer, ColumnComponent> sortable) {
         return sortable.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey , Map.Entry::getValue, (a, b) -> a, TreeMap::new));
     }
+
 }

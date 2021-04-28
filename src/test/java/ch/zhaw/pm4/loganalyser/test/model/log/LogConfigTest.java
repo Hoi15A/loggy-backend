@@ -6,7 +6,14 @@ import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

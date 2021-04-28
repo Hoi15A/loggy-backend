@@ -50,7 +50,7 @@ class ColumnComponentsControllerCreateTest {
         String content = TestUtils.loadResourceContent("ColumnComponent/testCreateColumnComponent.json");
         ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
 
-        doNothing().when(columnComponentService).createColumn(dto);
+        doNothing().when(columnComponentService).createColumnComponent(dto);
 
         // execute
         try {
@@ -65,7 +65,7 @@ class ColumnComponentsControllerCreateTest {
         }
 
         // verify
-        verify(columnComponentService, times(1)).createColumn(dto);
+        verify(columnComponentService, times(1)).createColumnComponent(dto);
     }
 
     /* ****************************************************************************************************************

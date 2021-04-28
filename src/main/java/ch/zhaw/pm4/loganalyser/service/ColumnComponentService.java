@@ -28,7 +28,7 @@ public class ColumnComponentService {
      * Saves a new {@link ColumnComponent} to the database.
      * @param dto to be created.
      */
-    public void createColumn(ColumnComponentDTO dto) {
+    public void createColumnComponent(ColumnComponentDTO dto) {
         ColumnComponent columnComponent = mapDTOToColumnComponent(dto);
         columnComponentRepository.save(columnComponent);
     }
