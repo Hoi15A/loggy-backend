@@ -66,6 +66,7 @@ public class ColumnComponentController {
      * @param id of the {@link ColumnComponentDTO}.
      * @param columnComponentDTO Data transfer object containing the data that should be updated in the database.
      * @return {@link ResponseEntity} with status 200 and the updated {@link ColumnComponentDTO} inside the body.
+     * @throws ArgumentMismatchException when the provided {@link ColumnComponentDTO} has not the same id as the path variable.
      * @throws RecordNotFoundException when the provided {@link ColumnComponentDTO} does not exist.
      */
     @PutMapping("/{id}")
