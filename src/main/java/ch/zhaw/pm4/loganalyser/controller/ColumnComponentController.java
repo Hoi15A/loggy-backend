@@ -28,6 +28,7 @@ import java.util.List;
 public class ColumnComponentController {
 
     public static final String UPDATE_EXCEPTION_MESSAGE = "The provided column component does not have the same id as the path variable";
+
     private final ColumnComponentService columnComponentService;
 
     /**

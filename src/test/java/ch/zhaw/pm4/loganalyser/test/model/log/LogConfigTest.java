@@ -35,7 +35,6 @@ class LogConfigTest {
         String filename = "nginx-access.log";
         List<String> lines = readLogLines(filename);
         // register columns
-        List<ColumnComponent> components = new ArrayList<>();
         int i = 0;
         Map<Integer, ColumnComponent> componentMap = new TreeMap<>();
         componentMap.put(++i, createColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));

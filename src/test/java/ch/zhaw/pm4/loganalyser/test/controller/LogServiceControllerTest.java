@@ -247,4 +247,32 @@ class LogServiceControllerTest {
         verify(logServiceService, times(0)).createLogService(any());
     }
 
+    @Test
+    void testCreateLogServiceWithNonExistingLogConfig() {
+        //prepare
+        String content = TestUtils.loadResourceContent("LogService/testCreateLogServiceWithNonExistingLogConfig.json");
+        String exceptionMessage = "Log config does not exists";
+
+        doThrow(new RecordNotFoundException(exceptionMessage)).when(logServiceService).createLogService(any());
+
+        //execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .post("/service/")
+                    .content(content)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_NOT_FOUND_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        //verify
+        verify(logServiceService, times(1)).createLogService(any());
+    }
+
 }
