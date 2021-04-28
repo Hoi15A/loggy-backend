@@ -6,20 +6,23 @@ import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.repository.LogConfigRepository;
 import ch.zhaw.pm4.loganalyser.util.DTOMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.*;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogConfig;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogConfigToDTO;
 
 /**
  * Perform CRUD operations for the log configs.
  */
+@RequiredArgsConstructor
 @Service
-@AllArgsConstructor
+@Transactional
 public class LogConfigService {
 
     private final LogConfigRepository logConfigRepository;

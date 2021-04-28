@@ -5,20 +5,21 @@ import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import ch.zhaw.pm4.loganalyser.repository.ColumnComponentRepository;
 import ch.zhaw.pm4.loganalyser.util.DTOMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.*;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapColumnComponentToDTO;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToColumnComponent;
 
 /**
  * Perform CRUD operations for the column components.
  */
+@RequiredArgsConstructor
 @Service
-@AllArgsConstructor
 public class ColumnComponentService {
 
     private final ColumnComponentRepository columnComponentRepository;

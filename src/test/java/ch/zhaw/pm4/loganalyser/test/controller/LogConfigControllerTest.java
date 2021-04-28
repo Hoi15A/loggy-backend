@@ -51,8 +51,8 @@ class LogConfigControllerTest  extends ControllerTest {
         components2.put(2, null);
 
         List<LogConfigDTO> dtos = new ArrayList<>();
-        dtos.add(new LogConfigDTO("test1", 0, 0, " ", components1));
-        dtos.add(new LogConfigDTO("test2", 0, 0, " ", components2));
+        dtos.add(LogConfigDTO.builder().name("test1").columnCount(0).headerLength(0).separator(" ").columnComponents(components1).build());
+        dtos.add(LogConfigDTO.builder().name("test2").columnCount(0).headerLength(0).separator(" ").columnComponents(components2).build());
 
         when(logConfigService.getAllLogConfigs()).thenReturn(dtos);
 
@@ -100,7 +100,13 @@ class LogConfigControllerTest  extends ControllerTest {
     @Test
     void testGetLogConfigById() {
         // prepare
-        LogConfigDTO dto = new LogConfigDTO("test1", 1, 2, "|", new HashMap<>());
+        LogConfigDTO dto = LogConfigDTO.builder()
+                .name("test1")
+                .columnCount(1)
+                .headerLength(2)
+                .separator("|")
+                .columnComponents(new HashMap<>())
+                .build();
 
         when(logConfigService.getLogConfigById(dto.getName())).thenReturn(dto);
 

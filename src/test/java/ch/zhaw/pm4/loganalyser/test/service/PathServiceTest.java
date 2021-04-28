@@ -49,9 +49,9 @@ class PathServiceTest {
 
         int i = 0;
         expected = new ArrayList<>();
-        expected.add(new FileTreeDTO(++i, varFolderMock.getName(), varFolderMock.getPath(), new ArrayList<>()));
-        expected.add(new FileTreeDTO(++i, etcFolderMock.getName(), etcFolderMock.getPath(), new ArrayList<>()));
-        expected.add(new FileTreeDTO(++i, homeFolderMock.getName(), homeFolderMock.getPath(), new ArrayList<>()));
+        expected.add(createFileTreeDTO(++i, varFolderMock.getName(), varFolderMock.getPath()));
+        expected.add(createFileTreeDTO(++i, etcFolderMock.getName(), etcFolderMock.getPath()));
+        expected.add(createFileTreeDTO(++i, homeFolderMock.getName(), homeFolderMock.getPath()));
 
         subFolders = Arrays.array(varFolderMock, etcFolderMock, homeFolderMock);
 
@@ -65,6 +65,15 @@ class PathServiceTest {
         when(fileMock.getName()).thenReturn(name);
         when(fileMock.getPath()).thenReturn(fullPath);
         when(fileMock.isDirectory()).thenReturn(true);
+    }
+
+    private FileTreeDTO createFileTreeDTO(int id, String name, String path) {
+        return FileTreeDTO.builder()
+                .id(id)
+                .name(name)
+                .fullpath(path)
+                .children(new ArrayList<>())
+                .build();
     }
 
     @AfterEach

@@ -4,7 +4,7 @@ import ch.zhaw.pm4.loganalyser.exception.RecordAlreadyExistsException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.service.LogConfigService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * API controller for {@link LogConfigDTO}
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("config")
 public class LogConfigController {

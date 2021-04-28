@@ -3,6 +3,8 @@ package ch.zhaw.pm4.loganalyser.service;
 import ch.zhaw.pm4.loganalyser.exception.PathNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -19,16 +21,22 @@ import java.util.stream.StreamSupport;
 /**
  * Provides information about the filesystem.
  */
+
+@NoArgsConstructor
+@Setter
 @Service
-@Data
 public class PathService {
+
+    private FileSystem fileSystem = FileSystems.getDefault();
 
     private int fileIdCounter;
 
-    private Function<File, FileTreeDTO> mapFileToFileTreeDTO = file ->
-            new FileTreeDTO(++fileIdCounter, file.getName(), file.getPath(), new ArrayList<>());
-
-    private FileSystem fileSystem = FileSystems.getDefault();
+    private final Function<File, FileTreeDTO> mapFileToFileTreeDTO = file -> FileTreeDTO.builder()
+            .id(++fileIdCounter)
+            .name(file.getName())
+            .fullpath(file.getPath())
+            .children(new ArrayList<>())
+            .build();
 
     /**
      * Returns a list of all root folders on the filesystem.

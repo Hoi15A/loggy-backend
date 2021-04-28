@@ -1,6 +1,5 @@
 package ch.zhaw.pm4.loganalyser.service;
 
-import ch.zhaw.pm4.loganalyser.controller.LogConfigController;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
@@ -23,9 +22,9 @@ import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogServiceToDTO;
 /**
  * Perform CRUD operations for the log services.
  */
+@RequiredArgsConstructor
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class LogServiceService {
 
     private final LogServiceRepository logServiceRepository;

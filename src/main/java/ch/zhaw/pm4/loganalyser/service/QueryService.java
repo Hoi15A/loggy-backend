@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 /**
  * Performs a query operation for a specific service.
  */
+@RequiredArgsConstructor
 @Setter
 @Service
-@RequiredArgsConstructor
 public class QueryService {
 
     private final Logger logger = Logger.getLogger(QueryService.class.getName());

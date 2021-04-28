@@ -17,8 +17,8 @@ import java.util.List;
 /**
  * API controller to query log files for a given service.
  */
-@RestController
 @RequiredArgsConstructor
+@RestController
 @RequestMapping("/query")
 public class QueryController {
 

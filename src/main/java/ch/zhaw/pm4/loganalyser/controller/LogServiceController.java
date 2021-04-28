@@ -21,8 +21,8 @@ import java.util.Set;
 /**
  * API controller for {@link LogServiceDTO}
  */
-@RestController
 @RequiredArgsConstructor
+@RestController
 @RequestMapping("/service")
 public class LogServiceController {
 

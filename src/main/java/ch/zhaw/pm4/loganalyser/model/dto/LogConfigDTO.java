@@ -1,9 +1,10 @@
 package ch.zhaw.pm4.loganalyser.model.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -15,8 +16,8 @@ import java.util.Map;
  * Data Transfer Object for a {@link ch.zhaw.pm4.loganalyser.model.log.LogConfig}.
  */
 @NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Data @Builder
 public class LogConfigDTO {
 
     public static final String NAME_VALIDATION_MESSAGE = "Name cannot have only whitespaces or be empty";

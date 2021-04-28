@@ -91,7 +91,12 @@ class ColumnComponentsControllerTest extends ControllerTest {
     @Test
     void testGetColumnComponentById() {
         // prepare
-        ColumnComponentDTO dto = new ColumnComponentDTO(EXISTING_ID, ColumnType.MESSAGE, "-|[a-zA-Z]+", "User");
+        ColumnComponentDTO dto = ColumnComponentDTO.builder()
+                .id(EXISTING_ID)
+                .columnType(ColumnType.MESSAGE)
+                .format("-|[a-zA-Z]+")
+                .name("User")
+                .build();
 
         when(columnComponentService.getColumnComponentById(dto.getId())).thenReturn(dto);
 
