@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.test.controller;
 
+import ch.zhaw.pm4.loganalyser.controller.ColumnComponentController;
 import ch.zhaw.pm4.loganalyser.exception.ApiExceptionHandler;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
@@ -158,7 +159,6 @@ class ColumnComponentsControllerTest extends ControllerTest {
 
         // execute
         try {
-            // todo: check for same id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
                     .put("/column/" + dto.getId())
                     .content(content)
@@ -245,7 +245,6 @@ class ColumnComponentsControllerTest extends ControllerTest {
 
         // execute
         try {
-            // todo: check for non existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
                     .put("/column/" + dto.getId())
                     .content(content)
@@ -262,6 +261,34 @@ class ColumnComponentsControllerTest extends ControllerTest {
 
         // verify
         verify(columnComponentService, times(1)).updateColumn(dto);
+    }
+
+    @Test
+    void testUpdateExistingColumnComponentDifferentIdInRequest() {
+        // prepare
+        String content = loadResourceContent("ColumnComponent/testUpdateExistingColumnComponent.json");
+        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
+
+        doNothing().when(columnComponentService).updateColumn(dto);
+
+        // execute
+        try {
+            mockMvc.perform(MockMvcRequestBuilders
+                                    .put("/column/" + (dto.getId() + 1))
+                                    .content(content)
+                                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$").exists())
+                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.INTERNAL_SERVER_ERROR_MESSAGE)))
+                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.details.[0]", is(ColumnComponentController.UPDATE_EXCEPTION_MESSAGE)))
+                    .andDo(print());
+        } catch (Exception e) {
+            fail(e);
+        }
+
+        // verify
+        verify(columnComponentService, times(0)).updateColumn(dto);
     }
 
     @Test
@@ -310,7 +337,6 @@ class ColumnComponentsControllerTest extends ControllerTest {
 
         // execute
         try {
-            // todo: check for (non) existing id in dto and path variable
             mockMvc.perform(MockMvcRequestBuilders
                     .put("/column/" + dto.getId())
                     .content(content)

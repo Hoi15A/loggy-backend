@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.controller;
 
+import ch.zhaw.pm4.loganalyser.exception.ArgumentMismatchException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequestMapping("column")
 public class ColumnComponentController {
 
+    public static final String UPDATE_EXCEPTION_MESSAGE = "The provided column component does not have the same id as the path variable";
     private final ColumnComponentService columnComponentService;
 
     /**
@@ -61,13 +63,17 @@ public class ColumnComponentController {
 
     /**
      * Updates a column component and saves it into the database based on the provided {@link ColumnComponentDTO}.
+     * @param id of the {@link ColumnComponentDTO}.
      * @param columnComponentDTO Data transfer object containing the data that should be updated in the database.
      * @return {@link ResponseEntity} with status 200 and the updated {@link ColumnComponentDTO} inside the body.
      * @throws RecordNotFoundException when the provided {@link ColumnComponentDTO} does not exist.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ColumnComponentDTO> updateColumn(@Valid @RequestBody final ColumnComponentDTO columnComponentDTO) {
-        // TODO: check or set dto id with pathvariable
+    public ResponseEntity<ColumnComponentDTO> updateColumn(@PathVariable long id,
+                                                           @Valid @RequestBody final ColumnComponentDTO columnComponentDTO) {
+        if (id != columnComponentDTO.getId())
+            throw new ArgumentMismatchException(UPDATE_EXCEPTION_MESSAGE);
+
         columnComponentService.updateColumn(columnComponentDTO);
         return ResponseEntity.ok(columnComponentDTO);
     }
