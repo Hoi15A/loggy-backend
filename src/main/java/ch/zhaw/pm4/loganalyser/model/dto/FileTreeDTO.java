@@ -6,12 +6,17 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object for the log files location.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileTreeDTO {
+
     private int id;
     private String name;
     private String fullpath;
     private List<FileTreeDTO> children;
+
 }

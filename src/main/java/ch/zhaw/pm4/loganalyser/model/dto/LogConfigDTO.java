@@ -11,6 +11,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
+/**
+ * Data Transfer Object for a {@link ch.zhaw.pm4.loganalyser.model.log.LogConfig}.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter

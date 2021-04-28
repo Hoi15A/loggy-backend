@@ -14,17 +14,67 @@ import java.util.stream.Collectors;
 
 import static ch.zhaw.pm4.loganalyser.util.DTOMapper.*;
 
+/**
+ * Perform CRUD operations for the column components.
+ */
 @Service
 @AllArgsConstructor
 public class ColumnComponentService {
 
     private final ColumnComponentRepository columnComponentRepository;
 
+    /**
+     * Saves a new {@link ColumnComponent} to the database.
+     * @param dto to be created.
+     */
     public void createColumn(ColumnComponentDTO dto) {
         ColumnComponent columnComponent = mapDTOToColumnComponent(dto);
         columnComponentRepository.save(columnComponent);
     }
 
+    /**
+     * Returns a transformed list of all {@link ColumnComponent}.
+     * @return a list of {@link ColumnComponentDTO}
+     */
+    public List<ColumnComponentDTO> getAllColumnComponents() {
+        return columnComponentRepository
+                .findAll()
+                .stream()
+                .map(DTOMapper::mapColumnComponentToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a transformed {@link ColumnComponent}
+     * @param id of the {@link ColumnComponent}
+     * @return a {@link ColumnComponentDTO}
+     * @throws RecordNotFoundException when the provided id does not exist.
+     */
+    public ColumnComponentDTO getColumnComponentById(long id) {
+        Optional<ColumnComponent> columnComponentOptional = columnComponentRepository.findById(id);
+        if(columnComponentOptional.isEmpty()) throw new RecordNotFoundException("Could not find column component with id " + id);
+
+        return mapColumnComponentToDTO(columnComponentOptional.get());
+    }
+
+    /**
+     * Updates an existing {@link ColumnComponent} in the database.
+     * @param columnComponentDTO to be updated.
+     * @throws RecordNotFoundException when the provided {@link ColumnComponentDTO} does not exist.
+     */
+    public void updateColumn(ColumnComponentDTO columnComponentDTO) {
+        Optional<ColumnComponent> oldColumnComponent = columnComponentRepository.findById(columnComponentDTO.getId());
+        if(oldColumnComponent.isEmpty()) throw new RecordNotFoundException("Could not update non existing column component " + columnComponentDTO.getName());
+
+        columnComponentRepository.save(mapDTOToColumnComponent(columnComponentDTO));
+    }
+
+    /**
+     * Deletes a {@link ColumnComponent} from the database.
+     * @param id of the {@link ColumnComponent}
+     * @return the deleted {@link ColumnComponentDTO}
+     * @throws RecordNotFoundException when the provided id does not exist.
+     */
     public ColumnComponentDTO deleteColumnComponentById(long id) {
         Optional<ColumnComponent> optionalColumnComponent = columnComponentRepository.findById(id);
         if (optionalColumnComponent.isEmpty()) throw new RecordNotFoundException("Could not delete id: " + id);
@@ -34,25 +84,4 @@ public class ColumnComponentService {
         return mapColumnComponentToDTO(columnComponent);
     }
 
-    public void updateColumn(ColumnComponentDTO columnComponentDTO) {
-        Optional<ColumnComponent> oldColumnComponent = columnComponentRepository.findById(columnComponentDTO.getId());
-        if(oldColumnComponent.isEmpty()) throw new RecordNotFoundException(columnComponentDTO.getName());
-
-        columnComponentRepository.save(mapDTOToColumnComponent(columnComponentDTO));
-    }
-
-    public List<ColumnComponentDTO> getAllColumnComponents() {
-        return columnComponentRepository
-                .findAll()
-                .stream()
-                .map(DTOMapper::mapColumnComponentToDTO)
-                .collect(Collectors.toList());
-    }
-
-    public ColumnComponentDTO getColumnComponentById(long id) {
-        Optional<ColumnComponent> columnComponentOptional = columnComponentRepository.findById(id);
-        if(columnComponentOptional.isEmpty()) throw new RecordNotFoundException("ID was not found");
-
-        return mapColumnComponentToDTO(columnComponentOptional.get());
-    }
 }

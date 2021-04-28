@@ -17,6 +17,11 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class DTOMapper {
 
+    /**
+     * Map {@link LogServiceDTO} to a {@link LogService}
+     * @param logServiceDTO to be mapped.
+     * @return {@link LogService}
+     */
     public static LogService mapDTOToLogService(LogServiceDTO logServiceDTO) {
         return LogService.builder()
                 .id(logServiceDTO.getId())
@@ -28,6 +33,28 @@ public class DTOMapper {
                 .build();
     }
 
+    /**
+     * Map {@link LogService} to a {@link LogServiceDTO}
+     * @param logService to be mapped.
+     * @return {@link LogServiceDTO}
+     */
+    public static LogServiceDTO mapLogServiceToDTO(LogService logService) {
+        LogServiceDTO dto = new LogServiceDTO();
+        dto.setId(logService.getId());
+        dto.setName(logService.getName());
+        dto.setDescription(logService.getDescription());
+        dto.setImage(logService.getImage());
+        dto.setLogDirectory(logService.getLogDirectory());
+        dto.setLocation(logService.getLogServiceLocation());
+        dto.setLogConfig(logService.getLogConfig().getName());
+        return dto;
+    }
+
+    /**
+     * Map {@link LogConfigDTO} to a {@link LogConfig}
+     * @param logConfigDTO to be mapped.
+     * @return {@link LogConfig}
+     */
     public static LogConfig mapDTOToLogConfig(LogConfigDTO logConfigDTO) {
         return LogConfig.builder()
                 .name(logConfigDTO.getName())
@@ -38,6 +65,17 @@ public class DTOMapper {
                 .build();
     }
 
+    private static Map<Integer, ColumnComponent> mapColumnComponentsDtoMapToColumnComponentsMap(Map<Integer, ColumnComponentDTO> dtoMap) {
+        return dtoMap.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                                          entry -> mapDTOToColumnComponent(entry.getValue())));
+    }
+
+    /**
+     * Map {@link LogConfig} to a {@link LogConfigDTO}
+     * @param logConfig to be mapped.
+     * @return {@link LogConfigDTO}
+     */
     public static LogConfigDTO mapLogConfigToDTO(LogConfig logConfig) {
         LogConfigDTO logConfigDTO = new LogConfigDTO();
         logConfigDTO.setName(logConfig.getName());
@@ -54,24 +92,11 @@ public class DTOMapper {
                                           entry -> mapColumnComponentToDTO(entry.getValue())));
     }
 
-    private static Map<Integer, ColumnComponent> mapColumnComponentsDtoMapToColumnComponentsMap(Map<Integer, ColumnComponentDTO> dtoMap) {
-        return dtoMap.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                                          entry -> mapDTOToColumnComponent(entry.getValue())));
-    }
-
-    public static LogServiceDTO mapLogServiceToDTO(LogService logService) {
-        LogServiceDTO dto = new LogServiceDTO();
-        dto.setId(logService.getId());
-        dto.setName(logService.getName());
-        dto.setDescription(logService.getDescription());
-        dto.setImage(logService.getImage());
-        dto.setLogDirectory(logService.getLogDirectory());
-        dto.setLocation(logService.getLogServiceLocation());
-        dto.setLogConfig(logService.getLogConfig().getName());
-        return dto;
-    }
-
+    /**
+     * Map {@link ColumnComponentDTO} to a {@link ColumnComponent}
+     * @param columnComponentDTO to be mapped.
+     * @return {@link ColumnComponent}
+     */
     public static ColumnComponent mapDTOToColumnComponent(ColumnComponentDTO columnComponentDTO) {
         return ColumnComponent.builder()
                 .name(columnComponentDTO.getName())
@@ -82,6 +107,11 @@ public class DTOMapper {
 
     }
 
+    /**
+     * Map {@link ColumnComponent} to a {@link ColumnComponentDTO}
+     * @param columnComponent to be mapped.
+     * @return {@link ColumnComponentDTO}
+     */
     public static ColumnComponentDTO mapColumnComponentToDTO(ColumnComponent columnComponent) {
         ColumnComponentDTO dto = new ColumnComponentDTO();
         dto.setColumnType(columnComponent.getColumnType());
@@ -90,4 +120,5 @@ public class DTOMapper {
         dto.setName(columnComponent.getName());
         return dto;
     }
+
 }
