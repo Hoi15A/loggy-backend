@@ -17,11 +17,17 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -38,7 +44,7 @@ class QueryControllerTest {
     MockMvc mockMvc;
 
     /* ****************************************************************************************************************
-     * POSITIV TESTS
+     * POSITIVE TESTS
      * ****************************************************************************************************************/
 
     @Test
@@ -83,7 +89,7 @@ class QueryControllerTest {
     }
 
     /* ****************************************************************************************************************
-     * NEGATIV TESTS
+     * NEGATIVE TESTS
      * ****************************************************************************************************************/
 
     @Test
