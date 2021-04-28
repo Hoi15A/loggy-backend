@@ -74,7 +74,7 @@ public class LogParser {
                         values.add(m.group(convertNameForCapturingGroup(c)));
                     }
                     Collections.reverse(values);
-                    rows.add(values.stream().toArray(String[]::new));
+                    rows.add(values.toArray(String[]::new));
                 }
             }
         }

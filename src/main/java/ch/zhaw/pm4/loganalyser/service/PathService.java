@@ -2,7 +2,6 @@ package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.PathNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;

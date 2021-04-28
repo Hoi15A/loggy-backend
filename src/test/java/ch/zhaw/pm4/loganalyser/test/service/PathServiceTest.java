@@ -4,7 +4,6 @@ import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
 import ch.zhaw.pm4.loganalyser.service.PathService;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -29,8 +29,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class QueryServiceTest {
 
-    LogServiceRepository logServiceRepositoryMock = mock(LogServiceRepository.class);
-    LogParser logParserMock = mock(LogParser.class);
+    final LogServiceRepository logServiceRepositoryMock = mock(LogServiceRepository.class);
+    final LogParser logParserMock = mock(LogParser.class);
 
     @Autowired
     QueryService queryService;
