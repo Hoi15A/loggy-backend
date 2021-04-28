@@ -46,6 +46,7 @@ class LogParserTest {
         // register columns
         Map<Integer, ColumnComponent> columnComponentMap = new TreeMap<>();
         int i = 0;
+        columnComponentMap.put(++i, createColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));
         columnComponentMap.put(++i, createColumnComponent(9L, "Custom Seperator", ColumnType.CUSTOM, "-"));
         columnComponentMap.put(++i, createColumnComponent(2L, "User", ColumnType.CUSTOM, "-|[a-zA-Z]+"));
         columnComponentMap.put(++i, createColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
