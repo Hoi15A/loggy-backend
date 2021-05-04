@@ -10,9 +10,10 @@ import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
+import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;
 import ch.zhaw.pm4.loganalyser.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.parser.criteria.Criteria;
-import ch.zhaw.pm4.loganalyser.parser.criteria.RegexCriteria;
+import ch.zhaw.pm4.loganalyser.parser.criteria.CriteriaFactory;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import ch.zhaw.pm4.loganalyser.util.DTOMapper;
 import lombok.NonNull;
@@ -23,7 +24,11 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -73,14 +78,14 @@ public class QueryService {
     /**
      * Runs a query on a service and returns all matched lines.
      * @param serviceId to be queried on.
-     * @param queries to be applied on the log files.
+     * @param  queryComponentDTOS {@link QueryComponentDTO} to be applied on the log files.
      * @throws RecordNotFoundException when the service does not exist.
      * @throws FileNotFoundException when the log file does not exist.
      * @throws FileReadException when there were complication while reading the log file.
      * @return List<String[]>
      */
-    public List<String[]> runQueryForService(long serviceId, List<QueryComponentDTO> queries) {
-        List<QueryComponent> queryComponents = queries.stream()
+    public List<String[]> runQueryForService(long serviceId, List<QueryComponentDTO> queryComponentDTOS) {
+        List<QueryComponent> queryComponents = queryComponentDTOS.stream()
                 .map(DTOMapper::mapDTOToQueryComponent)
                 .collect(Collectors.toList());
 
@@ -95,7 +100,8 @@ public class QueryService {
 
             for (QueryComponent component : queryComponents) {
                 int componentIndex = getComponentIndex(component, sortedComponents);
-                Criteria criteria = createCriteria(component);
+                FilterType filtertype = component.getFilterType();
+                Criteria criteria = createCriteria(filtertype, component);
                 logEntries = criteria.apply(logEntries, componentIndex);
             }
 
@@ -114,9 +120,7 @@ public class QueryService {
         return -1;
     }
 
-    private Criteria createCriteria(QueryComponent component) {
-        // TODO: Create Factory for Criteria
-        return new RegexCriteria("<regex here>");
+    private Criteria createCriteria(FilterType filterType, QueryComponent component) {
+        return CriteriaFactory.getCriteria(filterType, component);
     }
-
 }
