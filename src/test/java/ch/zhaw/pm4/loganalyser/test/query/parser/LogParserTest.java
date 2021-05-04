@@ -21,7 +21,7 @@ class LogParserTest {
     private static final String LFOLDER = "logs";
 
     @Test
-    void readTest() throws Exception {
+    void testRead() throws Exception {
         // prepare
         LogService serviceMock = mock(LogService.class);
         File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LFOLDER).getPath());
