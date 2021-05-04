@@ -81,7 +81,7 @@ class ColumnComponentsControllerDeleteTest {
     void testDeleteNonExistingColumnComponent() {
         // prepare
         String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
-        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
+        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content);
 
         String exceptionMessage = "Could not delete id: " + dto.getId();
 
@@ -106,10 +106,10 @@ class ColumnComponentsControllerDeleteTest {
         verify(columnComponentService, times(1)).deleteColumnComponentById(dto.getId());
     }
 
-    private Object parseResourceContent(String content, Class<?> clazz) {
+    private Object parseResourceContent(String content) {
         Object dto;
         try {
-            dto = objectMapper.readValue(content, clazz);
+            dto = objectMapper.readValue(content, (Class<?>) ColumnComponentDTO.class);
         } catch (IOException e) {
             dto = null;
         }

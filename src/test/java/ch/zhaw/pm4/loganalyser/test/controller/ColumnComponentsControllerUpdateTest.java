@@ -50,7 +50,7 @@ class ColumnComponentsControllerUpdateTest {
     void testUpdateExistingColumnComponent() {
         // prepare
         String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateExistingColumnComponent.json");
-        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
+        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content);
 
         doNothing().when(columnComponentService).updateColumn(dto);
 
@@ -78,7 +78,7 @@ class ColumnComponentsControllerUpdateTest {
     void testUpdateNonExistingColumnComponent() {
         // prepare
         String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateNonExistingColumnComponent.json");
-        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
+        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content);
 
         String exceptionMessage = dto.getName();
 
@@ -108,7 +108,7 @@ class ColumnComponentsControllerUpdateTest {
     void testUpdateExistingColumnComponentDifferentIdInRequest() {
         // prepare
         String content = TestUtils.loadResourceContent("ColumnComponent/testUpdateExistingColumnComponent.json");
-        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
+        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content);
 
         doNothing().when(columnComponentService).updateColumn(dto);
 
@@ -145,7 +145,7 @@ class ColumnComponentsControllerUpdateTest {
     private void testUpdateWithCorruptedJSON(String relativeResourceLocation) {
         // prepare
         String content = TestUtils.loadResourceContent(relativeResourceLocation);
-        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
+        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content);
 
         // execute
         try {
@@ -171,10 +171,10 @@ class ColumnComponentsControllerUpdateTest {
         verify(columnComponentService, times(0)).updateColumn(any());
     }
 
-    private Object parseResourceContent(String content, Class<?> clazz) {
+    private Object parseResourceContent(String content) {
         Object dto;
         try {
-            dto = objectMapper.readValue(content, clazz);
+            dto = objectMapper.readValue(content, (Class<?>) ColumnComponentDTO.class);
         } catch (IOException e) {
             dto = null;
         }
