@@ -4,10 +4,14 @@ import ch.zhaw.pm4.loganalyser.exception.InvalidColumnTypeException;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.util.IP;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,9 +24,17 @@ public class RangeCriteria implements Criteria {
 
     private final Logger logger = Logger.getLogger(RangeCriteria.class.getName());
 
-    private final ColumnType type;
+    @Setter
+    private ColumnType type = null;
     private final String from;
     private final String to;
+
+    private final List<String> dateFormatStrings = Arrays.asList(
+            "dd/MMM/yyyy:HH:mm:ss Z",   // Nginx Format
+            "yyyy-MM-dd'T'HH:mm:ss'Z'", // ISO 8601 UTC
+            "yyyy-MM-dd'T'HH:mm:ssZ",   // ISO 8601 non UTC
+            "DD-MM-YYYY"
+    );
 
     /**
      * Apply the RangeCriteria on a list
@@ -32,6 +44,8 @@ public class RangeCriteria implements Criteria {
      */
     @Override
     public List<String[]> apply(List<String[]> rows, int key) {
+        if (type == null) throw new InvalidColumnTypeException("No ColumnType passed in setter");
+
         List<String[]> filtered = new ArrayList<>();
 
         for (String[] row : rows) {
@@ -44,12 +58,7 @@ public class RangeCriteria implements Criteria {
                     if (isInDateRange(row[key])) filtered.add(row);
                     break;
                 case IP:
-                    try {
-                        if (isIPInRange(row[key])) filtered.add(row);
-                    } catch (UnknownHostException e) {
-                        logger.log(Level.WARNING, "Unable to convert IP to string, ignoring it.", e);
-                        e.printStackTrace();
-                    }
+                    if (isIPInRange(row[key])) filtered.add(row);
                     break;
                 default:
                     throw new InvalidColumnTypeException("An unsupported ColumnType was passed");
@@ -68,23 +77,35 @@ public class RangeCriteria implements Criteria {
     }
 
     private boolean isInDateRange(String str) {
-        /**
-         * NGINX doesnt just output regular ISO dateformats from what I can tell.
-         * As far as I can see parsing any arbitrary dateformat isnt a thing (excluding finding a lib for it)
-         * Solution is to either only support nginx timestamps or:
-         * https://stackoverflow.com/a/4024604/5457433
-         * Support multiple by just trying predefined formats until it parses.
-         *
-         * TODO: Ask leo for opinion on that before wasting time.
-         */
-        return true;
+        var isInRange = false;
+
+        for (String formatString : dateFormatStrings) {
+            try {
+                var date = new SimpleDateFormat(formatString).parse(str);
+                var fromDate = new SimpleDateFormat(formatString).parse(from);
+                var toDate = new SimpleDateFormat(formatString).parse(to);
+                isInRange = date.compareTo(fromDate) > 0 && date.compareTo(toDate) < 0;
+                break;
+            }
+            catch (ParseException ignored) {}
+        }
+
+        return isInRange;
     }
 
-    private boolean isIPInRange(String str) throws UnknownHostException {
-        var inputIP = IP.ipToLong(InetAddress.getByName(str));
-        var fromIP = IP.ipToLong(InetAddress.getByName(from));
-        var toIP = IP.ipToLong(InetAddress.getByName(to));
+    private boolean isIPInRange(String str) {
+        var isInRange = false;
 
-        return inputIP >= fromIP && inputIP <= toIP;
+        try {
+            var inputIP = IP.ipToLong(InetAddress.getByName(str));
+            var fromIP = IP.ipToLong(InetAddress.getByName(from));
+            var toIP = IP.ipToLong(InetAddress.getByName(to));
+
+            isInRange = inputIP >= fromIP && inputIP <= toIP;
+        } catch (UnknownHostException e) {
+            logger.log(Level.WARNING, "Unable to convert one or more IP(s) to string, ignoring.", e);
+        }
+
+        return isInRange;
     }
 }
