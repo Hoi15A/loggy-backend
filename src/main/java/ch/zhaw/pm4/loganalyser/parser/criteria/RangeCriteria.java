@@ -86,8 +86,9 @@ public class RangeCriteria implements Criteria {
                 var toDate = new SimpleDateFormat(formatString).parse(to);
                 isInRange = date.compareTo(fromDate) > 0 && date.compareTo(toDate) < 0;
                 break;
+            } catch (ParseException ignored) {
+               logger.info("Attempted to parse date and failed");
             }
-            catch (ParseException ignored) {}
         }
 
         return isInRange;
