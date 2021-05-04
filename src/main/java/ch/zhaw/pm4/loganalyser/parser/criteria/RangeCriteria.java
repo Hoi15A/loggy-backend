@@ -44,7 +44,7 @@ public class RangeCriteria implements Criteria {
      */
     @Override
     public List<String[]> apply(List<String[]> rows, int columnIndex) {
-        if (type == null) throw new InvalidColumnTypeException("No ColumnType passed in setter");
+        if (type == null) throw new UnsupportedOperationException("No ColumnType passed in setter");
 
         List<String[]> filtered = new ArrayList<>();
 
@@ -61,7 +61,7 @@ public class RangeCriteria implements Criteria {
                     if (isIPInRange(row[columnIndex])) filtered.add(row);
                     break;
                 default:
-                    throw new InvalidColumnTypeException("An unsupported ColumnType was passed");
+                    throw new InvalidColumnTypeException("An unsupported ColumnType was passed: " + type);
             }
         }
 
