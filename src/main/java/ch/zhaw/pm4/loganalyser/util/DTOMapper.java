@@ -115,6 +115,7 @@ public class DTOMapper {
         return ColumnComponentDTO.builder()
                 .columnType(columnComponent.getColumnType())
                 .format(columnComponent.getFormat())
+                .filterTypes(columnComponent.getColumnType().getFilterTypes())
                 .id(columnComponent.getId())
                 .name(columnComponent.getName())
                 .build();

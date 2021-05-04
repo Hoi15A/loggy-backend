@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.model.dto;
 
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
+import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,8 @@ public class ColumnComponentDTO {
 
     @NotNull(message = COLUMN_TYPE_VALIDATION_MESSAGE)
     private ColumnType columnType;
+
+    private FilterType[] filterTypes;
 
     @NotNull(message = FORMAT_VALIDATION_MESSAGE)
     private String format;
