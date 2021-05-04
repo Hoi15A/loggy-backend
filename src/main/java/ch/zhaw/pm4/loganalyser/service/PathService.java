@@ -56,7 +56,7 @@ public class PathService {
      * @throws PathNotFoundException when the directory does not exist.
      */
     public List<FileTreeDTO> getContentOfFolder(String folder) {
-        File folderFile = fileSystem.getPath(folder).toFile();
+        var folderFile = fileSystem.getPath(folder).toFile();
         if (!folderFile.exists()) throw new PathNotFoundException("The provided path (" + folder + ") does not exist");
 
         return Arrays.stream(Objects.requireNonNull(folderFile.listFiles()))

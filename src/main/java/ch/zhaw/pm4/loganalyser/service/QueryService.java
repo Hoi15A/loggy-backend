@@ -52,7 +52,7 @@ public class QueryService {
         // todo : to be removed
         List<ColumnDTO> tableData = new ArrayList<>();
         List<HeaderDTO> headers = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        var sdf = new SimpleDateFormat("dd.MM.yyyy");
         try {
             tableData.add(new ColumnDTO(sdf.parse("01.03.2021"), "info", "Service started"));
             tableData.add(new ColumnDTO(sdf.parse("02.03.2021"), "warning", "Could not interpret xyz"));
@@ -94,7 +94,7 @@ public class QueryService {
             throw new RecordNotFoundException(String.format("The service with id %d does not exist", serviceId));
 
         try {
-            LogService service = logService.get();
+            var service = logService.get();
             List<String[]> logEntries = logParser.read(service);
             Map<Integer, ColumnComponent> sortedComponents = sortComponents(service.getLogConfig().getColumnComponents());
 

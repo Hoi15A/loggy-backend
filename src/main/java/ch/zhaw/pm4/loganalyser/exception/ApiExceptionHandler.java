@@ -76,7 +76,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleCustomException(HttpStatus httpStatus, String errorMessage, Exception ex) {
         List<String> details = List.of(ex.getLocalizedMessage());
-        ErrorResponse error = new ErrorResponse(errorMessage, details);
+        var error = new ErrorResponse(errorMessage, details);
         return new ResponseEntity<>(error, httpStatus);
     }
 
@@ -87,7 +87,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(ObjectError::getDefaultMessage)
                 .collect(Collectors.toList());
-        ErrorResponse error = new ErrorResponse(METHOD_ARGUMENT_NOT_VALID_MESSAGE, details);
+        var error = new ErrorResponse(METHOD_ARGUMENT_NOT_VALID_MESSAGE, details);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 

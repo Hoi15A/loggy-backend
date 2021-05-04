@@ -33,7 +33,7 @@ public class LogParser {
      * @throws IOException when either a file is not found or there were complications while reading the file.
      */
     public List<String[]> read(LogService service) throws IOException {
-        Path logDir = Path.of(service.getLogDirectory());
+        var logDir = Path.of(service.getLogDirectory());
 
         List<String[]> rows = new ArrayList<>();
         for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
@@ -61,11 +61,11 @@ public class LogParser {
      */
     private List<String[]> parse(File logfile, LogConfig config) throws IOException {
         List<String[]> rows = new ArrayList<>();
-        Pattern p = Pattern.compile(concatenateRegex(config));
-        try (BufferedReader br = new BufferedReader(new FileReader(logfile))) {
+        var p = Pattern.compile(concatenateRegex(config));
+        try (var br = new BufferedReader(new FileReader(logfile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                Matcher m = p.matcher(line);
+                var m = p.matcher(line);
                 List<String> values = new ArrayList<>();
                 if (m.find()) {
                     for(ColumnComponent c: sortedColumns.values()) {
@@ -80,7 +80,7 @@ public class LogParser {
     }
 
     private String concatenateRegex(LogConfig config) {
-        String lineRegex = "";
+        var lineRegex = "";
         sortedColumns = new TreeMap<>(Collections.reverseOrder());
         sortedColumns.putAll(config.getColumnComponents());
 

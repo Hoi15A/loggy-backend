@@ -39,7 +39,7 @@ public class LogServiceService {
         Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(logServiceDTO.getLogConfig());
         if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException("Could not create log service. Log config " + logServiceDTO.getLogConfig() + " does not exist.");
 
-        LogService service = mapDTOToLogService(logServiceDTO);
+        var service = mapDTOToLogService(logServiceDTO);
         service.setLogConfig(optionalLogConfig.get());
         logServiceRepository.save(service);
     }
@@ -79,8 +79,8 @@ public class LogServiceService {
         Optional<LogService> optionalLogService = logServiceRepository.findById(id);
         if (optionalLogService.isEmpty()) throw new RecordNotFoundException("Could not delete non existing log service with id " + id);
 
-        LogService logService = optionalLogService.get();
-        LogConfig logConfig = logService.getLogConfig();
+        var logService = optionalLogService.get();
+        var logConfig = logService.getLogConfig();
         logService.setLogConfig(null);
         logServiceRepository.save(logService);
         logServiceRepository.delete(logService);
