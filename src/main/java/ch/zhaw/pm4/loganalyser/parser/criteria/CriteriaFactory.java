@@ -4,6 +4,9 @@ import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Factory to create criteria based on {@link FilterType} and {@link QueryComponent}
+ */
 @UtilityClass
 public class CriteriaFactory {
 

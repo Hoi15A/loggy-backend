@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Criteria to filter when the column matches the given regex string
+ */
 @RequiredArgsConstructor
 public class RegexCriteria implements Criteria {
     private final String regex;

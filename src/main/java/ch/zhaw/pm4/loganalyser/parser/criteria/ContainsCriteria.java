@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Criteria to filter when the column contains a given string
+ */
 @RequiredArgsConstructor
 public class ContainsCriteria implements Criteria {
     private final String contains;
