@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser.parser.criteria;
+package ch.zhaw.pm4.loganalyser.query.criteria;
 
 import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;

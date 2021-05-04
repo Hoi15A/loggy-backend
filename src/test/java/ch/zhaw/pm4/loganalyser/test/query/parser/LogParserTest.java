@@ -1,10 +1,10 @@
-package ch.zhaw.pm4.loganalyser.test.parser;
+package ch.zhaw.pm4.loganalyser.test.query.parser;
 
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
-import ch.zhaw.pm4.loganalyser.parser.LogParser;
+import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

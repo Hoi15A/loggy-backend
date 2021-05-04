@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser.parser.criteria;
+package ch.zhaw.pm4.loganalyser.query.criteria;
 
 import ch.zhaw.pm4.loganalyser.exception.InvalidColumnTypeException;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;

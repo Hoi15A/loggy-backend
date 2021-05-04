@@ -8,7 +8,7 @@ import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
-import ch.zhaw.pm4.loganalyser.parser.LogParser;
+import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
 import org.junit.jupiter.api.Test;
