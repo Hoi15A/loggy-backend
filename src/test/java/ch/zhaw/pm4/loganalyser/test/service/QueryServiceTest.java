@@ -3,6 +3,7 @@ package ch.zhaw.pm4.loganalyser.test.service;
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
+import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -93,7 +95,8 @@ class QueryServiceTest {
         queryService.setLogServiceRepository(logServiceRepositoryMock);
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> queryService.runQueryForService(-12L, List.of()));
+        List<QueryComponentDTO> queries = new ArrayList<>();
+        assertThrows(RecordNotFoundException.class, () -> queryService.runQueryForService(-12L, queries));
     }
 
     @Test
@@ -108,8 +111,8 @@ class QueryServiceTest {
         when(logParserMock.read(any())).thenThrow(new java.io.FileNotFoundException());
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(optionalMock);
 
-
-        assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, List.of()));
+        List<QueryComponentDTO> queries = new ArrayList<>();
+        assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, queries));
     }
 
     @Test
@@ -124,8 +127,8 @@ class QueryServiceTest {
         when(logParserMock.read(any())).thenThrow(new IOException());
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(optionalMock);
 
-
-        assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, List.of()));
+        List<QueryComponentDTO> queries = new ArrayList<>();
+        assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, queries));
     }
 
     private void mapTest(Map<Integer, ColumnComponent> providedMap, Map<Integer, ColumnComponent> receivedMap) {

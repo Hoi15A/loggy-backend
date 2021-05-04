@@ -63,7 +63,8 @@ class LogConfigServiceDeleteTest {
                 .build();
 
         assertEquals(2, logConfigRepository.count());
-        assertThrows(RecordNotFoundException.class, () -> logConfigService.deleteLogConfigById(compareDTO.getName()));
+        var name = compareDTO.getName();
+        assertThrows(RecordNotFoundException.class, () -> logConfigService.deleteLogConfigById(name));
         assertEquals(2, logConfigRepository.count());
     }
 }
