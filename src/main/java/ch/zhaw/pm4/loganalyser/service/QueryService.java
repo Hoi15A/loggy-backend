@@ -100,8 +100,8 @@ public class QueryService {
 
             for (QueryComponent component : queryComponents) {
                 int componentIndex = getComponentIndex(component, sortedComponents);
-                FilterType filtertype = component.getFilterType();
-                Criteria criteria = createCriteria(filtertype, component);
+                var filtertype = component.getFilterType();
+                var criteria = createCriteria(filtertype, component);
                 logEntries = criteria.apply(logEntries, componentIndex);
             }
 
