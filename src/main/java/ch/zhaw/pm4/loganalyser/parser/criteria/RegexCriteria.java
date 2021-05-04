@@ -10,7 +10,7 @@ public class RegexCriteria implements Criteria {
     private final String regex;
 
     @Override
-    public List<String[]> apply(List<String[]> rows, int key) {
-        return rows.stream().filter(row -> row[key].matches(regex)).collect(Collectors.toList());
+    public List<String[]> apply(List<String[]> rows, int columnIndex) {
+        return rows.stream().filter(row -> row[columnIndex].matches(regex)).collect(Collectors.toList());
     }
 }

@@ -39,11 +39,11 @@ public class RangeCriteria implements Criteria {
     /**
      * Apply the RangeCriteria on a list
      * @param rows Input to be filtered
-     * @param key Index of column in row that should be filtered on
+     * @param columnIndex Index of column in row that should be filtered on
      * @return Filtered List
      */
     @Override
-    public List<String[]> apply(List<String[]> rows, int key) {
+    public List<String[]> apply(List<String[]> rows, int columnIndex) {
         if (type == null) throw new InvalidColumnTypeException("No ColumnType passed in setter");
 
         List<String[]> filtered = new ArrayList<>();
@@ -52,13 +52,13 @@ public class RangeCriteria implements Criteria {
             switch (type) {
                 case INTEGER:
                 case DOUBLE:
-                    if (isInNumberRange(row[key])) filtered.add(row);
+                    if (isInNumberRange(row[columnIndex])) filtered.add(row);
                     break;
                 case DATE:
-                    if (isInDateRange(row[key])) filtered.add(row);
+                    if (isInDateRange(row[columnIndex])) filtered.add(row);
                     break;
                 case IP:
-                    if (isIPInRange(row[key])) filtered.add(row);
+                    if (isIPInRange(row[columnIndex])) filtered.add(row);
                     break;
                 default:
                     throw new InvalidColumnTypeException("An unsupported ColumnType was passed");

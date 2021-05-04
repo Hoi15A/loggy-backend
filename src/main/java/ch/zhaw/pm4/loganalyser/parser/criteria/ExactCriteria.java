@@ -10,7 +10,7 @@ public class ExactCriteria implements Criteria {
     private final String exact;
 
     @Override
-    public List<String[]> apply(List<String[]> rows, int key) {
-        return rows.stream().filter(row -> row[key].equals(exact)).collect(Collectors.toList());
+    public List<String[]> apply(List<String[]> rows, int columnIndex) {
+        return rows.stream().filter(row -> row[columnIndex].equals(exact)).collect(Collectors.toList());
     }
 }
