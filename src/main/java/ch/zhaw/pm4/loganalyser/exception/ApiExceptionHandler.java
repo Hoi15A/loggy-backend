@@ -26,6 +26,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String RECORD_ALREADY_EXISTS_MESSAGE = "Record already exists";
     public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "Validation failed";
     public static final String PATH_NOT_FOUND_MESSAGE = "The path has not been found";
+    public static final String INVALID_COLUMN_TYPE_MESSAGE = "The defined column type is invalid";
 
     /**
      * Catches all {@link Exception} and returns it with the information what went wrong.
@@ -72,6 +73,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(PathNotFoundException.class)
     public ResponseEntity<Object> handlePathNotFoundExceptionException(PathNotFoundException ex, WebRequest request) {
         return handleCustomException(HttpStatus.NOT_FOUND, PATH_NOT_FOUND_MESSAGE, ex);
+    }
+
+    /**
+     * Catches a {@link InvalidColumnTypeException} and returns it with
+     * additional details what was invalid.
+     * @param ex {@link InvalidColumnTypeException}
+     * @param request {@link WebRequest}
+     * @return ResponseEntity<Object>
+     */
+    @ExceptionHandler(InvalidColumnTypeException.class)
+    public ResponseEntity<Object> handlePathNotFoundExceptionException(InvalidColumnTypeException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.BAD_REQUEST, INVALID_COLUMN_TYPE_MESSAGE, ex);
     }
 
     private ResponseEntity<Object> handleCustomException(HttpStatus httpStatus, String errorMessage, Exception ex) {
