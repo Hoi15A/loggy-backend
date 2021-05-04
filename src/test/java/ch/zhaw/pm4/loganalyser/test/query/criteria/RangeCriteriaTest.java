@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser.test.query.parser.criteria;
+package ch.zhaw.pm4.loganalyser.test.query.criteria;
 
 import org.junit.jupiter.api.Test;
 
