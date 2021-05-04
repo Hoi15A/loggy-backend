@@ -1,4 +1,4 @@
-package ch.zhaw.pm4.loganalyser.test.controller;
+package ch.zhaw.pm4.loganalyser.test;
 
 import org.springframework.util.ResourceUtils;
 
@@ -6,9 +6,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-class ControllerTest {
+public class TestUtils {
 
-    String loadResourceContent(String relativeResourceLocation) {
+    private TestUtils() {}
+
+    public static String loadResourceContent(String relativeResourceLocation) {
         try {
             File columnFile = ResourceUtils.getFile("classpath:testfiles/" + relativeResourceLocation);
             return new String(Files.readAllBytes(columnFile.toPath()));

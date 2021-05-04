@@ -2,6 +2,9 @@ package ch.zhaw.pm4.loganalyser.model.log.column;
 
 import lombok.Getter;
 
+/**
+ * Enumeration of the column types.
+ */
 @Getter
 public enum ColumnType {
 

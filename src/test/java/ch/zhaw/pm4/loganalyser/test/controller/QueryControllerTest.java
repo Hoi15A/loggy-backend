@@ -5,6 +5,7 @@ import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
+import ch.zhaw.pm4.loganalyser.test.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,16 +18,23 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class QueryControllerTest extends ControllerTest {
+class QueryControllerTest {
 
     public static final String GET_REQUEST_ID = "/query/%d";
     public static final long VALID_SERVICE_ID = 1;
@@ -45,7 +53,7 @@ class QueryControllerTest extends ControllerTest {
     @Test
     void testGetQueryForLogService() {
         // prepare
-        String content = loadResourceContent("QueryComponent/query.json");
+        String content = TestUtils.loadResourceContent("QueryComponent/query.json");
         List<String[]> mockData = new ArrayList<>();
         String[] mockRow1 = {"30.03.2021", "INFO", "Loggy started"};
         String[] mockRow2 = {"31.03.2021", "ERROR", "Server is on fire"};
@@ -84,12 +92,12 @@ class QueryControllerTest extends ControllerTest {
     }
 
     /* ****************************************************************************************************************
-     * NEGATIV TESTS
+     * NEGATIVE TESTS
      * ****************************************************************************************************************/
 
     @Test
     void testGetQueryForLogServiceServiceNotFound() {
-        String content = loadResourceContent("QueryComponent/query.json");
+        String content = TestUtils.loadResourceContent("QueryComponent/query.json");
         String exceptionMessage = String.format("The service with id %d does not exist", INVALID_SERVICE_ID);
 
         doThrow(new RecordNotFoundException(exceptionMessage))
@@ -117,7 +125,7 @@ class QueryControllerTest extends ControllerTest {
 
     @Test
     void testGetQueryForLogServiceFileNotFound() {
-        String content = loadResourceContent("QueryComponent/query.json");
+        String content = TestUtils.loadResourceContent("QueryComponent/query.json");
         String exceptionMessage = "The file wanted to process has not been found";
 
         doThrow(new FileNotFoundException(exceptionMessage))
@@ -145,7 +153,7 @@ class QueryControllerTest extends ControllerTest {
 
     @Test
     void testGetQueryForLogServiceReadError() {
-        String content = loadResourceContent("QueryComponent/query.json");
+        String content = TestUtils.loadResourceContent("QueryComponent/query.json");
         String exceptionMessage = "The file wanted to process had an error while reading";
 
         doThrow(new FileReadException(exceptionMessage)).when(queryService).runQueryForService(eq(VALID_SERVICE_ID), anyList());
@@ -169,7 +177,5 @@ class QueryControllerTest extends ControllerTest {
         // verify
         verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList());
     }
-
-    // todo: query invalid
 
 }

@@ -1,14 +1,18 @@
 package ch.zhaw.pm4.loganalyser.model.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.util.Date;
 
+/**
+ * Data Transfer Object for the logs presented as a table column.
+ */
 @Data
-@AllArgsConstructor
 public class ColumnDTO {
-    private Date date;
-    private String type;
-    private String message;
+
+    @NonNull private Date date;
+    @NonNull private String type;
+    @NonNull private String message;
+
 }

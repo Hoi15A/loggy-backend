@@ -1,16 +1,22 @@
 package ch.zhaw.pm4.loganalyser.model.dto;
 
 import ch.zhaw.pm4.loganalyser.model.log.LogServiceLocation;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 
+/**
+ * Data Transfer Object for a {@link ch.zhaw.pm4.loganalyser.model.log.LogService}.
+ */
 @NoArgsConstructor
-@Getter @Setter
-@EqualsAndHashCode
-@ToString
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Data @Builder
 public class LogServiceDTO {
 
     public static final String LOG_DIRECTORY_VALIDATION_MESSAGE = "The log directory path cannot have only whitespaces or be empty";

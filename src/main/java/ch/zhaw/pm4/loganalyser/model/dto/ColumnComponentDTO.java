@@ -1,16 +1,21 @@
 package ch.zhaw.pm4.loganalyser.model.dto;
 
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
-@AllArgsConstructor
+/**
+ * Data Transfer Object for a {@link ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent}.
+ */
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Data @Builder
 public class ColumnComponentDTO {
 
     public static final String COLUMN_TYPE_VALIDATION_MESSAGE = "Column type is not set";

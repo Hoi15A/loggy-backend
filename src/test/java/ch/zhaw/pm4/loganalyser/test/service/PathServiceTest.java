@@ -4,7 +4,6 @@ import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
 import ch.zhaw.pm4.loganalyser.service.PathService;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -18,8 +17,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class PathServiceTest {
@@ -49,9 +52,9 @@ class PathServiceTest {
 
         int i = 0;
         expected = new ArrayList<>();
-        expected.add(new FileTreeDTO(++i, varFolderMock.getName(), varFolderMock.getPath(), new ArrayList<>()));
-        expected.add(new FileTreeDTO(++i, etcFolderMock.getName(), etcFolderMock.getPath(), new ArrayList<>()));
-        expected.add(new FileTreeDTO(++i, homeFolderMock.getName(), homeFolderMock.getPath(), new ArrayList<>()));
+        expected.add(createFileTreeDTO(++i, varFolderMock.getName(), varFolderMock.getPath()));
+        expected.add(createFileTreeDTO(++i, etcFolderMock.getName(), etcFolderMock.getPath()));
+        expected.add(createFileTreeDTO(++i, homeFolderMock.getName(), homeFolderMock.getPath()));
 
         subFolders = Arrays.array(varFolderMock, etcFolderMock, homeFolderMock);
 
@@ -65,6 +68,15 @@ class PathServiceTest {
         when(fileMock.getName()).thenReturn(name);
         when(fileMock.getPath()).thenReturn(fullPath);
         when(fileMock.isDirectory()).thenReturn(true);
+    }
+
+    private FileTreeDTO createFileTreeDTO(int id, String name, String path) {
+        return FileTreeDTO.builder()
+                .id(id)
+                .name(name)
+                .fullpath(path)
+                .children(new ArrayList<>())
+                .build();
     }
 
     @AfterEach

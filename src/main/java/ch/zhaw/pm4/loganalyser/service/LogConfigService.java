@@ -6,46 +6,44 @@ import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.repository.LogConfigRepository;
 import ch.zhaw.pm4.loganalyser.util.DTOMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.*;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogConfig;
+import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogConfigToDTO;
 
+/**
+ * Perform CRUD operations for the log configs.
+ */
+@RequiredArgsConstructor
 @Service
-@AllArgsConstructor
+@Transactional
 public class LogConfigService {
 
     private final LogConfigRepository logConfigRepository;
 
     /**
-     * Saves a new {@link LogConfig} to the database
-     * @param logConfigDTO
-     * @throws RecordAlreadyExistsException If a config with the same name already exists this exception will be thrown
+     * Saves a new {@link LogConfig} to the database.
+     * @param logConfigDTO to be created.
+     * @throws RecordAlreadyExistsException when the same name already exists.
      */
     public void createLogConfig(LogConfigDTO logConfigDTO) {
         Optional<LogConfig> logConfigOptional = logConfigRepository.findById(logConfigDTO.getName());
-        if (logConfigOptional.isPresent()) throw new RecordAlreadyExistsException("A config with the name " + logConfigDTO.getName() + " already exists.");
+        if (logConfigOptional.isPresent()) throw new RecordAlreadyExistsException("Could not create already existing log config " + logConfigDTO.getName());
 
         LogConfig config = mapDTOToLogConfig(logConfigDTO);
         logConfigRepository.save(config);
     }
 
     /**
-     * Updates an existing {@link LogConfig}
-     * @param logConfigDTO
+     * Returns a transformed list of all {@link LogConfig}.
+     * @return a list of {@link LogConfigDTO}
      */
-    public void updateLogConfig(LogConfigDTO logConfigDTO) {
-        Optional<LogConfig> logConfigOptional= logConfigRepository.findById(logConfigDTO.getName());
-        if (logConfigOptional.isEmpty()) throw new RecordNotFoundException("A config with the name " + logConfigDTO.getName() + " does not exist and cant be updated.");
-
-        LogConfig config = mapDTOToLogConfig(logConfigDTO);
-        logConfigRepository.save(config);
-    }
-
     public List<LogConfigDTO> getAllLogConfigs() {
         return logConfigRepository
                 .findAll()
@@ -54,24 +52,45 @@ public class LogConfigService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a transformed {@link LogConfig}
+     * @param id of the {@link LogConfig}
+     * @return a {@link LogConfigDTO}
+     * @throws RecordNotFoundException when the provided id does not exist.
+     */
     public LogConfigDTO getLogConfigById(String id) {
         Optional<LogConfig> logConfigOptional = logConfigRepository.findById(id);
-        if (logConfigOptional.isEmpty()) throw new RecordNotFoundException(id);
+        if (logConfigOptional.isEmpty()) throw new RecordNotFoundException("Could not find log config " + id);
 
         return mapLogConfigToDTO(logConfigOptional.get());
     }
 
     /**
-     * Deletes a {@link LogConfigService} by it's name
-     * @param id of the {@link LogConfigService}
-     * @return deleted {@link LogConfigService}
+     * Updates an existing {@link LogConfig} in the database.
+     * @param logConfigDTO to be updated.
+     * @throws RecordNotFoundException when the provided {@link LogConfigDTO} does not exist.
+     */
+    public void updateLogConfig(LogConfigDTO logConfigDTO) {
+        Optional<LogConfig> logConfigOptional= logConfigRepository.findById(logConfigDTO.getName());
+        if (logConfigOptional.isEmpty()) throw new RecordNotFoundException("Could not update non existing log config " + logConfigDTO.getName());
+
+        LogConfig config = mapDTOToLogConfig(logConfigDTO);
+        logConfigRepository.save(config);
+    }
+
+    /**
+     * Deletes a {@link LogConfig} from the database.
+     * @param id of the {@link LogConfig}.
+     * @return the deleted {@link LogConfigDTO}.
+     * @throws RecordNotFoundException when the provided id does not exist.
      */
     public LogConfigDTO deleteLogConfigById(String id) {
         Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(id);
-        if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException(id);
+        if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException("Could not delete non existing log config " + id);
 
         LogConfig logConfig = optionalLogConfig.get();
         logConfigRepository.delete(logConfig);
         return mapLogConfigToDTO(optionalLogConfig.get());
     }
+
 }

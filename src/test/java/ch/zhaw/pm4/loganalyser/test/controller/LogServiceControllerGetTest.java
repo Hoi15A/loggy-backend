@@ -16,16 +16,21 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LogServiceControllerTest extends ControllerTest {
+class LogServiceControllerGetTest {
 
     public static final long NON_EXISTING_ID = -2L;
     public static final long EXISTING_ID = 2L;
@@ -37,7 +42,7 @@ class LogServiceControllerTest extends ControllerTest {
     MockMvc mockMvc;
 
     /* ****************************************************************************************************************
-     * POSITIV TESTS
+     * POSITIVE TESTS
      * ****************************************************************************************************************/
 
     @Test
@@ -101,58 +106,8 @@ class LogServiceControllerTest extends ControllerTest {
         verify(logServiceService, times(1)).getLogServiceById(dto.getId());
     }
 
-    @Test
-    void testCreateLogService() {
-        // prepare
-        String content = loadResourceContent("LogService/testCreateLogService.json");
-
-        doNothing().when(logServiceService).createLogService(any());
-
-        // execute
-        try {
-            mockMvc.perform(MockMvcRequestBuilders
-                    .post("/service/")
-                    .content(content)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isCreated())
-                    .andDo(print());
-        } catch (Exception e) {
-            fail(e);
-        }
-
-        // verify
-        verify(logServiceService, times(1)).createLogService(any());
-    }
-
-    @Test
-    void testDeleteLogService() {
-        // prepare
-        LogServiceDTO dto = new LogServiceDTO();
-        dto.setId(EXISTING_ID);
-        dto.setName("Test1");
-
-        when(logServiceService.deleteLogServiceById(anyLong())).thenReturn(dto);
-
-        // execute
-        try {
-            mockMvc.perform(MockMvcRequestBuilders
-                    .delete("/service/" + dto.getId())
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").exists())
-                    .andExpect(jsonPath("$.name").isNotEmpty())
-                    .andExpect(jsonPath("$.name", is(dto.getName())))
-                    .andDo(print());
-        } catch (Exception e) {
-            fail(e);
-        }
-
-        // verify
-        verify(logServiceService, times(1)).deleteLogServiceById(anyLong());
-    }
-
     /* ****************************************************************************************************************
-     * NEGATIV TESTS
+     * NEGATIVE TESTS
      * ****************************************************************************************************************/
 
     @Test
@@ -183,68 +138,6 @@ class LogServiceControllerTest extends ControllerTest {
 
         // verify
         verify(logServiceService, times(1)).getLogServiceById(dto.getId());
-    }
-
-    @Test
-    void testDeleteNonExistingColumnComponent() {
-        // prepare
-        LogServiceDTO dto = new LogServiceDTO();
-        dto.setId(NON_EXISTING_ID);
-        dto.setName("Test1");
-
-        String exceptionMessage = "Could not delete id: " + dto.getId();
-
-        doThrow(new RecordNotFoundException(exceptionMessage)).when(logServiceService).deleteLogServiceById(dto.getId());
-
-        // execute
-        try {
-            mockMvc.perform(MockMvcRequestBuilders
-                    .delete("/service/" + dto.getId())
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$").exists())
-                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.RECORD_NOT_FOUND_MESSAGE)))
-                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.details.[0]", is(exceptionMessage)))
-                    .andDo(print());
-        } catch (Exception e) {
-            fail(e);
-        }
-
-        // verify
-        verify(logServiceService, times(1)).deleteLogServiceById(dto.getId());
-    }
-
-    @Test
-    void testCreateLogServiceWithCorruptedJSON() {
-        //prepare
-        String content = loadResourceContent("LogService/testCreateLogServiceWithCorruptedJSON.json");
-
-        doNothing().when(logServiceService).createLogService(any());
-
-        //execute
-        try {
-            mockMvc.perform(MockMvcRequestBuilders
-                    .post("/service/")
-                    .content(content)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$").exists())
-                    .andExpect(jsonPath("$.message", is(ApiExceptionHandler.METHOD_ARGUMENT_NOT_VALID_MESSAGE)))
-                    .andExpect(jsonPath("$.details.[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.details.[*]", containsInAnyOrder(
-                            LogServiceDTO.LOG_DIRECTORY_VALIDATION_MESSAGE,
-                            LogServiceDTO.NAME_VALIDATION_MESSAGE,
-                            LogServiceDTO.LOG_CONFIG_VALIDATION_MESSAGE,
-                            LogServiceDTO.LOCATION_VALIDATION_MESSAGE
-                    )))
-                    .andDo(print());
-        } catch (Exception e) {
-            fail(e);
-        }
-
-        //verify
-        verify(logServiceService, times(0)).createLogService(any());
     }
 
 }

@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
+import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
@@ -18,17 +19,25 @@ import java.util.stream.Collectors;
 import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogService;
 import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogServiceToDTO;
 
+/**
+ * Perform CRUD operations for the log services.
+ */
+@RequiredArgsConstructor
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class LogServiceService {
 
     private final LogServiceRepository logServiceRepository;
     private final LogConfigRepository logConfigRepository;
 
+    /**
+     * Saves a new {@link LogService} to the database.
+     * @param logServiceDTO to be created.
+     * @throws RecordNotFoundException when the provided {@link LogConfigDTO} for this {@link LogServiceDTO} does not exist.
+     */
     public void createLogService(LogServiceDTO logServiceDTO) {
         Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(logServiceDTO.getLogConfig());
-        if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException(logServiceDTO.getLogConfig());
+        if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException("Could not create log service. Log config " + logServiceDTO.getLogConfig() + " does not exist.");
 
         LogService service = mapDTOToLogService(logServiceDTO);
         service.setLogConfig(optionalLogConfig.get());
@@ -36,8 +45,8 @@ public class LogServiceService {
     }
 
     /**
-     * Returns all LogServices.
-     * @return list of {@link LogServiceDTO}
+     * Returns a transformed list of all {@link LogService}.
+     * @return a list of {@link LogServiceDTO}
      */
     public Set<LogServiceDTO> getAllLogServices() {
         return logServiceRepository
@@ -48,25 +57,27 @@ public class LogServiceService {
     }
 
     /**
-     * Get a {@link LogService} by it's id
+     * Returns a transformed {@link LogService}
      * @param id of the {@link LogService}
-     * @return the logservice or {@link RecordNotFoundException} when the logservice is not existent
+     * @return a {@link LogServiceDTO}
+     * @throws RecordNotFoundException when the provided id does not exist.
      */
     public LogServiceDTO getLogServiceById(long id) {
         Optional<LogService> logService = logServiceRepository.findById(id);
-        if(logService.isEmpty()) throw new RecordNotFoundException(String.valueOf(id));
+        if(logService.isEmpty()) throw new RecordNotFoundException("Could not find log service with id " + id);
 
         return mapLogServiceToDTO(logService.get());
     }
     
     /**
-     * Deletes a {@link LogService} by it's id
+     * Deletes a {@link LogService} from the database.
      * @param id of the {@link LogService}
-     * @return deleted {@link LogService}
+     * @return the deleted {@link LogServiceDTO}
+     * @throws RecordNotFoundException when the provided id does not exist.
      */
     public LogServiceDTO deleteLogServiceById(long id) {
         Optional<LogService> optionalLogService = logServiceRepository.findById(id);
-        if (optionalLogService.isEmpty()) throw new RecordNotFoundException(String.valueOf(id));
+        if (optionalLogService.isEmpty()) throw new RecordNotFoundException("Could not delete non existing log service with id " + id);
 
         LogService logService = optionalLogService.get();
         LogConfig logConfig = logService.getLogConfig();
@@ -76,4 +87,5 @@ public class LogServiceService {
         logService.setLogConfig(logConfig);
         return mapLogServiceToDTO(optionalLogService.get());
     }
+
 }

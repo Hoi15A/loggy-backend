@@ -28,20 +28,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-@Service
+/**
+ * Performs a query operation for a specific service.
+ */
 @RequiredArgsConstructor
+@Setter
+@Service
 public class QueryService {
 
-    @Setter
+    private final Logger logger = Logger.getLogger(QueryService.class.getName());
+
     @NonNull
     private LogServiceRepository logServiceRepository;
 
-    private final Logger logger = Logger.getLogger(QueryService.class.getName());
-    @Setter
     private LogParser logParser = new LogParser();
 
     public TableDTO getSampleLogsByQuery() {
-
+        // todo : to be removed
         List<ColumnDTO> tableData = new ArrayList<>();
         List<HeaderDTO> headers = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -68,14 +71,16 @@ public class QueryService {
     }
 
     /**
-     * Runs a query on a service and returns all matched lines
-     *
-     * @param serviceId          log service id
-     * @param queryComponentDTOS TODO
-     * @return rows
+     * Runs a query on a service and returns all matched lines.
+     * @param serviceId to be queried on.
+     * @param queries to be applied on the log files.
+     * @throws RecordNotFoundException when the service does not exist.
+     * @throws FileNotFoundException when the log file does not exist.
+     * @throws FileReadException when there were complication while reading the log file.
+     * @return List<String[]>
      */
-    public List<String[]> runQueryForService(long serviceId, List<QueryComponentDTO> queryComponentDTOS) {
-        List<QueryComponent> queryComponents = queryComponentDTOS.stream()
+    public List<String[]> runQueryForService(long serviceId, List<QueryComponentDTO> queries) {
+        List<QueryComponent> queryComponents = queries.stream()
                 .map(DTOMapper::mapDTOToQueryComponent)
                 .collect(Collectors.toList());
 
@@ -113,4 +118,5 @@ public class QueryService {
         // TODO: Create Factory for Criteria
         return new RegexCriteria("<regex here>");
     }
+
 }

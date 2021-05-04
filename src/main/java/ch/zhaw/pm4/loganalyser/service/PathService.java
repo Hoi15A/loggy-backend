@@ -2,7 +2,8 @@ package ch.zhaw.pm4.loganalyser.service;
 
 import ch.zhaw.pm4.loganalyser.exception.PathNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.FileTreeDTO;
-import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,16 +17,44 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Service
-@Data
-public class PathService {
-    private int fileIdCounter;
+/**
+ * Provides information about the filesystem.
+ */
 
-    private Function<File, FileTreeDTO> mapFileToFileTreeDTO = file ->
-            new FileTreeDTO(++fileIdCounter, file.getName(), file.getPath(), new ArrayList<>());
+@NoArgsConstructor
+@Setter
+@Service
+public class PathService {
 
     private FileSystem fileSystem = FileSystems.getDefault();
 
+    private int fileIdCounter;
+
+    private final Function<File, FileTreeDTO> mapFileToFileTreeDTO = file -> FileTreeDTO.builder()
+            .id(++fileIdCounter)
+            .name(file.getName())
+            .fullpath(file.getPath())
+            .children(new ArrayList<>())
+            .build();
+
+    /**
+     * Returns a list of all root folders on the filesystem.
+     * @return List<FileTreeDTO>
+     */
+    public List<FileTreeDTO> getRootFolder() {
+        fileIdCounter = 0;
+        return StreamSupport.stream(fileSystem.getRootDirectories().spliterator(), false)
+                .filter(Objects::nonNull)
+                .map(file -> getContentOfFolder(file.toString()))
+                .collect(ArrayList::new, List::addAll, List::addAll);
+    }
+
+    /**
+     * Returns a list of all sub folders (not recursive) from a provided directory.
+     * @param folder to list its sub folders
+     * @return List<FileTreeDTO>
+     * @throws PathNotFoundException when the directory does not exist.
+     */
     public List<FileTreeDTO> getContentOfFolder(String folder) {
         File folderFile = fileSystem.getPath(folder).toFile();
         if (!folderFile.exists()) throw new PathNotFoundException("The provided path (" + folder + ") does not exist");
@@ -34,13 +63,6 @@ public class PathService {
                 .filter(File::isDirectory)
                 .map(mapFileToFileTreeDTO)
                 .collect(Collectors.toList());
-    }
-    public List<FileTreeDTO> getRootFolder() {
-        fileIdCounter = 0;
-        return StreamSupport.stream(fileSystem.getRootDirectories().spliterator(), false)
-                .filter(Objects::nonNull)
-                .map(file -> getContentOfFolder(file.toString()))
-                .collect(ArrayList::new, List::addAll, List::addAll);
     }
 
 }

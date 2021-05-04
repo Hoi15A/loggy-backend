@@ -6,7 +6,14 @@ import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,18 +42,17 @@ class LogConfigTest {
         String filename = "nginx-access.log";
         List<String> lines = readLogLines(filename);
         // register columns
-        List<ColumnComponent> components = new ArrayList<>();
         int i = 0;
         Map<Integer, ColumnComponent> componentMap = new TreeMap<>();
-        componentMap.put(++i, new ColumnComponent(1L, "Host", ColumnType.IP, "(\\d{1,3}\\.){3}\\d{1,3}"));
-        componentMap.put(++i, new ColumnComponent(9L, "Custom Seperator", ColumnType.TEXT, "-"));
-        componentMap.put(++i, new ColumnComponent(2L, "User", ColumnType.TEXT, "-|[a-zA-Z]+"));
-        componentMap.put(++i, new ColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
-        componentMap.put(++i, new ColumnComponent(4L, "Request", ColumnType.TEXT, "\\\".+\\\""));
-        componentMap.put(++i, new ColumnComponent(5L, "Response Code", ColumnType.INTEGER, "\\d{1,3}"));
-        componentMap.put(++i, new ColumnComponent(6L, "Byte Size", ColumnType.INTEGER, "\\d+"));
-        componentMap.put(++i, new ColumnComponent(7L, "Something", ColumnType.TEXT, "\\\".+\\\""));
-        componentMap.put(++i, new ColumnComponent(8L, "Request Client", ColumnType.TEXT, "\\\".+\\\""));
+        componentMap.put(++i, createColumnComponent(1L, "Host", ColumnType.IP, "(\\d{1,3}\\.){3}\\d{1,3}"));
+        componentMap.put(++i, createColumnComponent(9L, "Custom Seperator", ColumnType.TEXT, "-"));
+        componentMap.put(++i, createColumnComponent(2L, "User", ColumnType.TEXT, "-|[a-zA-Z]+"));
+        componentMap.put(++i, createColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
+        componentMap.put(++i, createColumnComponent(4L, "Request", ColumnType.TEXT, "\\\".+\\\""));
+        componentMap.put(++i, createColumnComponent(5L, "Response Code", ColumnType.INTEGER, "\\d{1,3}"));
+        componentMap.put(++i, createColumnComponent(6L, "Byte Size", ColumnType.INTEGER, "\\d+"));
+        componentMap.put(++i, createColumnComponent(7L, "Something", ColumnType.TEXT, "\\\".+\\\""));
+        componentMap.put(++i, createColumnComponent(8L, "Request Client", ColumnType.TEXT, "\\\".+\\\""));
 
         //register config
         LogConfig config = new LogConfig();
@@ -69,6 +75,15 @@ class LogConfigTest {
                 System.out.println(Arrays.toString(values));
             }
         }
+    }
+
+    private ColumnComponent createColumnComponent(long id, String name, ColumnType type, String format) {
+        return ColumnComponent.builder()
+                .id(id)
+                .name(name)
+                .columnType(type)
+                .format(format)
+                .build();
     }
 
     private String concatenateRegex(LogConfig config) {

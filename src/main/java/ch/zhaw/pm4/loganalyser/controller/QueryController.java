@@ -1,5 +1,8 @@
 package ch.zhaw.pm4.loganalyser.controller;
 
+import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
+import ch.zhaw.pm4.loganalyser.exception.FileReadException;
+import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
@@ -10,8 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController
+/**
+ * API controller to query log files for a given service.
+ */
 @RequiredArgsConstructor
+@RestController
 @RequestMapping("/query")
 public class QueryController {
 
@@ -19,19 +25,24 @@ public class QueryController {
 
     @GetMapping("sample")
     public ResponseEntity<TableDTO> getSampleQuery() {
+        // TODO: to be removed
         return ResponseEntity.ok(queryService.getSampleLogsByQuery());
     }
 
     /**
-     * Runs a query for a certain log service
-     *
-     * @param logServiceId
-     * @return
+     * Runs a query for a certain log service.
+     * @param logServiceId of the log service.
+     * @param queries to be applied as a filter on the log files.
+     * @return {@link ResponseEntity} with status 200 and the filtered content inside the body.
+     * @throws RecordNotFoundException when the service does not exist.
+     * @throws FileNotFoundException when the log file does not exist.
+     * @throws FileReadException when there were complication while reading the log file.
      */
     @PostMapping("{logServiceId}")
     public ResponseEntity<List<String[]>> getQueryForLogService(
             @PathVariable("logServiceId") final long logServiceId,
-            @Valid @RequestBody final List<QueryComponentDTO> queryComponents) {
-        return ResponseEntity.ok(queryService.runQueryForService(logServiceId, queryComponents));
+            @Valid @RequestBody final List<QueryComponentDTO> queries) {
+        return ResponseEntity.ok(queryService.runQueryForService(logServiceId, queries));
     }
+
 }

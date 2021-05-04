@@ -15,11 +15,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,7 +37,7 @@ class PathControllerTest {
     MockMvc mockMvc;
 
     /* ****************************************************************************************************************
-     * POSITIV TESTS
+     * POSITIVE TESTS
      * ****************************************************************************************************************/
 
     @Test
@@ -40,9 +45,9 @@ class PathControllerTest {
         // prepare
         int i = 0;
         List<FileTreeDTO> fileTreeDTOS = new ArrayList<>();
-        fileTreeDTOS.add(new FileTreeDTO(++i, "var", "/var", new ArrayList<>()));
-        fileTreeDTOS.add(new FileTreeDTO(++i, "home", "/home", new ArrayList<>()));
-        fileTreeDTOS.add(new FileTreeDTO(++i, "etc", "/etc", new ArrayList<>()));
+        fileTreeDTOS.add(createFileTreeDTO(++i, "var", "/var"));
+        fileTreeDTOS.add(createFileTreeDTO(++i, "home", "/home"));
+        fileTreeDTOS.add(createFileTreeDTO(++i, "etc", "/etc"));
 
         when(pathService.getRootFolder()).thenReturn(fileTreeDTOS);
 
@@ -87,9 +92,9 @@ class PathControllerTest {
         String rootFolder = "/var";
         int i = 4;
         List<FileTreeDTO> fileTreeDTOS = new ArrayList<>();
-        fileTreeDTOS.add(new FileTreeDTO(++i, "log", rootFolder + "/log", new ArrayList<>()));
-        fileTreeDTOS.add(new FileTreeDTO(++i, "www", rootFolder + "/www", new ArrayList<>()));
-        fileTreeDTOS.add(new FileTreeDTO(++i, "xyz", rootFolder + "/xyz", new ArrayList<>()));
+        fileTreeDTOS.add(createFileTreeDTO(++i, "log", rootFolder + "/log"));
+        fileTreeDTOS.add(createFileTreeDTO(++i, "www", rootFolder + "/www"));
+        fileTreeDTOS.add(createFileTreeDTO(++i, "xyz", rootFolder + "/xyz"));
         
         when(pathService.getContentOfFolder(rootFolder)).thenReturn(fileTreeDTOS);
 
@@ -128,8 +133,17 @@ class PathControllerTest {
         verify(pathService, times(1)).getContentOfFolder(rootFolder);
     }
 
+    private FileTreeDTO createFileTreeDTO(int id, String name, String path) {
+        return FileTreeDTO.builder()
+                .id(id)
+                .name(name)
+                .fullpath(path)
+                .children(new ArrayList<>())
+                .build();
+    }
+
     /* ****************************************************************************************************************
-     * NEGATIV TESTS
+     * NEGATIVE TESTS
      * ****************************************************************************************************************/
 
     @Test

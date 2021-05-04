@@ -4,16 +4,34 @@ import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class collects all log files for a given {@link LogService}.
+ * It filters and parses the necessary files / file contents and provides them for further processing.
+ */
 public class LogParser {
 
     private Map<Integer, ColumnComponent> sortedColumns;
 
+    /**
+     * Reads log files from {@link LogService}, then filters and parses them.
+     * @param service to be analyzed
+     * @return the parsed content of the log files.
+     * @throws IOException when either a file is not found or there were complications while reading the file.
+     */
     public List<String[]> read(LogService service) throws IOException {
         Path logDir = Path.of(service.getLogDirectory());
 
@@ -39,7 +57,7 @@ public class LogParser {
      * @param logfile File that should be parsed
      * @param config Config to apply while parsing
      * @return Parsed logs
-     * @throws FileNotFoundException If file could not be found.
+     * @throws IOException If file could not be found or there were complications while reading the file.
      */
     private List<String[]> parse(File logfile, LogConfig config) throws IOException {
         List<String[]> rows = new ArrayList<>();
@@ -54,7 +72,7 @@ public class LogParser {
                         values.add(m.group(convertNameForCapturingGroup(c)));
                     }
                     Collections.reverse(values);
-                    rows.add(values.stream().toArray(String[]::new));
+                    rows.add(values.toArray(String[]::new));
                 }
             }
         }
