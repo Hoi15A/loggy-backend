@@ -17,8 +17,8 @@ public class CriteriaFactory {
             case EXACT: criteria = new ExactCriteria(queryComponent.getExact());
                 break;
 
-            case RANGE:
-                throw new UnsupportedOperationException("RangeCriteria not implemented yet");
+            case RANGE: criteria = new RangeCriteria(queryComponent.getFrom(), queryComponent.getTo());
+                break;
 
             case CONTAINS: criteria = new ContainsCriteria(queryComponent.getContains());
                 break;
