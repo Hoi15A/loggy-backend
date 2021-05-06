@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.test.query.criteria;
 
+import ch.zhaw.pm4.loganalyser.exception.InvalidColumnTypeException;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.query.criteria.RangeCriteria;
 import org.junit.jupiter.api.Test;
@@ -46,8 +47,14 @@ class RangeCriteriaTest {
     }
 
     @Test
-    void testRangeCriteria_ColumnTypeInvalid() {
+    void testRangeCriteria_UnsupportedColumnType() {
+        RangeCriteria criteria = new RangeCriteria(VALID_IP_FROM, VALID_IP_TO);
+        criteria.setType(ColumnType.TEXT);
 
+        List<String[]> list = new ArrayList<>();
+        list.add(new String[] { VALID_IP_FROM, COLUMN_DUMMY });
+
+        assertThrows(InvalidColumnTypeException.class, () -> criteria.apply(list, 0));
     }
 
     @Test
