@@ -19,5 +19,5 @@ public class ContainsCriteria implements Criteria {
                 .filter(row -> row[columnIndex].contains(contains))
                 .collect(Collectors.toList());
     }
-    
+
 }
