@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.test.query.criteria;
 
+import ch.zhaw.pm4.loganalyser.exception.InvalidInputException;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.query.criteria.RangeCriteria;
 import org.junit.jupiter.api.Test;
@@ -134,7 +135,7 @@ class RangeCriteriaNumberTest {
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_INTEGER_IN_RANGE, COLUMN_DUMMY });
 
-        assertThrows(NumberFormatException.class, () -> criteria.apply(list, 0));
+        assertThrows(InvalidInputException.class, () -> criteria.apply(list, 0));
     }
 
     @Test
@@ -145,7 +146,7 @@ class RangeCriteriaNumberTest {
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_INTEGER_IN_RANGE, COLUMN_DUMMY });
 
-        assertThrows(NumberFormatException.class, () -> criteria.apply(list, 0));
+        assertThrows(InvalidInputException.class, () -> criteria.apply(list, 0));
     }
 
     @Test
@@ -156,7 +157,7 @@ class RangeCriteriaNumberTest {
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_INTEGER_IN_RANGE, COLUMN_DUMMY });
 
-        assertThrows(NumberFormatException.class, () -> criteria.apply(list, 0));
+        assertThrows(InvalidInputException.class, () -> criteria.apply(list, 0));
     }
 
     @Test
@@ -167,7 +168,7 @@ class RangeCriteriaNumberTest {
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_INTEGER_IN_RANGE, COLUMN_DUMMY });
 
-        assertThrows(NumberFormatException.class, () -> criteria.apply(list, 0));
+        assertThrows(InvalidInputException.class, () -> criteria.apply(list, 0));
     }
 
 }

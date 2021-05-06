@@ -21,6 +21,7 @@ public class CriteriaFactory {
                 break;
 
             case RANGE: criteria = new RangeCriteria(queryComponent.getFrom(), queryComponent.getTo());
+            // TODO: criteria needs columnType
                 break;
 
             case CONTAINS: criteria = new ContainsCriteria(queryComponent.getContains());

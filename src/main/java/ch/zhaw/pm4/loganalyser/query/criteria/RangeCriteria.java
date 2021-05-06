@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.query.criteria;
 
 import ch.zhaw.pm4.loganalyser.exception.InvalidColumnTypeException;
+import ch.zhaw.pm4.loganalyser.exception.InvalidInputException;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.util.IP;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +9,12 @@ import lombok.Setter;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -23,6 +24,8 @@ import java.util.logging.Logger;
 public class RangeCriteria implements Criteria {
 
     private final Logger logger = Logger.getLogger(RangeCriteria.class.getName());
+    private static final String VALID_IP_REGEX = "(1?\\d{1,2}\\.){3}(1?\\d{1,2})"  // 0.0.0.0 - 199.199.199.199
+                                                + "|(2[0-5]{2}\\.){3}(2[0-5]{2})"; // 200.200.200.200 - 255.255.255.255
 
     @Setter
     private ColumnType type = null;
@@ -68,26 +71,63 @@ public class RangeCriteria implements Criteria {
         return filtered;
     }
 
-    private boolean isInNumberRange(String str) {
-        var input = Double.parseDouble(str);
-        var fromInt = Double.parseDouble(from);
-        var toInt = Double.parseDouble(to);
+    /*
+     * NUMBER
+     */
 
-        return input >= fromInt && input <= toInt;
+    private boolean isInNumberRange(String str) {
+        if(str == null) return false;
+
+        double input;
+
+        try {
+            input = Double.parseDouble(str);
+        }  catch (Exception e) {
+            return false;
+        }
+
+        var fromNumber = parseNumber(from, "from");
+        var toNumber = parseNumber(to, "to");
+
+        return isInputAfterNumber(input, fromNumber) && isInputBeforeNumber(input, toNumber);
     }
+
+    private Double parseNumber(String str, String message) {
+        try {
+            if (str != null) return Double.parseDouble(str);
+        } catch (Exception e) {
+            throw new InvalidInputException(String.format("Unable to parse '%s' value as a number", message));
+        }
+        return null;
+    }
+
+    private boolean isInputAfterNumber(Double input, Double from) {
+        if (from == null) return true;
+        return input >= from;
+    }
+
+    private boolean isInputBeforeNumber(Double input, Double to) {
+        if (to == null) return true;
+        return input <= to;
+    }
+
+    /*
+     * DATE
+     */
 
     private boolean isInDateRange(String str) {
         var isInRange = false;
 
         for (String formatString : dateFormatStrings) {
             try {
-                var format = new SimpleDateFormat(formatString);
-                var date = format.parse(str);
-                var fromDate = format.parse(from);
-                var toDate = format.parse(to);
-                isInRange = date.compareTo(fromDate) > 0 && date.compareTo(toDate) < 0;
+                var format = DateTimeFormatter.ofPattern(formatString);
+                var date = parseDate(str, format);
+                var fromDate = parseDate(from, format);
+                var toDate = parseDate(to, format);
+
+                isInRange = date != null && isInputAfterDate(date, fromDate) && isInputBeforeDate(date, toDate);
                 break;
-            } catch (ParseException ignored) {
+            } catch (DateTimeParseException ignored) {
                logger.info("Attempted to parse date and failed");
             }
         }
@@ -95,19 +135,65 @@ public class RangeCriteria implements Criteria {
         return isInRange;
     }
 
+    private LocalDateTime parseDate(String str, DateTimeFormatter format) {
+        if (str != null) return LocalDateTime.parse(str, format);
+        return null;
+    }
+
+    private boolean isInputAfterDate(LocalDateTime input, LocalDateTime from) {
+        if (from == null) return true;
+        return input.isAfter(from);
+    }
+
+    private boolean isInputBeforeDate(LocalDateTime input, LocalDateTime to) {
+        if (to == null) return true;
+        return input.isBefore(to);
+    }
+
+    /*
+     * IP
+     */
+
     private boolean isIPInRange(String str) {
+        if (str == null) return false;
         var isInRange = false;
 
-        try {
-            var inputIP = IP.ipToLong(InetAddress.getByName(str));
-            var fromIP = IP.ipToLong(InetAddress.getByName(from));
-            var toIP = IP.ipToLong(InetAddress.getByName(to));
+        long inputIP;
 
-            isInRange = inputIP >= fromIP && inputIP <= toIP;
+        try {
+            inputIP = IP.ipToLong(InetAddress.getByName(str));
         } catch (UnknownHostException e) {
-            logger.log(Level.WARNING, "Unable to convert one or more IP(s) to string, ignoring.", e);
+            return false;
         }
 
+        var fromIP = parseIP(from, "from");
+        var toIP = parseIP(to, "to");
+
+        isInRange = isInputAfterIP(inputIP, fromIP) && isInputBeforeIP(inputIP, toIP);
         return isInRange;
     }
+
+    private Long parseIP(String str, String message) {
+        var errMsg = "Unable to parse '" + message + "' value as an ip";
+        try {
+            if (str != null) {
+                if (!str.matches(VALID_IP_REGEX)) throw new InvalidInputException(errMsg);
+                return IP.ipToLong(InetAddress.getByName(str));
+            }
+        } catch (UnknownHostException e) {
+            throw new InvalidInputException(errMsg);
+        }
+        return null;
+    }
+
+    private boolean isInputAfterIP(Long input, Long from) {
+        if (from == null) return true;
+        return input >= from;
+    }
+
+    private boolean isInputBeforeIP(Long input, Long to) {
+        if (to == null) return true;
+        return input <= to;
+    }
+
 }
