@@ -27,6 +27,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "Validation failed";
     public static final String PATH_NOT_FOUND_MESSAGE = "The path has not been found";
     public static final String INVALID_COLUMN_TYPE_MESSAGE = "The defined column type is invalid";
+    public static final String INVALID_INPUT_MESSAGE = "The provided input is invalid";
     public static final String EXACTCRITERIA_IS_NULL_MESSAGE = "The Exact searched String is Null";
 
     /**
@@ -72,7 +73,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity<Object>
      */
     @ExceptionHandler(PathNotFoundException.class)
-    public ResponseEntity<Object> handlePathNotFoundExceptionException(PathNotFoundException ex, WebRequest request) {
+    public ResponseEntity<Object> handlePathNotFoundException(PathNotFoundException ex, WebRequest request) {
         return handleCustomException(HttpStatus.NOT_FOUND, PATH_NOT_FOUND_MESSAGE, ex);
     }
 
@@ -83,7 +84,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity<Object>
      */
     @ExceptionHandler(ExactCriteriaIsNullException.class)
-    public ResponseEntity<Object> handleExactCriteriaIsNullExceptionException(ExactCriteriaIsNullException ex, WebRequest request) {
+    public ResponseEntity<Object> handleExactCriteriaIsNullException(ExactCriteriaIsNullException ex, WebRequest request) {
         return handleCustomException(HttpStatus.BAD_REQUEST, EXACTCRITERIA_IS_NULL_MESSAGE, ex);
     }
 
@@ -95,8 +96,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity<Object>
      */
     @ExceptionHandler(InvalidColumnTypeException.class)
-    public ResponseEntity<Object> handlePathNotFoundExceptionException(InvalidColumnTypeException ex, WebRequest request) {
+    public ResponseEntity<Object> handlePathNotFoundException(InvalidColumnTypeException ex, WebRequest request) {
         return handleCustomException(HttpStatus.BAD_REQUEST, INVALID_COLUMN_TYPE_MESSAGE, ex);
+    }
+
+    /**
+     * Catches a {@link InvalidInputException} and returns it with
+     * additional details what was invalid.
+     * @param ex {@link InvalidInputException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity<Object>}
+     */
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<Object> handleInvalidInputException(InvalidInputException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.BAD_REQUEST, INVALID_INPUT_MESSAGE, ex);
     }
 
     private ResponseEntity<Object> handleCustomException(HttpStatus httpStatus, String errorMessage, Exception ex) {
