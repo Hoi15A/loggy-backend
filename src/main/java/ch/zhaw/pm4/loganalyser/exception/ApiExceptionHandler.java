@@ -27,6 +27,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String METHOD_ARGUMENT_NOT_VALID_MESSAGE = "Validation failed";
     public static final String PATH_NOT_FOUND_MESSAGE = "The path has not been found";
     public static final String INVALID_COLUMN_TYPE_MESSAGE = "The defined column type is invalid";
+    public static final String EXACTCRITERIA_IS_NULL_MESSAGE = "The Exact searched String is Null";
 
     /**
      * Catches all {@link Exception} and returns it with the information what went wrong.
@@ -73,6 +74,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(PathNotFoundException.class)
     public ResponseEntity<Object> handlePathNotFoundExceptionException(PathNotFoundException ex, WebRequest request) {
         return handleCustomException(HttpStatus.NOT_FOUND, PATH_NOT_FOUND_MESSAGE, ex);
+    }
+
+    /**
+     * Catches a {@link ExactCriteriaIsNullException} and returns it
+     * @param ex {@link ExactCriteriaIsNullException}
+     * @param request {@link WebRequest}
+     * @return ResponseEntity<Object>
+     */
+    @ExceptionHandler(ExactCriteriaIsNullException.class)
+    public ResponseEntity<Object> handleExactCriteriaIsNullExceptionException(ExactCriteriaIsNullException ex, WebRequest request) {
+        return handleCustomException(HttpStatus.BAD_REQUEST, EXACTCRITERIA_IS_NULL_MESSAGE, ex);
     }
 
     /**

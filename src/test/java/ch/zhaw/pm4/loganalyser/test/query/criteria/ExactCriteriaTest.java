@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.test.query.criteria;
 
+import ch.zhaw.pm4.loganalyser.exception.ExactCriteriaIsNullException;
 import ch.zhaw.pm4.loganalyser.query.criteria.ExactCriteria;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +70,7 @@ class ExactCriteriaTest {
         list.add(new String[] { VALID_EXACT, COLUMN_DUMMY });
         list.add(new String[] { VALID_EXACT, COLUMN_DUMMY });
 
-        assertThrows(NullPointerException.class, () -> criteria.apply(list, 0));
+        assertThrows(ExactCriteriaIsNullException.class, () -> criteria.apply(list, 0));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.query.criteria;
 
+import ch.zhaw.pm4.loganalyser.exception.ExactCriteriaIsNullException;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -15,9 +16,14 @@ public class ExactCriteria implements Criteria {
 
     @Override
     public List<String[]> apply(List<String[]> rows, int columnIndex) {
-        return rows.stream()
-                .filter(row -> row[columnIndex].equals(exact))
-                .collect(Collectors.toList());
+        if (exact == null) {
+            throw new ExactCriteriaIsNullException("Exact String is null");
+        }
+        else {
+            return rows.stream()
+                    .filter(row -> row[columnIndex].equals(exact))
+                    .collect(Collectors.toList());
+        }
     }
 
 }
