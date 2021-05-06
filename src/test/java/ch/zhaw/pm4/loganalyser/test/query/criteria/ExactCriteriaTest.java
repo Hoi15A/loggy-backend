@@ -61,7 +61,8 @@ class ExactCriteriaTest {
         assertThrows(NullPointerException.class, () -> criteria.apply(null, 0));
     }
 
-    @Test public void testExactCriteria_ContainsNull() {
+    @Test
+    void testExactCriteria_ContainsNull() {
         ExactCriteria criteria = new ExactCriteria(null);
 
         List<String[]> list = new ArrayList<>();
@@ -90,4 +91,5 @@ class ExactCriteriaTest {
 
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> criteria.apply(list, 2));
     }
+
 }
