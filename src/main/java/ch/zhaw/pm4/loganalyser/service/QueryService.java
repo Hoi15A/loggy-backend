@@ -3,7 +3,11 @@ package ch.zhaw.pm4.loganalyser.service;
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
-import ch.zhaw.pm4.loganalyser.model.dto.*;
+import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.ColumnDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.HeaderDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
@@ -67,13 +71,6 @@ public class QueryService {
         headers.add(new HeaderDTO("Message", "message"));
 
         return new TableDTO(headers, tableData);
-
-    }
-
-    private Map<Integer, ColumnComponent> sortComponents(Map<Integer, ColumnComponent> sortable) {
-        return sortable.entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, TreeMap::new));
     }
 
     /**
@@ -95,7 +92,7 @@ public class QueryService {
         try {
             var service = logService.get();
             List<String[]> logEntries = logParser.read(service);
-            Map<Integer, ColumnComponent> sortedComponents = sortComponents(service.getLogConfig().getColumnComponents());
+            Map<Integer, ColumnComponent> sortedComponents = new TreeMap<>(service.getLogConfig().getColumnComponents());
 
             for (QueryComponent component : queryComponents) {
                 int componentIndex = getComponentIndex(component, sortedComponents);
