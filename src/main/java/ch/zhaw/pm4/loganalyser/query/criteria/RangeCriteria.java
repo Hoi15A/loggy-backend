@@ -118,7 +118,7 @@ public class RangeCriteria implements Criteria {
             var toDate = parseDate(to, format);
 
             return date != null && isInputAfterDate(date, fromDate) && isInputBeforeDate(date, toDate);
-        } catch (DateTimeParseException ex) {
+        } catch (DateTimeParseException | IllegalArgumentException ex) {
             throw new InvalidInputException("Date format is not valid!");
         }
     }

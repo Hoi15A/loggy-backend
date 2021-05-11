@@ -37,11 +37,6 @@ class CriteriaFactoryTest {
         assertNotNull(CriteriaFactory.getCriteria(FilterType.CONTAINS, qc));
     }
 
-    @Test
-    void testGetCriteria_FilterType_Default_Case() {
-        // todo: nothing yet as default
-    }
-
     /* ****************************************************************************************************************
      * NEGATIVE TESTS
      * ****************************************************************************************************************/
