@@ -161,12 +161,12 @@ public class RangeCriteria implements Criteria {
 
     private boolean isInputAfterDate(LocalDateTime input, LocalDateTime from) {
         if (from == null) return true;
-        return input.isAfter(from);
+        return input.isAfter(from) || input.isEqual(from);
     }
 
     private boolean isInputBeforeDate(LocalDateTime input, LocalDateTime to) {
         if (to == null) return true;
-        return input.isBefore(to);
+        return input.isBefore(to) || input.isEqual(to);
     }
 
     /*
