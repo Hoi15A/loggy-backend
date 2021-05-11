@@ -123,9 +123,15 @@ public class DTOMapper {
                 .build();
     }
 
+    /**
+     * Map {@link QueryComponentDTO} to a {@link QueryComponent}
+     * @param queryComponentDTO to be mapped.
+     * @return {@link QueryComponent}
+     */
     public static QueryComponent mapDTOToQueryComponent(QueryComponentDTO queryComponentDTO) {
         return QueryComponent.builder()
                 .columnComponentId(queryComponentDTO.getColumnComponentId())
+                .filterType(queryComponentDTO.getFilterType())
                 .from(queryComponentDTO.getFrom())
                 .to(queryComponentDTO.getTo())
                 .regex(queryComponentDTO.getRegex())

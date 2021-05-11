@@ -119,6 +119,7 @@ public class RangeCriteria implements Criteria {
 
             return date != null && isInputAfterDate(date, fromDate) && isInputBeforeDate(date, toDate);
         } catch (DateTimeParseException | IllegalArgumentException ex) {
+            ex.printStackTrace();
             throw new InvalidInputException("Date format is not valid!");
         }
     }

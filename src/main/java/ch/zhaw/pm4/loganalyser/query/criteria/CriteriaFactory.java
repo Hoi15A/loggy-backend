@@ -37,7 +37,8 @@ public class CriteriaFactory {
 
     private Criteria createRangeCriteria(QueryComponent qc) {
         var columnComponent = qc.getColumnComponent();
-        if (columnComponent.getDateFormat().isBlank()) throw new InvalidInputException("To query a date range a date format must be set on the column component!");
+        if (columnComponent.getDateFormat() != null && columnComponent.getDateFormat().isBlank())
+            throw new InvalidInputException("To query a date range a date format must be set on the column component!");
 
         var criteria = new RangeCriteria(qc.getFrom(), qc.getTo());
         criteria.setType(columnComponent.getColumnType());
