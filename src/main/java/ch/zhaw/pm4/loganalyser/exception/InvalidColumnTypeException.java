@@ -6,6 +6,7 @@ package ch.zhaw.pm4.loganalyser.exception;
 public class InvalidColumnTypeException extends RuntimeException {
     /**
      * Creates a new InvalidColumnTypeException
+     * @param message Error Message
      */
     public InvalidColumnTypeException(String message) {
         super(message);
