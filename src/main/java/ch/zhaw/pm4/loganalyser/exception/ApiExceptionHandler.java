@@ -96,7 +96,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity<Object>
      */
     @ExceptionHandler(InvalidColumnTypeException.class)
-    public ResponseEntity<Object> handlePathNotFoundException(InvalidColumnTypeException ex, WebRequest request) {
+    public ResponseEntity<Object> handleInvalidColumnTypeException(InvalidColumnTypeException ex, WebRequest request) {
         return handleCustomException(HttpStatus.BAD_REQUEST, INVALID_COLUMN_TYPE_MESSAGE, ex);
     }
 
