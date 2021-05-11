@@ -231,11 +231,6 @@ class QueryServiceTest {
 
     @Test
     void testRunQueryForService_range() {
-        // -- list of queries
-        // -- dateformat für daterange
-        // -- ip range
-        // -- number range (int and double)
-
         // prepare
         QueryComponentDTO ipRange = QueryComponentDTO.builder()
                 .columnComponentId(0L)
