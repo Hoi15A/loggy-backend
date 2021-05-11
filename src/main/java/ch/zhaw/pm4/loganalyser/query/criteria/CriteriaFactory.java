@@ -43,7 +43,7 @@ public class CriteriaFactory {
         var criteria = new RangeCriteria(qc.getFrom(), qc.getTo());
         criteria.setType(columnComponent.getColumnType());
         criteria.setDateFormat(columnComponent.getDateFormat());
-
+        criteria.setOnlyDateInFormat(true); // todo: get from frontend
         return criteria;
     }
 

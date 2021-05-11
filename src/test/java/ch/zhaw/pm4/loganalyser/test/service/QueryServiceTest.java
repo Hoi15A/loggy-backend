@@ -247,8 +247,8 @@ class QueryServiceTest {
         QueryComponentDTO dateRange = QueryComponentDTO.builder()
                 .columnComponentId(1L)
                 .filterType(FilterType.RANGE)
-                .from("11/05/2021")
-                .to("13/05/2021")
+                .from("10/05/2021")
+                .to("14/05/2021")
                 .build();
 
         QueryComponentDTO doubleRange = QueryComponentDTO.builder()
@@ -283,13 +283,13 @@ class QueryServiceTest {
         // execute
         List<String[]> ipResult = queryService.runQueryForService(SERVICE_ID, List.of(ipRange));
         // todo: fix date range test
-        //List<String[]> dateResult = queryService.runQueryForService(SERVICE_ID, List.of(dateRange));
+        List<String[]> dateResult = queryService.runQueryForService(SERVICE_ID, List.of(dateRange));
         List<String[]> doubleResult = queryService.runQueryForService(SERVICE_ID, List.of(doubleRange));
         List<String[]> integerResult = queryService.runQueryForService(SERVICE_ID, List.of(integerRange));
 
         // verify
         verifyRange(ipResult, ipFiltered);
-        //verifyRange(dateResult, dateFiltered);
+        verifyRange(dateResult, dateFiltered);
         verifyRange(doubleResult, doubleFiltered);
         verifyRange(integerResult, integerFiltered);
     }
