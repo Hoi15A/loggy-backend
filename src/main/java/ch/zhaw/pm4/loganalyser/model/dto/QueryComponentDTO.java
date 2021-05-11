@@ -2,14 +2,15 @@ package ch.zhaw.pm4.loganalyser.model.dto;
 
 import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data @Builder
 public class QueryComponentDTO {
     @NotNull
     private long columnComponentId;
