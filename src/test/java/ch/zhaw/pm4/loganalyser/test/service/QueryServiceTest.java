@@ -11,22 +11,23 @@ import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -35,55 +36,103 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class QueryServiceTest {
 
-    final LogServiceRepository logServiceRepositoryMock = mock(LogServiceRepository.class);
-    final LogParser logParserMock = mock(LogParser.class);
+    private static final String IP_REGEX = "(1?\\d{1,2}\\.){3}(1?\\d{1,2})"  // 0.0.0.0 - 199.199.199.199
+            + "|(2[0-5]{2}\\.){3}(2[0-5]{2})"; // 200.200.200.200 - 255.255.255.255
 
-    @Autowired
-    QueryService queryService;
+    @Autowired QueryService queryService;
+
+    @Mock LogServiceRepository logServiceRepositoryMock;
+    @Mock LogParser logParserMock;
+    @Mock LogService logServiceMock;
+    @Mock LogConfig logConfigMock;
+
+    Map<Integer, ColumnComponent> columnComponentMap = new HashMap<>();
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        setUpColumnComponents();
+        when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.ofNullable(logServiceMock));
+        when(logServiceMock.getLogConfig()).thenReturn(logConfigMock);
+        when(logConfigMock.getColumnComponents()).thenReturn(columnComponentMap);
+    }
+
+    void setUpColumnComponents() {
+        ColumnComponent ipComp      = mock(ColumnComponent.class);
+        ColumnComponent dateComp    = mock(ColumnComponent.class);
+        ColumnComponent textComp    = mock(ColumnComponent.class);
+        ColumnComponent doubleComp  = mock(ColumnComponent.class);
+        ColumnComponent intComp     = mock(ColumnComponent.class);
+
+        // id
+        long l = 1;
+        when(ipComp.getId()).thenReturn(++l);
+        when(dateComp.getId()).thenReturn(++l);
+        when(textComp.getId()).thenReturn(++l);
+        when(doubleComp.getId()).thenReturn(++l);
+        when(intComp.getId()).thenReturn(++l);
+
+        // format
+        when(ipComp.getFormat()).thenReturn(IP_REGEX);
+        when(dateComp.getFormat()).thenReturn("(\\d{2}/){2}\\d{4}"); // dd/MM/yyyy
+        when(textComp.getFormat()).thenReturn(".+");
+        when(doubleComp.getFormat()).thenReturn("\\d+(\\.\\d+)?");
+        when(intComp.getFormat()).thenReturn("\\d+");
+
+        // date format
+        when(dateComp.getDateFormat()).thenReturn("dd/MM/yyyy");
+
+        // column type
+        when(ipComp.getColumnType()).thenReturn(ColumnType.IP);
+        when(dateComp.getColumnType()).thenReturn(ColumnType.DATE);
+        when(textComp.getColumnType()).thenReturn(ColumnType.TEXT);
+        when(doubleComp.getColumnType()).thenReturn(ColumnType.DOUBLE);
+        when(intComp.getColumnType()).thenReturn(ColumnType.INTEGER);
+
+        // collect
+        int i = 0;
+        columnComponentMap.put(++i, ipComp);
+        columnComponentMap.put(++i, dateComp);
+        columnComponentMap.put(++i, textComp);
+        columnComponentMap.put(++i, doubleComp);
+        columnComponentMap.put(++i, intComp);
+    }
 
     /* ****************************************************************************************************************
      * POSITIVE TESTS
      * ****************************************************************************************************************/
 
     @Test
-    void testRunQueryForService() {
-        ColumnComponent compare = ColumnComponent.builder()
-                .id(1)
-                .name("Host")
-                .format("ff")
-                .columnType(ColumnType.DATE)
-                .build();
+    void testRunQueryForService_exact() {
+        // -- list of queries
+        // -- exact
+    }
 
-        ColumnComponent compare2 = ColumnComponent.builder()
-                .id(1)
-                .name("User")
-                .format("ff")
-                .columnType(ColumnType.DATE)
-                .build();
+    @Test
+    void testRunQueryForService_contains() {
+        // -- list of queries
+        // -- contains
+    }
 
-        Map<Integer, ColumnComponent> components = new TreeMap<>();
-        components.put(2, compare);
-        components.put(1, compare2);
+    @Test
+    void testRunQueryForService_regex() {
+        // -- list of queries
+        // -- regex
+    }
 
-        Map<Integer, ColumnComponent> sortedComponents = sortComponents(components);
+    @Test
+    void testRunQueryForService_range() {
+        // -- list of queries
+        // -- dateformat für daterange
+        // -- ip range
+        // -- number range (int and double)
+    }
 
-        LogConfig logConfig = new LogConfig();
-        logConfig.setColumnComponents(sortedComponents);
+    @Test
+    void testRunQueryForService_multiple() {
+        // -- list of queries
 
-        LogService logService = new LogService();
-        logService.setId(1);
-        logService.setLogConfig(logConfig);
-
-        mapTest(components, sortedComponents);
-
-        queryService.setLogServiceRepository(logServiceRepositoryMock);
-        queryService.setLogParser(logParserMock);
-
-        when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.of(logService));
-
-        // todo: execute runQueryForService and split this test into multiple test cases
-
-        assertEquals((Optional.of(logService)).get().getLogConfig().getColumnComponents(), sortedComponents);
     }
 
     /* ****************************************************************************************************************
@@ -129,14 +178,6 @@ class QueryServiceTest {
 
         List<QueryComponentDTO> queries = new ArrayList<>();
         assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, queries));
-    }
-
-    private void mapTest(Map<Integer, ColumnComponent> providedMap, Map<Integer, ColumnComponent> receivedMap) {
-        assertEquals(providedMap.size(), receivedMap.size());
-        assertNotNull(providedMap, "Provided Map is null;");
-        assertNotNull(receivedMap, "Received Map is null;");
-        assertEquals(providedMap.size(), receivedMap.size(), "Size mismatch for maps;");
-        assertTrue(receivedMap.keySet().containsAll(providedMap.keySet()), "Missing keys in received map;");
     }
 
     private Map<Integer, ColumnComponent> sortComponents(Map<Integer, ColumnComponent> sortable) {
