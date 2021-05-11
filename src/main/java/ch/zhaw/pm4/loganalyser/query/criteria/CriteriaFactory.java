@@ -1,5 +1,6 @@
 package ch.zhaw.pm4.loganalyser.query.criteria;
 
+import ch.zhaw.pm4.loganalyser.exception.InvalidInputException;
 import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;
 import lombok.experimental.UtilityClass;
@@ -20,8 +21,7 @@ public class CriteriaFactory {
             case EXACT: criteria = new ExactCriteria(queryComponent.getExact());
                 break;
 
-            case RANGE: criteria = new RangeCriteria(queryComponent.getFrom(), queryComponent.getTo());
-            // TODO: criteria needs columnType
+            case RANGE: criteria = createRangeCriteria(queryComponent);
                 break;
 
             case CONTAINS: criteria = new ContainsCriteria(queryComponent.getContains());
@@ -31,6 +31,17 @@ public class CriteriaFactory {
                 criteria = null;
                 break;
         }
+
+        return criteria;
+    }
+
+    private Criteria createRangeCriteria(QueryComponent qc) {
+        var columnComponent = qc.getColumnComponent();
+        if (columnComponent.getDateFormat().isBlank()) throw new InvalidInputException("To query a date range a date format must be set on the column component!");
+
+        var criteria = new RangeCriteria(qc.getFrom(), qc.getTo());
+        criteria.setType(columnComponent.getColumnType());
+        criteria.setDateFormat(columnComponent.getDateFormat());
 
         return criteria;
     }

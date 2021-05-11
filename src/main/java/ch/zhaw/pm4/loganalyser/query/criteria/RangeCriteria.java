@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -29,15 +28,11 @@ public class RangeCriteria implements Criteria {
 
     @Setter
     private ColumnType type = null;
+    @Setter
+    private String dateFormat;
+
     private final String from;
     private final String to;
-
-    private final List<String> dateFormatStrings = Arrays.asList(
-            "dd/MMM/yyyy:HH:mm:ss Z",   // Nginx Format
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", // ISO 8601 UTC
-            "yyyy-MM-dd'T'HH:mm:ssZ",   // ISO 8601 non UTC
-            "DD-MM-YYYY"
-    );
 
     /**
      * Apply the RangeCriteria on a list
@@ -116,23 +111,26 @@ public class RangeCriteria implements Criteria {
      */
 
     private boolean isInDateRange(String str) {
-        var isInRange = false;
+        try {
+            var format = DateTimeFormatter.ofPattern(dateFormat);
+            LocalDateTime date = parseColumn(str, format);
+            var fromDate = parseDate(from, format);
+            var toDate = parseDate(to, format);
 
-        for (String formatString : dateFormatStrings) {
-            try {
-                var format = DateTimeFormatter.ofPattern(formatString);
-                var date = parseDate(str, format);
-                var fromDate = parseDate(from, format);
-                var toDate = parseDate(to, format);
-
-                isInRange = date != null && isInputAfterDate(date, fromDate) && isInputBeforeDate(date, toDate);
-                break;
-            } catch (DateTimeParseException ignored) {
-               logger.info("Attempted to parse date and failed");
-            }
+            return date != null && isInputAfterDate(date, fromDate) && isInputBeforeDate(date, toDate);
+        } catch (DateTimeParseException ex) {
+            throw new InvalidInputException("Date format is not valid!");
         }
+    }
 
-        return isInRange;
+    private LocalDateTime parseColumn(String str, DateTimeFormatter format) {
+        LocalDateTime date = null;
+        try {
+            date = parseDate(str, format);
+        } catch (DateTimeParseException ex) {
+            logger.info(str + " was invalid!");
+        }
+        return date;
     }
 
     private LocalDateTime parseDate(String str, DateTimeFormatter format) {

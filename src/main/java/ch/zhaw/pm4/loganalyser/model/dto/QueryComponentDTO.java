@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class QueryComponentDTO {
     @NotNull
-    private int id;
+    private long columnComponentId;
     private FilterType filterType;
     private String from;
     private String to;

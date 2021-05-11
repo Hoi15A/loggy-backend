@@ -100,6 +100,7 @@ public class DTOMapper {
     public static ColumnComponent mapDTOToColumnComponent(ColumnComponentDTO columnComponentDTO) {
         return ColumnComponent.builder()
                 .name(columnComponentDTO.getName())
+                .dateFormat(columnComponentDTO.getDateFormat())
                 .columnType(columnComponentDTO.getColumnType())
                 .id(columnComponentDTO.getId())
                 .format(columnComponentDTO.getFormat())
@@ -114,6 +115,7 @@ public class DTOMapper {
     public static ColumnComponentDTO mapColumnComponentToDTO(ColumnComponent columnComponent) {
         return ColumnComponentDTO.builder()
                 .columnType(columnComponent.getColumnType())
+                .dateFormat(columnComponent.getDateFormat())
                 .format(columnComponent.getFormat())
                 .filterTypes(columnComponent.getColumnType().getFilterTypes())
                 .id(columnComponent.getId())
@@ -123,7 +125,7 @@ public class DTOMapper {
 
     public static QueryComponent mapDTOToQueryComponent(QueryComponentDTO queryComponentDTO) {
         return QueryComponent.builder()
-                .id(queryComponentDTO.getId())
+                .columnComponentId(queryComponentDTO.getColumnComponentId())
                 .from(queryComponentDTO.getFrom())
                 .to(queryComponentDTO.getTo())
                 .regex(queryComponentDTO.getRegex())

@@ -1,10 +1,10 @@
 package ch.zhaw.pm4.loganalyser.test.query.criteria;
 
+import ch.zhaw.pm4.loganalyser.exception.InvalidInputException;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.query.criteria.RangeCriteria;
 import org.junit.jupiter.api.Test;
 
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class RangeCriteriaDateTest {
 
     private static final String COLUMN_DUMMY = "TEST";
+
+    private static final String VALID_FORMAT = "dd/MMM/yyyy:HH:mm:ss Z";
 
     private static final String VALID_DATE_FROM_ZONE1 = "01/Mar/2021:01:00:50 +0100";
     private static final String VALID_DATE_TO_ZONE1 = "30/Jun/2021:13:30:50 +0100";
@@ -31,6 +33,7 @@ class RangeCriteriaDateTest {
     void testRangeCriteria() {
         RangeCriteria criteria = new RangeCriteria(VALID_DATE_FROM_ZONE1, VALID_DATE_TO_ZONE1);
         criteria.setType(ColumnType.DATE);
+        criteria.setDateFormat(VALID_FORMAT);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_DATE_IN_RANGE_ZONE1, COLUMN_DUMMY });                 // ok
@@ -55,6 +58,7 @@ class RangeCriteriaDateTest {
     void testRangeCriteria_InvalidDateValue_From_Open() {
         RangeCriteria criteria = new RangeCriteria(null, VALID_DATE_TO_ZONE1);
         criteria.setType(ColumnType.DATE);
+        criteria.setDateFormat(VALID_FORMAT);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_DATE_IN_RANGE_ZONE1, COLUMN_DUMMY });                 // ok
@@ -75,6 +79,7 @@ class RangeCriteriaDateTest {
     void testRangeCriteria_InvalidDateValue_To_Open() {
         RangeCriteria criteria = new RangeCriteria(VALID_DATE_FROM_ZONE1, null);
         criteria.setType(ColumnType.DATE);
+        criteria.setDateFormat(VALID_FORMAT);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_DATE_IN_RANGE_ZONE1, COLUMN_DUMMY });                 // ok
@@ -104,22 +109,24 @@ class RangeCriteriaDateTest {
     void testRangeCriteria_InvalidDateValue_Format_FromValue() {
         RangeCriteria criteria = new RangeCriteria(INVALID_DATE_ZONE1, VALID_DATE_TO_ZONE1);
         criteria.setType(ColumnType.DATE);
+        criteria.setDateFormat(VALID_FORMAT);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { null, COLUMN_DUMMY });
 
-        assertThrows(DateTimeParseException.class, () -> criteria.apply(list, 0));
+        assertThrows(InvalidInputException.class, () -> criteria.apply(list, 0));
     }
 
     @Test
     void testRangeCriteria_InvalidDateValue_Format_ToValue() {
         RangeCriteria criteria = new RangeCriteria(VALID_DATE_FROM_ZONE1, INVALID_DATE_ZONE1);
         criteria.setType(ColumnType.DATE);
+        criteria.setDateFormat(VALID_FORMAT);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { null, COLUMN_DUMMY });
 
-        assertThrows(DateTimeParseException.class, () -> criteria.apply(list, 0));
+        assertThrows(InvalidInputException.class, () -> criteria.apply(list, 0));
     }
 
 }
