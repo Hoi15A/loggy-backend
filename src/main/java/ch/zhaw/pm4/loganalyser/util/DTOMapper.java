@@ -132,6 +132,7 @@ public class DTOMapper {
         return QueryComponent.builder()
                 .columnComponentId(queryComponentDTO.getColumnComponentId())
                 .filterType(queryComponentDTO.getFilterType())
+                .dateFormat(queryComponentDTO.getDateFormat())
                 .from(queryComponentDTO.getFrom())
                 .to(queryComponentDTO.getTo())
                 .regex(queryComponentDTO.getRegex())

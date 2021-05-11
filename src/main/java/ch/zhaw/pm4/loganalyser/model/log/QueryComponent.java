@@ -15,6 +15,7 @@ public class QueryComponent {
     private FilterType filterType;
     private String from;
     private String to;
+    private String dateFormat;
     private String regex;
     private String exact;
     private String contains;

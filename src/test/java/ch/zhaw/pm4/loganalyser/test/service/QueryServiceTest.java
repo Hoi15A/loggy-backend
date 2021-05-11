@@ -46,10 +46,10 @@ class QueryServiceTest {
     private static final long SERVICE_ID = 99L;
 
     //                                                              ip,                date,          text,                           double,   int
-    private static final String[] entryLocalhost   = new String[] { "127.0.0.1"      , "11/05/2021", "ERROR: Everything is on fire", "12.0"  , "8"       };
-    private static final String[] entryHomeNetwork = new String[] { "192.168.1.2"    , "12/05/2021", "WARN: Coffemachine broke"    , "6.9"   , "42"      };
-    private static final String[] entryMinIp       = new String[] { "0.0.0.0"        , "13/05/2021", "INFO: Nginx restarted"       , "123.7" , "112"     };
-    private static final String[] entryMaxIp       = new String[] { "255.255.255.255", "24/12/2121", "CRITICAL: Server died"       , "5555.5", "5555555" };
+    private static final String[] entryLocalhost   = new String[] { "127.0.0.1"      , "11/05/2021 - 23:59:59", "ERROR: Everything is on fire", "12.0"  , "8"       };
+    private static final String[] entryHomeNetwork = new String[] { "192.168.1.2"    , "12/05/2021 - 12:59:59", "WARN: Coffemachine broke"    , "6.9"   , "42"      };
+    private static final String[] entryMinIp       = new String[] { "0.0.0.0"        , "13/05/2021 - 11:59:59", "INFO: Nginx restarted"       , "123.7" , "112"     };
+    private static final String[] entryMaxIp       = new String[] { "255.255.255.255", "24/12/2121 - 00:00:00", "CRITICAL: Server died"       , "5555.5", "5555555" };
 
     @Autowired QueryService queryService;
 
@@ -127,9 +127,9 @@ class QueryServiceTest {
         when(intCompDTO.getFormat()).thenReturn("\\d+");
 
         // date format
-        when(dateComp.getDateFormat()).thenReturn("dd/MM/yyyy");
+        when(dateComp.getDateFormat()).thenReturn("dd/MM/yyyy - HH:mm:ss");
 
-        when(dateCompDTO.getDateFormat()).thenReturn("dd/MM/yyyy");
+        when(dateCompDTO.getDateFormat()).thenReturn("dd/MM/yyyy - HH:mm:ss");
 
         // column type
         when(ipComp.getColumnType()).thenReturn(ColumnType.IP);
@@ -242,8 +242,9 @@ class QueryServiceTest {
         QueryComponentDTO dateRange = QueryComponentDTO.builder()
                 .columnComponentId(1L)
                 .filterType(FilterType.RANGE)
-                .from("10/05/2021")
-                .to("14/05/2021")
+                .dateFormat("dd/MM/yyyy")
+                .from("11/05/2021")
+                .to("13/05/2021")
                 .build();
 
         QueryComponentDTO doubleRange = QueryComponentDTO.builder()

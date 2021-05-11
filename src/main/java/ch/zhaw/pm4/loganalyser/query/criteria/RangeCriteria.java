@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -32,9 +31,6 @@ public class RangeCriteria implements Criteria {
 
     @Setter
     private String dateFormat;
-
-    @Setter
-    private boolean onlyDateInFormat;
 
     private final String from;
     private final String to;
@@ -131,20 +127,6 @@ public class RangeCriteria implements Criteria {
     private LocalDateTime parseColumn(String str, DateTimeFormatter format) {
         LocalDateTime date = null;
         try {
-            /*
-             todo: question
-             example 1:
-                 from: dd/MM/yyyy
-                 to: dd/MM/yyyy
-                 str: dd/MM/yyyyTHH:mm:ss
-             str throws here a DateTimeParseException (probably wrong)
-
-             example 2:
-                 from: dd/MM/yyyyTHH:mm:ss
-                 to: dd/MM/yyyyTHH:mm:ss
-                 str: dd/MM/yyyy
-             str throws here a DateTimeParseException (probably ok or not a use case)
-             */
             date = parseDate(str, format);
         } catch (DateTimeParseException ex) {
             logger.info(str + " was invalid!");
@@ -154,9 +136,7 @@ public class RangeCriteria implements Criteria {
 
     private LocalDateTime parseDate(String str, DateTimeFormatter format) {
         if (str == null) return null;
-        return onlyDateInFormat
-                ? LocalDate.parse(str, format).atStartOfDay()
-                : LocalDateTime.parse(str, format);
+        return LocalDateTime.parse(str, format);
     }
 
     private boolean isInputAfterDate(LocalDateTime input, LocalDateTime from) {

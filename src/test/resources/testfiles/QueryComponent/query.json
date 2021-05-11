@@ -1,27 +1,28 @@
 [
   {
-    "id": 10,
+    "columnComponentId": 10,
     "filterType": 3,
     "exact": "192.168.1.1"
   },
   {
-    "id": 13,
+    "columnComponentId": 13,
     "filterType": 0,
-    "from": "23/Mar/2021:00:00:00 +0100",
-    "to": "23/Mar/2021:00:00:10 +0100"
+    "dateFormat": "dd/MMM/yyyy",
+    "from": "23/Mar/2021",
+    "to": "23/Mar/2021"
   },
   {
-    "id": 14,
+    "columnComponentId": 14,
     "filterType": 2,
     "contains": "GET"
   },
   {
-    "id": 15,
+    "columnComponentId": 15,
     "filterType": 3,
     "exact": "200"
   },
   {
-    "id": 16,
+    "columnComponentId": 16,
     "filterType": 0,
     "from": "1000"
   }
