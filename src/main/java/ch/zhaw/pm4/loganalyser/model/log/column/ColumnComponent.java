@@ -29,5 +29,6 @@ public class ColumnComponent {
     private String name;
     private ColumnType columnType;
     private String format;
+    private String dateFormat;
 
 }

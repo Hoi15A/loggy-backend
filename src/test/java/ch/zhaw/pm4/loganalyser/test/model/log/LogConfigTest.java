@@ -44,15 +44,15 @@ class LogConfigTest {
         // register columns
         int i = 0;
         Map<Integer, ColumnComponent> componentMap = new TreeMap<>();
-        componentMap.put(++i, createColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));
-        componentMap.put(++i, createColumnComponent(9L, "Custom Seperator", ColumnType.CUSTOM, "-"));
-        componentMap.put(++i, createColumnComponent(2L, "User", ColumnType.CUSTOM, "-|[a-zA-Z]+"));
+        componentMap.put(++i, createColumnComponent(1L, "Host", ColumnType.IP, "(\\d{1,3}\\.){3}\\d{1,3}"));
+        componentMap.put(++i, createColumnComponent(9L, "Custom Seperator", ColumnType.TEXT, "-"));
+        componentMap.put(++i, createColumnComponent(2L, "User", ColumnType.TEXT, "-|[a-zA-Z]+"));
         componentMap.put(++i, createColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
-        componentMap.put(++i, createColumnComponent(4L, "Request", ColumnType.MESSAGE, "\\\".+\\\""));
-        componentMap.put(++i, createColumnComponent(5L, "Response Code", ColumnType.CUSTOM, "\\d{1,3}"));
-        componentMap.put(++i, createColumnComponent(6L, "Byte Size", ColumnType.CUSTOM, "\\d+"));
-        componentMap.put(++i, createColumnComponent(7L, "Something", ColumnType.CUSTOM, "\\\".+\\\""));
-        componentMap.put(++i, createColumnComponent(8L, "Request Client", ColumnType.CUSTOM, "\\\".+\\\""));
+        componentMap.put(++i, createColumnComponent(4L, "Request", ColumnType.TEXT, "\\\".+\\\""));
+        componentMap.put(++i, createColumnComponent(5L, "Response Code", ColumnType.INTEGER, "\\d{1,3}"));
+        componentMap.put(++i, createColumnComponent(6L, "Byte Size", ColumnType.INTEGER, "\\d+"));
+        componentMap.put(++i, createColumnComponent(7L, "Something", ColumnType.TEXT, "\\\".+\\\""));
+        componentMap.put(++i, createColumnComponent(8L, "Request Client", ColumnType.TEXT, "\\\".+\\\""));
 
         //register config
         LogConfig config = new LogConfig();

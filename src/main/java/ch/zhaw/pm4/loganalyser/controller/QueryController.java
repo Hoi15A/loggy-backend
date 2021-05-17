@@ -3,15 +3,14 @@ package ch.zhaw.pm4.loganalyser.controller;
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
+import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -32,17 +31,18 @@ public class QueryController {
 
     /**
      * Runs a query for a certain log service.
-     * @param id of the log service.
-     * @param query to be applied as a filter on the log files.
+     * @param logServiceId of the log service.
+     * @param queries to be applied as a filter on the log files.
      * @return {@link ResponseEntity} with status 200 and the filtered content inside the body.
      * @throws RecordNotFoundException when the service does not exist.
      * @throws FileNotFoundException when the log file does not exist.
      * @throws FileReadException when there were complication while reading the log file.
      */
-    @GetMapping("{logServiceId}/{query}")
-    public ResponseEntity<List<String[]>> getQueryForLogService(@PathVariable("logServiceId") final long id,
-                                                                @PathVariable("query") final String query) {
-        return ResponseEntity.ok(queryService.runQueryForService(id, query));
+    @PostMapping("{logServiceId}")
+    public ResponseEntity<List<String[]>> getQueryForLogService(
+            @PathVariable("logServiceId") final long logServiceId,
+            @Valid @RequestBody final List<QueryComponentDTO> queries) {
+        return ResponseEntity.ok(queryService.runQueryForService(logServiceId, queries));
     }
 
 }

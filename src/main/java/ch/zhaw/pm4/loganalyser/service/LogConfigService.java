@@ -36,7 +36,7 @@ public class LogConfigService {
         Optional<LogConfig> logConfigOptional = logConfigRepository.findById(logConfigDTO.getName());
         if (logConfigOptional.isPresent()) throw new RecordAlreadyExistsException("Could not create already existing log config " + logConfigDTO.getName());
 
-        LogConfig config = mapDTOToLogConfig(logConfigDTO);
+        var config = mapDTOToLogConfig(logConfigDTO);
         logConfigRepository.save(config);
     }
 
@@ -74,7 +74,7 @@ public class LogConfigService {
         Optional<LogConfig> logConfigOptional= logConfigRepository.findById(logConfigDTO.getName());
         if (logConfigOptional.isEmpty()) throw new RecordNotFoundException("Could not update non existing log config " + logConfigDTO.getName());
 
-        LogConfig config = mapDTOToLogConfig(logConfigDTO);
+        var config = mapDTOToLogConfig(logConfigDTO);
         logConfigRepository.save(config);
     }
 
@@ -88,7 +88,7 @@ public class LogConfigService {
         Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(id);
         if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException("Could not delete non existing log config " + id);
 
-        LogConfig logConfig = optionalLogConfig.get();
+        var logConfig = optionalLogConfig.get();
         logConfigRepository.delete(logConfig);
         return mapLogConfigToDTO(optionalLogConfig.get());
     }

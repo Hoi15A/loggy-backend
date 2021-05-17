@@ -3,16 +3,24 @@ package ch.zhaw.pm4.loganalyser.service;
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
+import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.HeaderDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
+import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
-import ch.zhaw.pm4.loganalyser.parser.LogParser;
+import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;
+import ch.zhaw.pm4.loganalyser.query.criteria.Criteria;
+import ch.zhaw.pm4.loganalyser.query.criteria.CriteriaFactory;
+import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
+import ch.zhaw.pm4.loganalyser.util.DTOMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -37,6 +45,9 @@ public class QueryService {
 
     private final Logger logger = Logger.getLogger(QueryService.class.getName());
 
+    @Autowired
+    private ColumnComponentService columnComponentService;
+
     @NonNull
     private LogServiceRepository logServiceRepository;
 
@@ -46,13 +57,12 @@ public class QueryService {
         // todo : to be removed
         List<ColumnDTO> tableData = new ArrayList<>();
         List<HeaderDTO> headers = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        var sdf = new SimpleDateFormat("dd.MM.yyyy");
         try {
             tableData.add(new ColumnDTO(sdf.parse("01.03.2021"), "info", "Service started"));
             tableData.add(new ColumnDTO(sdf.parse("02.03.2021"), "warning", "Could not interpret xyz"));
             tableData.add(new ColumnDTO(sdf.parse("03.03.2021"), "error", "FileNotFound test.txt"));
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             logger.log(Level.WARNING, "Unable to parse the given date", e);
         }
 
@@ -61,28 +71,37 @@ public class QueryService {
         headers.add(new HeaderDTO("Message", "message"));
 
         return new TableDTO(headers, tableData);
-
     }
 
     /**
      * Runs a query on a service and returns all matched lines.
      * @param serviceId to be queried on.
-     * @param query to be applied on the log files.
-     * @return List<String[]>
+     * @param  queryComponentDTOS {@link QueryComponentDTO} to be applied on the log files.
      * @throws RecordNotFoundException when the service does not exist.
      * @throws FileNotFoundException when the log file does not exist.
      * @throws FileReadException when there were complication while reading the log file.
+     * @return List<String[]>
      */
-    public List<String[]> runQueryForService(long serviceId, String query) {
+    public List<String[]> runQueryForService(long serviceId, List<QueryComponentDTO> queryComponentDTOS) {
         Optional<LogService> logService = logServiceRepository.findById(serviceId);
-        if (logService.isEmpty()) throw new RecordNotFoundException(String.format("The service with id %d does not exist", serviceId));
+        if (logService.isEmpty())
+            throw new RecordNotFoundException(String.format("The service with id %d does not exist", serviceId));
+
+        List<QueryComponent> queryComponents = mapQueryComponents(queryComponentDTOS);
+
         try {
-            LogService service = logService.get();
-            List<String[]> logEntries = logParser.read(null, service);
-            Map<Integer, ColumnComponent> sortedComponents = sortComponents(service.getLogConfig().getColumnComponents());
-            String[] header = new String[sortedComponents.size()];
-            sortedComponents.forEach((key, value) -> header[key] = String.valueOf(sortedComponents.values().toArray(ColumnComponent[]::new)[key]));
-            logEntries.add(0, header);
+            var service = logService.get();
+            List<String[]> logEntries = logParser.read(service);
+            Map<Integer, ColumnComponent> sortedComponents = new TreeMap<>(service.getLogConfig().getColumnComponents());
+
+            for (QueryComponent component : queryComponents) {
+                int componentIndex = getComponentIndex(component, sortedComponents);
+                component.setColumnComponent(sortedComponents.get(componentIndex));
+                var filterType = component.getFilterType();
+                var criteria = createCriteria(filterType, component);
+                logEntries = criteria.apply(logEntries, componentIndex);
+            }
+
             return logEntries;
         } catch (java.io.FileNotFoundException ex1) {
             throw new FileNotFoundException("Log service file not found");
@@ -91,10 +110,27 @@ public class QueryService {
         }
     }
 
-    private Map<Integer, ColumnComponent> sortComponents(Map<Integer, ColumnComponent> sortable) {
-        return sortable.entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey , Map.Entry::getValue, (a,b) -> a, TreeMap::new));
+    private List<QueryComponent> mapQueryComponents(List<QueryComponentDTO> queryComponentDTOS) {
+        List<QueryComponent> queryComponents = queryComponentDTOS.stream()
+                .map(DTOMapper::mapDTOToQueryComponent)
+                .collect(Collectors.toList());
+
+        queryComponents.forEach(queryComponent -> {
+            ColumnComponentDTO dto = columnComponentService.getColumnComponentById(queryComponent.getColumnComponentId());
+            queryComponent.setColumnComponent(DTOMapper.mapDTOToColumnComponent(dto));
+        });
+        return queryComponents;
     }
 
+    private int getComponentIndex(QueryComponent component, Map<Integer, ColumnComponent> sortedComponents) {
+        return sortedComponents.entrySet().stream()
+                .filter(entry -> entry.getValue().getId() == component.getColumnComponent().getId())
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElseThrow(() -> new RecordNotFoundException("The column component (id = " + component.getColumnComponent().getId() + ") provided with the query was not found."));
+    }
+
+    private Criteria createCriteria(FilterType filterType, QueryComponent component) {
+        return CriteriaFactory.getCriteria(filterType, component);
+    }
 }

@@ -29,7 +29,7 @@ public class ColumnComponentService {
      * @param dto to be created.
      */
     public void createColumnComponent(ColumnComponentDTO dto) {
-        ColumnComponent columnComponent = mapDTOToColumnComponent(dto);
+        var columnComponent = mapDTOToColumnComponent(dto);
         columnComponentRepository.save(columnComponent);
     }
 
@@ -80,7 +80,7 @@ public class ColumnComponentService {
         Optional<ColumnComponent> optionalColumnComponent = columnComponentRepository.findById(id);
         if (optionalColumnComponent.isEmpty()) throw new RecordNotFoundException("Could not delete id: " + id);
 
-        ColumnComponent columnComponent = optionalColumnComponent.get();
+        var columnComponent = optionalColumnComponent.get();
         columnComponentRepository.delete(columnComponent);
         return mapColumnComponentToDTO(columnComponent);
     }

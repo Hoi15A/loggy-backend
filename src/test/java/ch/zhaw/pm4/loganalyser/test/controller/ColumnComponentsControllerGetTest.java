@@ -101,7 +101,7 @@ class ColumnComponentsControllerGetTest {
         // prepare
         ColumnComponentDTO dto = ColumnComponentDTO.builder()
                 .id(EXISTING_ID)
-                .columnType(ColumnType.MESSAGE)
+                .columnType(ColumnType.TEXT)
                 .format("-|[a-zA-Z]+")
                 .name("User")
                 .build();

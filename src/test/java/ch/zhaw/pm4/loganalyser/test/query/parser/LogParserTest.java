@@ -1,14 +1,13 @@
-package ch.zhaw.pm4.loganalyser.test.parser;
+package ch.zhaw.pm4.loganalyser.test.query.parser;
 
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
-import ch.zhaw.pm4.loganalyser.parser.LogParser;
+import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,7 +21,7 @@ class LogParserTest {
     private static final String LFOLDER = "logs";
 
     @Test
-    void readTest() throws Exception {
+    void testRead() throws Exception {
         // prepare
         LogService serviceMock = mock(LogService.class);
         File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LFOLDER).getPath());
@@ -32,7 +31,7 @@ class LogParserTest {
         LogParser parser = new LogParser();
 
         // execute
-        List<String[]> result = parser.read(new ArrayList<>(), serviceMock);
+        List<String[]> result = parser.read(serviceMock);
 
         // validate
         assertEquals("192.168.1.1", result.get(0)[0]);
@@ -46,15 +45,15 @@ class LogParserTest {
         // register columns
         Map<Integer, ColumnComponent> columnComponentMap = new TreeMap<>();
         int i = 0;
-        columnComponentMap.put(++i, createColumnComponent(1L, "Host", ColumnType.CUSTOM, "(\\d{1,3}\\.){3}\\d{1,3}"));
-        columnComponentMap.put(++i, createColumnComponent(9L, "Custom Seperator", ColumnType.CUSTOM, "-"));
-        columnComponentMap.put(++i, createColumnComponent(2L, "User", ColumnType.CUSTOM, "-|[a-zA-Z]+"));
+        columnComponentMap.put(++i, createColumnComponent(1L, "Host", ColumnType.IP, "(\\d{1,3}\\.){3}\\d{1,3}"));
+        columnComponentMap.put(++i, createColumnComponent(9L, "Custom Seperator", ColumnType.TEXT, "-"));
+        columnComponentMap.put(++i, createColumnComponent(2L, "User", ColumnType.TEXT, "-|[a-zA-Z]+"));
         columnComponentMap.put(++i, createColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
-        columnComponentMap.put(++i, createColumnComponent(4L, "Request", ColumnType.MESSAGE, "\\\".+\\\""));
-        columnComponentMap.put(++i, createColumnComponent(5L, "Response Code", ColumnType.CUSTOM, "\\d{1,3}"));
-        columnComponentMap.put(++i, createColumnComponent(6L, "Byte Size", ColumnType.CUSTOM, "\\d+"));
-        columnComponentMap.put(++i, createColumnComponent(7L, "Something", ColumnType.CUSTOM, "\\\".+\\\""));
-        columnComponentMap.put(++i, createColumnComponent(8L, "Request Client", ColumnType.CUSTOM, "\\\".+\\\""));
+        columnComponentMap.put(++i, createColumnComponent(4L, "Request", ColumnType.TEXT, "\\\".+\\\""));
+        columnComponentMap.put(++i, createColumnComponent(5L, "Response Code", ColumnType.INTEGER, "\\d{1,3}"));
+        columnComponentMap.put(++i, createColumnComponent(6L, "Byte Size", ColumnType.INTEGER, "\\d+"));
+        columnComponentMap.put(++i, createColumnComponent(7L, "Something", ColumnType.TEXT, "\\\".+\\\""));
+        columnComponentMap.put(++i, createColumnComponent(8L, "Request Client", ColumnType.TEXT, "\\\".+\\\""));
 
         //register config
         LogConfig config = new LogConfig();

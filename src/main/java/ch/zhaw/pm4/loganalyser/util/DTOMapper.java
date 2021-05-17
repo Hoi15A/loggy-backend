@@ -3,8 +3,10 @@ package ch.zhaw.pm4.loganalyser.util;
 import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogConfigDTO;
 import ch.zhaw.pm4.loganalyser.model.dto.LogServiceDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
+import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import lombok.experimental.UtilityClass;
 
@@ -98,6 +100,7 @@ public class DTOMapper {
     public static ColumnComponent mapDTOToColumnComponent(ColumnComponentDTO columnComponentDTO) {
         return ColumnComponent.builder()
                 .name(columnComponentDTO.getName())
+                .dateFormat(columnComponentDTO.getDateFormat())
                 .columnType(columnComponentDTO.getColumnType())
                 .id(columnComponentDTO.getId())
                 .format(columnComponentDTO.getFormat())
@@ -112,9 +115,29 @@ public class DTOMapper {
     public static ColumnComponentDTO mapColumnComponentToDTO(ColumnComponent columnComponent) {
         return ColumnComponentDTO.builder()
                 .columnType(columnComponent.getColumnType())
+                .dateFormat(columnComponent.getDateFormat())
                 .format(columnComponent.getFormat())
+                .filterTypes(columnComponent.getColumnType().getFilterTypes())
                 .id(columnComponent.getId())
                 .name(columnComponent.getName())
+                .build();
+    }
+
+    /**
+     * Map {@link QueryComponentDTO} to a {@link QueryComponent}
+     * @param queryComponentDTO to be mapped.
+     * @return {@link QueryComponent}
+     */
+    public static QueryComponent mapDTOToQueryComponent(QueryComponentDTO queryComponentDTO) {
+        return QueryComponent.builder()
+                .columnComponentId(queryComponentDTO.getColumnComponentId())
+                .filterType(queryComponentDTO.getFilterType())
+                .dateFormat(queryComponentDTO.getDateFormat())
+                .from(queryComponentDTO.getFrom())
+                .to(queryComponentDTO.getTo())
+                .regex(queryComponentDTO.getRegex())
+                .exact(queryComponentDTO.getExact())
+                .contains(queryComponentDTO.getContains())
                 .build();
     }
 

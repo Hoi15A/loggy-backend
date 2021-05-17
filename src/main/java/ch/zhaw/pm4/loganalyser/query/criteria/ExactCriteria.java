@@ -1,0 +1,29 @@
+package ch.zhaw.pm4.loganalyser.query.criteria;
+
+import ch.zhaw.pm4.loganalyser.exception.ExactCriteriaIsNullException;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Criteria to filter when the column is exactly the same as the given string
+ */
+@RequiredArgsConstructor
+public class ExactCriteria implements Criteria {
+
+    private final String exact;
+
+    @Override
+    public List<String[]> apply(List<String[]> rows, int columnIndex) {
+        if (exact == null) {
+            throw new ExactCriteriaIsNullException("Exact String is null");
+        }
+        else {
+            return rows.stream()
+                    .filter(row -> row[columnIndex].equals(exact))
+                    .collect(Collectors.toList());
+        }
+    }
+
+}

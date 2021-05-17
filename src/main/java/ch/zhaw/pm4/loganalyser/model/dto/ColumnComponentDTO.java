@@ -1,11 +1,8 @@
 package ch.zhaw.pm4.loganalyser.model.dto;
 
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -27,10 +24,14 @@ public class ColumnComponentDTO {
     @NotNull(message = COLUMN_TYPE_VALIDATION_MESSAGE)
     private ColumnType columnType;
 
+    private FilterType[] filterTypes;
+
     @NotNull(message = FORMAT_VALIDATION_MESSAGE)
     private String format;
 
     @NotBlank(message = NAME_VALIDATION_MESSAGE)
     private String name;
+
+    private String dateFormat; // note: columnType == date then not empty
 
 }

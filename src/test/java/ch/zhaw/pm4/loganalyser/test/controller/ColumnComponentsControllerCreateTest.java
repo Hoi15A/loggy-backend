@@ -48,7 +48,7 @@ class ColumnComponentsControllerCreateTest {
     void testCreateColumnComponent() {
         // prepare
         String content = TestUtils.loadResourceContent("ColumnComponent/testCreateColumnComponent.json");
-        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content, ColumnComponentDTO.class);
+        ColumnComponentDTO dto = (ColumnComponentDTO) parseResourceContent(content);
 
         doNothing().when(columnComponentService).createColumnComponent(dto);
 
@@ -101,10 +101,10 @@ class ColumnComponentsControllerCreateTest {
         verify(columnComponentService, times(0)).updateColumn(any());
     }
 
-    private Object parseResourceContent(String content, Class<?> clazz) {
+    private Object parseResourceContent(String content) {
         Object dto;
         try {
-            dto = objectMapper.readValue(content, clazz);
+            dto = objectMapper.readValue(content, (Class<?>) ColumnComponentDTO.class);
         } catch (IOException e) {
             dto = null;
         }

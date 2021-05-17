@@ -1,6 +1,5 @@
-package ch.zhaw.pm4.loganalyser.parser;
+package ch.zhaw.pm4.loganalyser.query.parser;
 
-import ch.zhaw.pm4.loganalyser.model.filter.Filter;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -29,13 +27,12 @@ public class LogParser {
 
     /**
      * Reads log files from {@link LogService}, then filters and parses them.
-     * @param filters a list of {@link Filter} to be applied.
      * @param service to be analyzed
      * @return the parsed content of the log files.
      * @throws IOException when either a file is not found or there were complications while reading the file.
      */
-    public List<String[]> read(List<Filter> filters, LogService service) throws IOException {
-        Path logDir = Path.of(service.getLogDirectory());
+    public List<String[]> read(LogService service) throws IOException {
+        var logDir = Path.of(service.getLogDirectory());
 
         List<String[]> rows = new ArrayList<>();
         for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
@@ -63,11 +60,11 @@ public class LogParser {
      */
     private List<String[]> parse(File logfile, LogConfig config) throws IOException {
         List<String[]> rows = new ArrayList<>();
-        Pattern p = Pattern.compile(concatenateRegex(config));
-        try (BufferedReader br = new BufferedReader(new FileReader(logfile))) {
+        var p = Pattern.compile(concatenateRegex(config));
+        try (var br = new BufferedReader(new FileReader(logfile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                Matcher m = p.matcher(line);
+                var m = p.matcher(line);
                 List<String> values = new ArrayList<>();
                 if (m.find()) {
                     for(ColumnComponent c: sortedColumns.values()) {
@@ -82,7 +79,7 @@ public class LogParser {
     }
 
     private String concatenateRegex(LogConfig config) {
-        String lineRegex = "";
+        var lineRegex = "";
         sortedColumns = new TreeMap<>(Collections.reverseOrder());
         sortedColumns.putAll(config.getColumnComponents());
 
