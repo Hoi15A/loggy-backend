@@ -8,6 +8,7 @@ import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -54,8 +55,8 @@ public class CriteriaFactory {
             var dtfRequest = DateTimeFormatter.ofPattern(qc.getDateFormat(), defaultLocale);
             var dtfLogService = DateTimeFormatter.ofPattern(columnComponent.getDateFormat(), defaultLocale);
 
-            var fromDate = LocalDate.parse(qc.getFrom(), dtfRequest).atStartOfDay();
-            var toDate = LocalDate.parse(qc.getTo(), dtfRequest).atStartOfDay().plusDays(1);
+            var fromDate = LocalDate.parse(qc.getFrom(), dtfRequest).atStartOfDay().atOffset(ZoneOffset.UTC);
+            var toDate = LocalDate.parse(qc.getTo(), dtfRequest).atStartOfDay().plusDays(1).atOffset(ZoneOffset.UTC);
             criteria = new RangeCriteria(dtfLogService.format(fromDate), dtfLogService.format(toDate));
             criteria.setDateFormat(columnComponent.getDateFormat());
             criteria.setLocale(defaultLocale);
