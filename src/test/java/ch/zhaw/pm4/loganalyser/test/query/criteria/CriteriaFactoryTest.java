@@ -30,6 +30,7 @@ class CriteriaFactoryTest {
         ColumnComponent columnComponentMock = mock(ColumnComponent.class);
         when(qc.getColumnComponent()).thenReturn(columnComponentMock);
         when(qc.getColumnComponent().getDateFormat()).thenReturn("dd-MM-yyyy");
+        when(qc.getFrom()).thenReturn("24-03-1997");
 
         assertNotNull(CriteriaFactory.getCriteria(FilterType.REGEX, qc));
         assertNotNull(CriteriaFactory.getCriteria(FilterType.EXACT, qc));
