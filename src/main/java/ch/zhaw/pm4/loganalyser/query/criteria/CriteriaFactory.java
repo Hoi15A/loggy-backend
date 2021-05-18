@@ -55,9 +55,20 @@ public class CriteriaFactory {
             var dtfRequest = DateTimeFormatter.ofPattern(qc.getDateFormat(), defaultLocale);
             var dtfLogService = DateTimeFormatter.ofPattern(columnComponent.getDateFormat(), defaultLocale);
 
-            var fromDate = LocalDate.parse(qc.getFrom(), dtfRequest).atStartOfDay().atOffset(ZoneOffset.UTC);
-            var toDate = LocalDate.parse(qc.getTo(), dtfRequest).atStartOfDay().plusDays(1).atOffset(ZoneOffset.UTC);
-            criteria = new RangeCriteria(dtfLogService.format(fromDate), dtfLogService.format(toDate));
+            if (qc.getFrom() == null && qc.getTo() == null) throw new InvalidInputException("Either the from or to value must be set.");
+
+            if(qc.getFrom() == null && qc.getTo() != null) {
+                var toDate = LocalDate.parse(qc.getTo(), dtfRequest).atStartOfDay().plusDays(1).atOffset(ZoneOffset.UTC);
+                criteria = new RangeCriteria(qc.getFrom(), dtfLogService.format(toDate));
+            } else if(qc.getFrom() != null && qc.getTo() == null) {
+                var fromDate = LocalDate.parse(qc.getFrom(), dtfRequest).atStartOfDay().atOffset(ZoneOffset.UTC);
+                criteria = new RangeCriteria(dtfLogService.format(fromDate), qc.getTo());
+            } else {
+                var fromDate = LocalDate.parse(qc.getFrom(), dtfRequest).atStartOfDay().atOffset(ZoneOffset.UTC);
+                var toDate = LocalDate.parse(qc.getTo(), dtfRequest).atStartOfDay().plusDays(1).atOffset(ZoneOffset.UTC);
+                criteria = new RangeCriteria(dtfLogService.format(fromDate), dtfLogService.format(toDate));
+            }
+
             criteria.setDateFormat(columnComponent.getDateFormat());
             criteria.setLocale(defaultLocale);
         } else {
