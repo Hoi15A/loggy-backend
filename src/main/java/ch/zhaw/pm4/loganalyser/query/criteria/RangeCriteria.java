@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
@@ -31,6 +32,9 @@ public class RangeCriteria implements Criteria {
 
     @Setter
     private String dateFormat;
+
+    @Setter
+    private Locale locale;
 
     private final String from;
     private final String to;
@@ -113,7 +117,7 @@ public class RangeCriteria implements Criteria {
 
     private boolean isInDateRange(String str) {
         try {
-            var format = DateTimeFormatter.ofPattern(dateFormat);
+            var format = DateTimeFormatter.ofPattern(dateFormat, locale);
             LocalDateTime date = parseColumn(str, format);
             var fromDate = parseDate(from, format);
             var toDate = parseDate(to, format);

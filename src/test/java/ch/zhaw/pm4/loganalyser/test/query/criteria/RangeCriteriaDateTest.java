@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,6 +38,7 @@ class RangeCriteriaDateTest {
         RangeCriteria criteria = new RangeCriteria(VALID_DATE_FROM_ZONE1, VALID_DATE_TO_ZONE1);
         criteria.setType(ColumnType.DATE);
         criteria.setDateFormat(VALID_FORMAT);
+        criteria.setLocale(Locale.ENGLISH);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_DATE_IN_RANGE_ZONE1, COLUMN_DUMMY });                 // ok
@@ -60,6 +62,7 @@ class RangeCriteriaDateTest {
         RangeCriteria criteria = new RangeCriteria(null, VALID_DATE_TO_ZONE1);
         criteria.setType(ColumnType.DATE);
         criteria.setDateFormat(VALID_FORMAT);
+        criteria.setLocale(Locale.ENGLISH);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_DATE_IN_RANGE_ZONE1, COLUMN_DUMMY });                 // ok
@@ -81,6 +84,7 @@ class RangeCriteriaDateTest {
         RangeCriteria criteria = new RangeCriteria(VALID_DATE_FROM_ZONE1, null);
         criteria.setType(ColumnType.DATE);
         criteria.setDateFormat(VALID_FORMAT);
+        criteria.setLocale(Locale.ENGLISH);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_DATE_IN_RANGE_ZONE1, COLUMN_DUMMY });                 // ok
@@ -97,11 +101,16 @@ class RangeCriteriaDateTest {
         assertEquals(list.get(3), result.get(1));
     }
 
+    /* ****************************************************************************************************************
+     * NEGATIVE TESTS
+     * ****************************************************************************************************************/
+
     @Test
     void testRangeCriteria_InvalidDateValue_Format() {
         RangeCriteria criteria = new RangeCriteria(VALID_DATE_FROM_ZONE1, null);
         criteria.setType(ColumnType.DATE);
         criteria.setDateFormat(INVALID_FORMAT);
+        criteria.setLocale(Locale.ENGLISH);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_DATE_IN_RANGE_ZONE1, COLUMN_DUMMY });                 // ok
@@ -109,15 +118,12 @@ class RangeCriteriaDateTest {
         assertThrows(InvalidInputException.class, () -> criteria.apply(list, 0));
     }
 
-    /* ****************************************************************************************************************
-     * NEGATIVE TESTS
-     * ****************************************************************************************************************/
-
     @Test
     void testRangeCriteria_InvalidDateValue_Format_FromValue() {
         RangeCriteria criteria = new RangeCriteria(INVALID_DATE_ZONE1, VALID_DATE_TO_ZONE1);
         criteria.setType(ColumnType.DATE);
         criteria.setDateFormat(VALID_FORMAT);
+        criteria.setLocale(Locale.ENGLISH);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { null, COLUMN_DUMMY });
@@ -130,6 +136,7 @@ class RangeCriteriaDateTest {
         RangeCriteria criteria = new RangeCriteria(VALID_DATE_FROM_ZONE1, INVALID_DATE_ZONE1);
         criteria.setType(ColumnType.DATE);
         criteria.setDateFormat(VALID_FORMAT);
+        criteria.setLocale(Locale.ENGLISH);
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { null, COLUMN_DUMMY });
