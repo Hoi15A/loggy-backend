@@ -48,14 +48,15 @@ public class CriteriaFactory {
         if (columnComponent.getDateFormat() != null && columnComponent.getDateFormat().isBlank())
             throw new InvalidInputException("To query a date range a date format must be set on the column component!");
 
+        if (qc.getFrom() == null && qc.getTo() == null)
+            throw new InvalidInputException("Either the from or to value must be set.");
+
         RangeCriteria criteria;
 
         if(columnComponent.getColumnType() == ColumnType.DATE) {
             var defaultLocale = Locale.ENGLISH;
             var dtfRequest = DateTimeFormatter.ofPattern(qc.getDateFormat(), defaultLocale);
             var dtfLogService = DateTimeFormatter.ofPattern(columnComponent.getDateFormat(), defaultLocale);
-
-            if (qc.getFrom() == null && qc.getTo() == null) throw new InvalidInputException("Either the from or to value must be set.");
 
             if(qc.getFrom() == null && qc.getTo() != null) {
                 var toDate = LocalDate.parse(qc.getTo(), dtfRequest).atStartOfDay().plusDays(1).atOffset(ZoneOffset.UTC);
