@@ -36,7 +36,9 @@ public class LogParser {
 
         List<String[]> rows = new ArrayList<>();
         for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
-            rows.addAll(parse(logfile, service.getLogConfig()));
+            if (logfile.isFile()) {
+                rows.addAll(parse(logfile, service.getLogConfig()));
+            }
         }
 
         return rows;
