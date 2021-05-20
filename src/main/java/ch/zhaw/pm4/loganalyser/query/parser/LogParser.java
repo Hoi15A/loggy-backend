@@ -3,11 +3,11 @@ package ch.zhaw.pm4.loganalyser.query.parser;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
+import org.springframework.lang.Nullable;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * This class collects all log files for a given {@link LogService}.
@@ -24,20 +25,22 @@ import java.util.regex.Pattern;
 public class LogParser {
 
     private Map<Integer, ColumnComponent> sortedColumns;
+    public static final long PAGE_SIZE = 500L;
 
     /**
      * Reads log files from {@link LogService}, then filters and parses them.
-     * @param service to be analyzed
+     * @param service to be analyzed.
+     * @param page of the file which should be fetched. A page is {@value LogParser#PAGE_SIZE} lines long.
      * @return the parsed content of the log files.
      * @throws IOException when either a file is not found or there were complications while reading the file.
      */
-    public List<String[]> read(LogService service) throws IOException {
+    public List<String[]> read(LogService service, int page) throws IOException {
         var logDir = Path.of(service.getLogDirectory());
 
         List<String[]> rows = new ArrayList<>();
         for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
             if (logfile.isFile()) {
-                rows.addAll(parse(logfile, service.getLogConfig()));
+                rows.addAll(parse(logfile, service.getLogConfig(), page));
             }
         }
 
@@ -57,28 +60,37 @@ public class LogParser {
      *
      * @param logfile File that should be parsed
      * @param config Config to apply while parsing
+     * @param page of the file which should be fetched. A page is {@value LogParser#PAGE_SIZE} lines long.
      * @return Parsed logs
      * @throws IOException If file could not be found or there were complications while reading the file.
      */
-    private List<String[]> parse(File logfile, LogConfig config) throws IOException {
+    private List<String[]> parse(File logfile, LogConfig config, int page) throws IOException {
         List<String[]> rows = new ArrayList<>();
         var p = Pattern.compile(concatenateRegex(config));
-        try (var br = new BufferedReader(new FileReader(logfile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                var m = p.matcher(line);
-                List<String> values = new ArrayList<>();
-                if (m.find()) {
-                    for(ColumnComponent c: sortedColumns.values()) {
-                        values.add(m.group(convertNameForCapturingGroup(c)));
-                    }
-                    Collections.reverse(values);
-                    rows.add(values.toArray(String[]::new));
-                }
-            }
+
+        try (Stream<String> lines = Files.lines(logfile.toPath())) {
+            lines.skip(page * PAGE_SIZE).limit(PAGE_SIZE).forEach(line -> {
+                String[] parsed = parseLine(p, line);
+                if (parsed != null) rows.add(parsed);
+            });
         }
+
         return rows;
     }
+
+    private @Nullable String[] parseLine(Pattern p, String line) {
+        var m = p.matcher(line);
+        List<String> values = new ArrayList<>();
+        if (m.find()) {
+            for(ColumnComponent c: sortedColumns.values()) {
+                values.add(m.group(convertNameForCapturingGroup(c)));
+            }
+            Collections.reverse(values);
+            return values.toArray(String[]::new);
+        }
+        return null;
+    }
+
 
     private String concatenateRegex(LogConfig config) {
         var lineRegex = "";

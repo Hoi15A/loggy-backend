@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -60,7 +61,7 @@ class QueryControllerTest {
         mockData.add(mockRow1);
         mockData.add(mockRow2);
 
-        when(queryService.runQueryForService(eq(VALID_SERVICE_ID), anyList())).thenReturn(mockData);
+        when(queryService.runQueryForService(eq(VALID_SERVICE_ID), anyList(), anyInt())).thenReturn(mockData);
 
         // execute
         try {
@@ -88,7 +89,7 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList());
+        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList(), anyInt());
     }
 
     /* ****************************************************************************************************************
@@ -101,7 +102,7 @@ class QueryControllerTest {
         String exceptionMessage = String.format("The service with id %d does not exist", INVALID_SERVICE_ID);
 
         doThrow(new RecordNotFoundException(exceptionMessage))
-                .when(queryService).runQueryForService(eq(INVALID_SERVICE_ID), anyList());
+                .when(queryService).runQueryForService(eq(INVALID_SERVICE_ID), anyList(), anyInt());
 
         // execute
         try {
@@ -120,7 +121,7 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(eq(INVALID_SERVICE_ID), anyList());
+        verify(queryService, times(1)).runQueryForService(eq(INVALID_SERVICE_ID), anyList(), anyInt());
     }
 
     @Test
@@ -129,7 +130,7 @@ class QueryControllerTest {
         String exceptionMessage = "The file wanted to process has not been found";
 
         doThrow(new FileNotFoundException(exceptionMessage))
-                .when(queryService).runQueryForService(eq(VALID_SERVICE_ID), anyList());
+                .when(queryService).runQueryForService(eq(VALID_SERVICE_ID), anyList(), anyInt());
 
         // execute
         try {
@@ -148,7 +149,7 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList());
+        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList(), anyInt());
     }
 
     @Test
@@ -156,7 +157,7 @@ class QueryControllerTest {
         String content = TestUtils.loadResourceContent("QueryComponent/query.json");
         String exceptionMessage = "The file wanted to process had an error while reading";
 
-        doThrow(new FileReadException(exceptionMessage)).when(queryService).runQueryForService(eq(VALID_SERVICE_ID), anyList());
+        doThrow(new FileReadException(exceptionMessage)).when(queryService).runQueryForService(eq(VALID_SERVICE_ID), anyList(), anyInt());
 
         // execute
         try {
@@ -175,7 +176,7 @@ class QueryControllerTest {
         }
 
         // verify
-        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList());
+        verify(queryService, times(1)).runQueryForService(eq(VALID_SERVICE_ID), anyList(), anyInt());
     }
 
 }

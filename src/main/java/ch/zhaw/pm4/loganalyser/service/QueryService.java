@@ -3,7 +3,11 @@ package ch.zhaw.pm4.loganalyser.service;
 import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
-import ch.zhaw.pm4.loganalyser.model.dto.*;
+import ch.zhaw.pm4.loganalyser.model.dto.ColumnComponentDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.ColumnDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.HeaderDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
+import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.QueryComponent;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
@@ -16,7 +20,6 @@ import ch.zhaw.pm4.loganalyser.util.DTOMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -40,7 +43,7 @@ public class QueryService {
 
     private final Logger logger = Logger.getLogger(QueryService.class.getName());
 
-    @Autowired
+    @NonNull
     private ColumnComponentService columnComponentService;
 
     @NonNull
@@ -72,12 +75,13 @@ public class QueryService {
      * Runs a query on a service and returns all matched lines.
      * @param serviceId to be queried on.
      * @param  queryComponentDTOS {@link QueryComponentDTO} to be applied on the log files.
+     * @param page of the file which should be fetched. A page is {@value LogParser#PAGE_SIZE} lines long.
      * @throws RecordNotFoundException when the service does not exist.
      * @throws FileNotFoundException when the log file does not exist.
      * @throws FileReadException when there were complication while reading the log file.
      * @return List<String[]>
      */
-    public List<String[]> runQueryForService(long serviceId, List<QueryComponentDTO> queryComponentDTOS) {
+    public List<String[]> runQueryForService(long serviceId, List<QueryComponentDTO> queryComponentDTOS, int page) {
         Optional<LogService> logService = logServiceRepository.findById(serviceId);
         if (logService.isEmpty())
             throw new RecordNotFoundException(String.format("The service with id %d does not exist", serviceId));
@@ -86,7 +90,7 @@ public class QueryService {
 
         try {
             var service = logService.get();
-            List<String[]> logEntries = logParser.read(service);
+            List<String[]> logEntries = logParser.read(service, page);
 
             for (QueryComponent component : queryComponents) {
                 int componentIndex = getComponentIndex(component, service.getLogConfig().getColumnComponents());

@@ -31,7 +31,7 @@ class LogParserTest {
         LogParser parser = new LogParser();
 
         // execute
-        List<String[]> result = parser.read(serviceMock);
+        List<String[]> result = parser.read(serviceMock, 0);
 
         // validate
         assertEquals("192.168.1.1", result.get(0)[0]);

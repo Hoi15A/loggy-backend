@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -73,7 +74,7 @@ class QueryServiceTest {
         when(logServiceRepositoryMock.findById(SERVICE_ID)).thenReturn(Optional.of(logServiceMock));
         when(logServiceMock.getLogConfig()).thenReturn(logConfigMock);
         when(logConfigMock.getColumnComponents()).thenReturn(columnComponentMap);
-        when(logParserMock.read(logServiceMock)).thenReturn(getParsedEntries());
+        when(logParserMock.read(logServiceMock, 0)).thenReturn(getParsedEntries());
     }
 
     List<String[]> getParsedEntries() {
@@ -177,7 +178,7 @@ class QueryServiceTest {
         filtered.add(entryLocalhost);
 
         // execute
-        List<String[]> result = queryService.runQueryForService(SERVICE_ID, List.of(dto));
+        List<String[]> result = queryService.runQueryForService(SERVICE_ID, List.of(dto), 0);
 
         // verify
         assertNotNull(result);
@@ -199,7 +200,7 @@ class QueryServiceTest {
         filtered.add(entryMinIp);
 
         // execute
-        List<String[]> result = queryService.runQueryForService(SERVICE_ID, List.of(dto));
+        List<String[]> result = queryService.runQueryForService(SERVICE_ID, List.of(dto), 0);
 
         // verify
         assertNotNull(result);
@@ -221,7 +222,7 @@ class QueryServiceTest {
         filtered.add(entryMaxIp);
 
         // execute
-        List<String[]> result = queryService.runQueryForService(SERVICE_ID, List.of(dto));
+        List<String[]> result = queryService.runQueryForService(SERVICE_ID, List.of(dto), 0);
 
         // verify
         assertNotNull(result);
@@ -277,10 +278,10 @@ class QueryServiceTest {
         List<String[]> integerFiltered = new ArrayList<>();
 
         // execute
-        List<String[]> ipResult = queryService.runQueryForService(SERVICE_ID, List.of(ipRange));
-        List<String[]> dateResult = queryService.runQueryForService(SERVICE_ID, List.of(dateRange));
-        List<String[]> doubleResult = queryService.runQueryForService(SERVICE_ID, List.of(doubleRange));
-        List<String[]> integerResult = queryService.runQueryForService(SERVICE_ID, List.of(integerRange));
+        List<String[]> ipResult = queryService.runQueryForService(SERVICE_ID, List.of(ipRange), 0);
+        List<String[]> dateResult = queryService.runQueryForService(SERVICE_ID, List.of(dateRange), 0);
+        List<String[]> doubleResult = queryService.runQueryForService(SERVICE_ID, List.of(doubleRange), 0);
+        List<String[]> integerResult = queryService.runQueryForService(SERVICE_ID, List.of(integerRange), 0);
 
         // verify
         verifyRange(ipResult, ipFiltered);
@@ -310,29 +311,29 @@ class QueryServiceTest {
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.empty());
 
         List<QueryComponentDTO> queries = new ArrayList<>();
-        assertThrows(RecordNotFoundException.class, () -> queryService.runQueryForService(-12L, queries));
+        assertThrows(RecordNotFoundException.class, () -> queryService.runQueryForService(-12L, queries, 0));
     }
 
     @Test
     void testRunQueryForService_FileNotFound() throws IOException {
         LogService logServiceMock = mock(LogService.class);
 
-        when(logParserMock.read(any())).thenThrow(new java.io.FileNotFoundException());
+        when(logParserMock.read(any(), anyInt())).thenThrow(new java.io.FileNotFoundException());
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.of(logServiceMock));
 
         List<QueryComponentDTO> queries = new ArrayList<>();
-        assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, queries));
+        assertThrows(FileNotFoundException.class, () -> queryService.runQueryForService(1, queries, 0));
     }
 
     @Test
     void testRunQueryForService_FileReadException() throws IOException {
         LogService logServiceMock = mock(LogService.class);
 
-        when(logParserMock.read(any())).thenThrow(new IOException());
+        when(logParserMock.read(any(), anyInt())).thenThrow(new IOException());
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.of(logServiceMock));
 
         List<QueryComponentDTO> queries = new ArrayList<>();
-        assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, queries));
+        assertThrows(FileReadException.class, () -> queryService.runQueryForService(1, queries, 0));
     }
 
 }
