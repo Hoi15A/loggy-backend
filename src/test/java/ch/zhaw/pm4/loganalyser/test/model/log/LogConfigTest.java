@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class LogConfigTest {
 
-    private static final String LFOLDER = "logs";
+    private static final String LFOLDER = "logs/testRead";
 
     List<String> readLogLines(String filename) {
         try (Scanner sc = new Scanner(Objects.requireNonNull(LogConfigTest
