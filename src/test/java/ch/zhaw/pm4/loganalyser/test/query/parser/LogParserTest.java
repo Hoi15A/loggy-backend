@@ -8,6 +8,7 @@ import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -18,13 +19,14 @@ import static org.mockito.Mockito.when;
 
 class LogParserTest {
 
-    private static final String LFOLDER = "logs";
+    private static final String LOGS_TEST_READ = "logs/testRead";
+    private static final String LOGS_TEST_PAGING = "logs/testPaging";
 
     @Test
     void testRead() throws Exception {
         // prepare
         LogService serviceMock = mock(LogService.class);
-        File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LFOLDER).getPath());
+        File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LOGS_TEST_READ).getPath());
         when(serviceMock.getLogDirectory()).thenReturn(logFolder.toString());
         when(serviceMock.getLogConfig()).thenReturn(getLogConfig());
 
@@ -41,13 +43,41 @@ class LogParserTest {
         }
     }
 
+    @Test
+    void testReadWithPaging() throws IOException {
+        // prepare
+        LogService serviceMock = mock(LogService.class);
+        File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LOGS_TEST_PAGING).getPath());
+        when(serviceMock.getLogDirectory()).thenReturn(logFolder.toString());
+        when(serviceMock.getLogConfig()).thenReturn(getLogConfig());
+
+        LogParser parser = new LogParser();
+
+        // execute
+        List<String[]> resultPageZero = parser.read(serviceMock, 0);
+        List<String[]> resultPageOne = parser.read(serviceMock, 1);
+
+        // validate
+        assertEquals("192.168.1.1", resultPageZero.get(0)[0]);
+        assertEquals(500, resultPageZero.size());
+        for (String[] line : resultPageZero) {
+            assertEquals(9, line.length);
+        }
+
+        assertEquals("63.143.42.248", resultPageOne.get(0)[0]);
+        assertEquals(40, resultPageOne.size());
+        for (String[] line : resultPageOne) {
+            assertEquals(9, line.length);
+        }
+    }
+
     private LogConfig getLogConfig() {
         // register columns
         Map<Integer, ColumnComponent> columnComponentMap = new TreeMap<>();
         int i = 0;
         columnComponentMap.put(++i, createColumnComponent(1L, "Host", ColumnType.IP, "(\\d{1,3}\\.){3}\\d{1,3}"));
         columnComponentMap.put(++i, createColumnComponent(9L, "Custom Seperator", ColumnType.TEXT, "-"));
-        columnComponentMap.put(++i, createColumnComponent(2L, "User", ColumnType.TEXT, "-|[a-zA-Z]+"));
+        columnComponentMap.put(++i, createColumnComponent(2L, "User", ColumnType.TEXT, ".+"));
         columnComponentMap.put(++i, createColumnComponent(3L, "Timestamp", ColumnType.DATE, "\\[.+\\]"));
         columnComponentMap.put(++i, createColumnComponent(4L, "Request", ColumnType.TEXT, "\\\".+\\\""));
         columnComponentMap.put(++i, createColumnComponent(5L, "Response Code", ColumnType.INTEGER, "\\d{1,3}"));
