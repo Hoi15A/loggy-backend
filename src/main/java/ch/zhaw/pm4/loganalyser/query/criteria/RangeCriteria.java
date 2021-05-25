@@ -4,6 +4,7 @@ import ch.zhaw.pm4.loganalyser.exception.InvalidColumnTypeException;
 import ch.zhaw.pm4.loganalyser.exception.InvalidInputException;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.util.IP;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
@@ -20,6 +21,7 @@ import java.util.logging.Logger;
 /**
  * Criteria class that filters based on a user provided range
  */
+@Getter
 @RequiredArgsConstructor
 public class RangeCriteria implements Criteria {
 
