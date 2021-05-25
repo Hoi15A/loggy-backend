@@ -21,6 +21,9 @@ class CriteriaFactoryTest {
 
     QueryComponent qc;
 
+    private static final String SIMPLE_DATE_FORMAT = "dd-MM-yyyy";
+    private static final String LONG_DATE_TIME_FORMAT = "dd-MM-yyyy'T'HH:mm:ss";
+
     @BeforeEach
     void setUp() {
         qc = mock(QueryComponent.class);
@@ -34,7 +37,7 @@ class CriteriaFactoryTest {
     void testGetCriteria() {
         ColumnComponent columnComponentMock = mock(ColumnComponent.class);
         when(qc.getColumnComponent()).thenReturn(columnComponentMock);
-        when(qc.getColumnComponent().getDateFormat()).thenReturn("dd-MM-yyyy");
+        when(qc.getColumnComponent().getDateFormat()).thenReturn(SIMPLE_DATE_FORMAT);
         when(qc.getFrom()).thenReturn("24-03-1997");
 
         assertNotNull(CriteriaFactory.getCriteria(FilterType.REGEX, qc));
@@ -49,8 +52,8 @@ class CriteriaFactoryTest {
         // default
         when(qc.getColumnComponent()).thenReturn(columnComponentMock);
         when(qc.getExact()).thenReturn("01-02-1997");
-        when(qc.getDateFormat()).thenReturn("dd-MM-yyyy");
-        when(qc.getColumnComponent().getDateFormat()).thenReturn("dd-MM-yyyy'T'HH:mm:ss");
+        when(qc.getDateFormat()).thenReturn(SIMPLE_DATE_FORMAT);
+        when(qc.getColumnComponent().getDateFormat()).thenReturn(LONG_DATE_TIME_FORMAT);
 
         ExactCriteria criteria = (ExactCriteria) CriteriaFactory.getCriteria(FilterType.EXACT, qc);
         assertNull(criteria.getDateFormat());
@@ -60,7 +63,7 @@ class CriteriaFactoryTest {
         when(qc.getColumnComponent().getColumnType()).thenReturn(ColumnType.DATE);
 
         criteria = (ExactCriteria) CriteriaFactory.getCriteria(FilterType.EXACT, qc);
-        assertEquals("dd-MM-yyyy'T'HH:mm:ss", criteria.getDateFormat());
+        assertEquals(LONG_DATE_TIME_FORMAT, criteria.getDateFormat());
         assertEquals(ColumnType.DATE, criteria.getType());
     }
 
@@ -70,8 +73,8 @@ class CriteriaFactoryTest {
         // default
         when(qc.getColumnComponent()).thenReturn(columnComponentMock);
         when(qc.getFrom()).thenReturn("01-02-1997");
-        when(qc.getDateFormat()).thenReturn("dd-MM-yyyy");
-        when(qc.getColumnComponent().getDateFormat()).thenReturn("dd-MM-yyyy'T'HH:mm:ss");
+        when(qc.getDateFormat()).thenReturn(SIMPLE_DATE_FORMAT);
+        when(qc.getColumnComponent().getDateFormat()).thenReturn(LONG_DATE_TIME_FORMAT);
         when(qc.getColumnComponent().getColumnType()).thenReturn(ColumnType.IP);
 
         RangeCriteria criteria = (RangeCriteria) CriteriaFactory.getCriteria(FilterType.RANGE, qc);
@@ -85,7 +88,7 @@ class CriteriaFactoryTest {
         when(qc.getColumnComponent().getColumnType()).thenReturn(ColumnType.DATE);
 
         criteria = (RangeCriteria) CriteriaFactory.getCriteria(FilterType.RANGE, qc);
-        assertEquals("dd-MM-yyyy'T'HH:mm:ss", criteria.getDateFormat());
+        assertEquals(LONG_DATE_TIME_FORMAT, criteria.getDateFormat());
         assertNotNull(criteria.getLocale());
         assertNotNull(criteria.getDateFormat());
         assertNotNull(criteria.getFrom());
