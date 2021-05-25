@@ -7,9 +7,7 @@ import ch.zhaw.pm4.loganalyser.model.log.column.FilterType;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -26,7 +24,7 @@ public class CriteriaFactory {
             case REGEX: criteria = new RegexCriteria(queryComponent.getRegex());
                 break;
 
-            case EXACT: criteria = new ExactCriteria(queryComponent.getExact());
+            case EXACT: criteria = createExactCriteria(queryComponent);
                 break;
 
             case RANGE: criteria = createRangeCriteria(queryComponent);
@@ -38,6 +36,26 @@ public class CriteriaFactory {
             default:
                 criteria = null;
                 break;
+        }
+
+        return criteria;
+    }
+
+    private Criteria createExactCriteria(QueryComponent qc) {
+        ExactCriteria criteria;
+
+        var columnComponent = qc.getColumnComponent();
+        if (columnComponent.getColumnType() == ColumnType.DATE) {
+            var defaultLocale = Locale.ENGLISH;
+            var dtfRequest = DateTimeFormatter.ofPattern(qc.getDateFormat(), defaultLocale);
+            var dtfLogService = DateTimeFormatter.ofPattern(columnComponent.getDateFormat(), defaultLocale);
+            var exactDate = LocalDate.parse(qc.getExact(), dtfRequest).atStartOfDay().atOffset(ZoneOffset.UTC);
+
+            criteria = new ExactCriteria(dtfLogService.format(exactDate));
+            criteria.setDateFormat(columnComponent.getDateFormat());
+            criteria.setType(ColumnType.DATE);
+        } else {
+            criteria = new ExactCriteria(qc.getExact());
         }
 
         return criteria;

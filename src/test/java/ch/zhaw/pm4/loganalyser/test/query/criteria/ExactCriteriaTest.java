@@ -1,6 +1,7 @@
 package ch.zhaw.pm4.loganalyser.test.query.criteria;
 
 import ch.zhaw.pm4.loganalyser.exception.ExactCriteriaIsNullException;
+import ch.zhaw.pm4.loganalyser.model.log.column.ColumnType;
 import ch.zhaw.pm4.loganalyser.query.criteria.ExactCriteria;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,10 @@ class ExactCriteriaTest {
 
     private static final String VALID_EXACT = "Is this exact?!?";
     private static final String VALID_NOT_EXACT = "Is this exactly?!?";
+
+    private static final String VALID_EXACT_DATE = "2021-03-23T00:00:00";
+    private static final String VALID_NOT_EXACT_DATE = "2021-03-22T00:00:00";
+    private static final String VALID_EXACT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
     /* ****************************************************************************************************************
      * POSITIVE TESTS
@@ -36,6 +41,23 @@ class ExactCriteriaTest {
         assertEquals(1, result.size());
         assertEquals(list.get(0), result.get(0));
     }
+
+    @Test
+    void testExactCriteria_ExactExists_Date() {
+        ExactCriteria criteria = new ExactCriteria(VALID_EXACT_DATE);
+        criteria.setType(ColumnType.DATE);
+        criteria.setDateFormat(VALID_EXACT_DATE_FORMAT);
+
+        List<String[]> list = new ArrayList<>();
+        list.add(new String[] { VALID_EXACT_DATE, COLUMN_DUMMY });
+        list.add(new String[] { COLUMN_DUMMY, COLUMN_DUMMY });
+
+        List<String[]> result = criteria.apply(list, 0);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(list.get(0), result.get(0));
+    }
     
     @Test
     void testExactCriteria_ExactNotExists() {
@@ -43,6 +65,22 @@ class ExactCriteriaTest {
 
         List<String[]> list = new ArrayList<>();
         list.add(new String[] { VALID_NOT_EXACT, COLUMN_DUMMY });
+        list.add(new String[] { COLUMN_DUMMY, COLUMN_DUMMY });
+
+        List<String[]> result = criteria.apply(list, 0);
+
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    void testExactCriteria_ExactNotExists_Date() {
+        ExactCriteria criteria = new ExactCriteria(VALID_EXACT_DATE);
+        criteria.setType(ColumnType.DATE);
+        criteria.setDateFormat(VALID_EXACT_DATE_FORMAT);
+
+        List<String[]> list = new ArrayList<>();
+        list.add(new String[] { VALID_NOT_EXACT_DATE, COLUMN_DUMMY });
         list.add(new String[] { COLUMN_DUMMY, COLUMN_DUMMY });
 
         List<String[]> result = criteria.apply(list, 0);
@@ -93,4 +131,15 @@ class ExactCriteriaTest {
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> criteria.apply(list, 2));
     }
 
+    @Test
+    void testExactCriteria_DateFormatNotSet() {
+        ExactCriteria criteria = new ExactCriteria(VALID_EXACT_DATE);
+        criteria.setType(ColumnType.DATE);
+
+        List<String[]> list = new ArrayList<>();
+        list.add(new String[] { VALID_EXACT_DATE, COLUMN_DUMMY });
+        list.add(new String[] { VALID_EXACT_DATE, COLUMN_DUMMY });
+
+        assertThrows(ExactCriteriaIsNullException.class, () -> criteria.apply(list, 0));
+    }
 }
