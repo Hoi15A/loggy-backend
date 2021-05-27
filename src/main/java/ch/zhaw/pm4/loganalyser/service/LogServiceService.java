@@ -27,6 +27,9 @@ import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogServiceToDTO;
 @Transactional
 public class LogServiceService {
 
+    public static final String UPDATE_SERVICE_S = "Could not update non existing log service %s";
+    public static final String UPDATE_SERVICE_LOG_CONFIG_S = "Could not create log service. Log config %s does not exist.";
+
     private final LogServiceRepository logServiceRepository;
     private final LogConfigRepository logConfigRepository;
 
@@ -88,4 +91,22 @@ public class LogServiceService {
         return mapLogServiceToDTO(optionalLogService.get());
     }
 
+    /**
+     * Updates a {@link LogService} in the database.
+     * @param logServiceDTO the updated log service as a {@link LogServiceDTO}
+     * @throws RecordNotFoundException when the LogService does not exist already
+     */
+    public void updateLogService(LogServiceDTO logServiceDTO) {
+        Optional<LogService> logServiceOptional = logServiceRepository.findById(logServiceDTO.getId());
+        if (logServiceOptional.isEmpty()) throw new RecordNotFoundException(String.format(UPDATE_SERVICE_S, logServiceDTO.getName()));
+
+        var service = mapDTOToLogService(logServiceDTO);
+
+        var logConfigOptional = logConfigRepository.findById(logServiceDTO.getLogConfig());
+        if (logConfigOptional.isEmpty()) throw new RecordNotFoundException(String.format(UPDATE_SERVICE_LOG_CONFIG_S, logServiceDTO.getLogConfig()));
+
+        service.setLogConfig(logConfigOptional.get());
+
+        logServiceRepository.save(service);
+    }
 }

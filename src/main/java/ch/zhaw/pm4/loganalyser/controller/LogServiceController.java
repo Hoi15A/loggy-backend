@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +39,18 @@ public class LogServiceController {
     public ResponseEntity<String> createService(@Valid @RequestBody final LogServiceDTO logServiceDTO) {
         logServiceService.createLogService(logServiceDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * Updates a log service in the database using the provided {@link LogServiceDTO}.
+     * @param logServiceDTO Data transfer object containing the data that should be updated in the database.
+     * @return {@link ResponseEntity} with status 204 with an empty body.
+     * @throws RecordNotFoundException when the provided {@link LogServiceDTO} does not exist.
+     */
+    @PutMapping("/")
+    public ResponseEntity<String> updateLogService(@Valid @RequestBody final LogServiceDTO logServiceDTO) {
+        logServiceService.updateLogService(logServiceDTO);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -70,5 +83,4 @@ public class LogServiceController {
     public ResponseEntity<LogServiceDTO> deleteLogService(@PathVariable("id") final long id) {
         return ResponseEntity.ok(logServiceService.deleteLogServiceById(id));
     }
-
 }
