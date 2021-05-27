@@ -8,11 +8,8 @@ import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

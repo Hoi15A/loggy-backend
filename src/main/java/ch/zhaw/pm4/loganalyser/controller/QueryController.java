@@ -4,12 +4,10 @@ import ch.zhaw.pm4.loganalyser.exception.FileNotFoundException;
 import ch.zhaw.pm4.loganalyser.exception.FileReadException;
 import ch.zhaw.pm4.loganalyser.exception.RecordNotFoundException;
 import ch.zhaw.pm4.loganalyser.model.dto.QueryComponentDTO;
-import ch.zhaw.pm4.loganalyser.model.dto.TableDTO;
 import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,12 +27,6 @@ import java.util.List;
 public class QueryController {
 
     private final QueryService queryService;
-
-    @GetMapping("sample")
-    public ResponseEntity<TableDTO> getSampleQuery() {
-        // TODO: to be removed
-        return ResponseEntity.ok(queryService.getSampleLogsByQuery());
-    }
 
     /**
      * Runs a query for a certain log service.

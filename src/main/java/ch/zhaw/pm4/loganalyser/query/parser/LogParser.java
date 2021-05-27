@@ -40,20 +40,16 @@ public class LogParser {
     public List<String[]> read(LogService service, int page) throws IOException {
         var logDir = Path.of(service.getLogDirectory());
 
-        System.out.println(logDir);
-        System.out.println(logDir.toFile());
-        System.out.println(logDir.toFile().listFiles());
-
-        LOGGER.info("Load logfiles in [" + service.getLogDirectory() + "]");
+        LOGGER.info(() -> "Load logfiles in [" + service.getLogDirectory() + "]");
         List<String[]> rows = new ArrayList<>();
         for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
             if (logfile.isFile()) {
-                LOGGER.info("Parse file [" + logfile.getName() + "]");
+                LOGGER.info(() -> "Parse file [" + logfile.getName() + "]");
                 rows.addAll(parse(logfile, service.getLogConfig(), page));
             }
         }
 
-        LOGGER.info("Total parsed lines: " + rows.size());
+        LOGGER.info(() -> "Total parsed lines: " + rows.size());
         return rows;
     }
 
@@ -79,12 +75,12 @@ public class LogParser {
         var p = Pattern.compile(concatenateRegex(config));
 
         try (Stream<String> lines = Files.lines(logfile.toPath())) {
-            LOGGER.info("Skipped " + (page * PAGE_SIZE) + " lines");
+            LOGGER.info(() -> "Skipped " + (page * PAGE_SIZE) + " lines");
             lines.skip(page * PAGE_SIZE).limit(PAGE_SIZE).forEach(line -> {
                 String[] parsed = parseLine(p, line);
                 if (parsed != null) rows.add(parsed);
             });
-            LOGGER.info("Parsed " + (page * PAGE_SIZE) + " lines");
+            LOGGER.info(() -> "Parsed " + (page * PAGE_SIZE) + " lines");
         }
 
         return rows;
@@ -116,7 +112,8 @@ public class LogParser {
             lastComponentSeparator = false;
         }
 
-        LOGGER.info("Builded regex: " + lineRegex);
+        String finalLineRegex = lineRegex;
+        LOGGER.info(() -> "Builded regex: " + finalLineRegex);
         return lineRegex;
     }
 

@@ -60,7 +60,7 @@ class QueryServiceTest {
     @Mock LogService logServiceMock;
     @Mock LogConfig logConfigMock;
 
-    Map<Integer, ColumnComponent> columnComponentMap = new HashMap<>();
+    final Map<Integer, ColumnComponent> columnComponentMap = new HashMap<>();
 
     @BeforeEach
     void setUp() throws IOException {
