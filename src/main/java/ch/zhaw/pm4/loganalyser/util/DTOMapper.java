@@ -24,7 +24,7 @@ public class DTOMapper {
      * @param logServiceDTO to be mapped.
      * @return {@link LogService}
      */
-    public static LogService mapDTOToLogService(LogServiceDTO logServiceDTO) {
+    public LogService mapDTOToLogService(LogServiceDTO logServiceDTO) {
         return LogService.builder()
                 .id(logServiceDTO.getId())
                 .name(logServiceDTO.getName())
@@ -40,7 +40,7 @@ public class DTOMapper {
      * @param logService to be mapped.
      * @return {@link LogServiceDTO}
      */
-    public static LogServiceDTO mapLogServiceToDTO(LogService logService) {
+    public LogServiceDTO mapLogServiceToDTO(LogService logService) {
         return LogServiceDTO.builder()
                 .id(logService.getId())
                 .name(logService.getName())
@@ -57,7 +57,7 @@ public class DTOMapper {
      * @param logConfigDTO to be mapped.
      * @return {@link LogConfig}
      */
-    public static LogConfig mapDTOToLogConfig(LogConfigDTO logConfigDTO) {
+    public LogConfig mapDTOToLogConfig(LogConfigDTO logConfigDTO) {
         return LogConfig.builder()
                 .name(logConfigDTO.getName())
                 .columnCount(logConfigDTO.getColumnCount())
@@ -67,7 +67,7 @@ public class DTOMapper {
                 .build();
     }
 
-    private static Map<Integer, ColumnComponent> mapColumnComponentsDtoMapToColumnComponentsMap(Map<Integer, ColumnComponentDTO> dtoMap) {
+    private Map<Integer, ColumnComponent> mapColumnComponentsDtoMapToColumnComponentsMap(Map<Integer, ColumnComponentDTO> dtoMap) {
         return dtoMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> mapDTOToColumnComponent(entry.getValue())));
     }
@@ -77,7 +77,7 @@ public class DTOMapper {
      * @param logConfig to be mapped.
      * @return {@link LogConfigDTO}
      */
-    public static LogConfigDTO mapLogConfigToDTO(LogConfig logConfig) {
+    public LogConfigDTO mapLogConfigToDTO(LogConfig logConfig) {
         return LogConfigDTO.builder()
                 .name(logConfig.getName())
                 .columnCount(logConfig.getColumnCount())
@@ -87,7 +87,7 @@ public class DTOMapper {
                 .build();
     }
 
-    private static Map<Integer, ColumnComponentDTO> mapColumnComponentsMapToDtoMap(Map<Integer, ColumnComponent> columnComponentMap) {
+    private Map<Integer, ColumnComponentDTO> mapColumnComponentsMapToDtoMap(Map<Integer, ColumnComponent> columnComponentMap) {
         return columnComponentMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> mapColumnComponentToDTO(entry.getValue())));
     }
@@ -97,7 +97,7 @@ public class DTOMapper {
      * @param columnComponentDTO to be mapped.
      * @return {@link ColumnComponent}
      */
-    public static ColumnComponent mapDTOToColumnComponent(ColumnComponentDTO columnComponentDTO) {
+    public ColumnComponent mapDTOToColumnComponent(ColumnComponentDTO columnComponentDTO) {
         return ColumnComponent.builder()
                 .name(columnComponentDTO.getName())
                 .dateFormat(columnComponentDTO.getDateFormat())
@@ -112,7 +112,7 @@ public class DTOMapper {
      * @param columnComponent to be mapped.
      * @return {@link ColumnComponentDTO}
      */
-    public static ColumnComponentDTO mapColumnComponentToDTO(ColumnComponent columnComponent) {
+    public ColumnComponentDTO mapColumnComponentToDTO(ColumnComponent columnComponent) {
         return ColumnComponentDTO.builder()
                 .columnType(columnComponent.getColumnType())
                 .dateFormat(columnComponent.getDateFormat())
@@ -128,7 +128,7 @@ public class DTOMapper {
      * @param queryComponentDTO to be mapped.
      * @return {@link QueryComponent}
      */
-    public static QueryComponent mapDTOToQueryComponent(QueryComponentDTO queryComponentDTO) {
+    public QueryComponent mapDTOToQueryComponent(QueryComponentDTO queryComponentDTO) {
         return QueryComponent.builder()
                 .columnComponentId(queryComponentDTO.getColumnComponentId())
                 .filterType(queryComponentDTO.getFilterType())

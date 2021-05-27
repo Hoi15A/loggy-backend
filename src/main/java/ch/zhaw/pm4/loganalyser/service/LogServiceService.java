@@ -16,8 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogService;
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogServiceToDTO;
 
 /**
  * Perform CRUD operations for the log services.
@@ -42,7 +40,7 @@ public class LogServiceService {
         Optional<LogConfig> optionalLogConfig = logConfigRepository.findById(logServiceDTO.getLogConfig());
         if (optionalLogConfig.isEmpty()) throw new RecordNotFoundException("Could not create log service. Log config " + logServiceDTO.getLogConfig() + " does not exist.");
 
-        var service = mapDTOToLogService(logServiceDTO);
+        var service = DTOMapper.mapDTOToLogService(logServiceDTO);
         service.setLogConfig(optionalLogConfig.get());
         logServiceRepository.save(service);
     }
@@ -69,7 +67,7 @@ public class LogServiceService {
         Optional<LogService> logService = logServiceRepository.findById(id);
         if(logService.isEmpty()) throw new RecordNotFoundException("Could not find log service with id " + id);
 
-        return mapLogServiceToDTO(logService.get());
+        return DTOMapper.mapLogServiceToDTO(logService.get());
     }
     
     /**
@@ -88,7 +86,7 @@ public class LogServiceService {
         logServiceRepository.save(logService);
         logServiceRepository.delete(logService);
         logService.setLogConfig(logConfig);
-        return mapLogServiceToDTO(optionalLogService.get());
+        return DTOMapper.mapLogServiceToDTO(optionalLogService.get());
     }
 
     /**
@@ -100,7 +98,7 @@ public class LogServiceService {
         Optional<LogService> logServiceOptional = logServiceRepository.findById(logServiceDTO.getId());
         if (logServiceOptional.isEmpty()) throw new RecordNotFoundException(String.format(UPDATE_SERVICE_S, logServiceDTO.getName()));
 
-        var service = mapDTOToLogService(logServiceDTO);
+        var service = DTOMapper.mapDTOToLogService(logServiceDTO);
 
         var logConfigOptional = logConfigRepository.findById(logServiceDTO.getLogConfig());
         if (logConfigOptional.isEmpty()) throw new RecordNotFoundException(String.format(UPDATE_SERVICE_LOG_CONFIG_S, logServiceDTO.getLogConfig()));

@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToLogConfig;
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapLogConfigToDTO;
 
 /**
  * Perform CRUD operations for the log configs.
@@ -36,7 +34,7 @@ public class LogConfigService {
         Optional<LogConfig> logConfigOptional = logConfigRepository.findById(logConfigDTO.getName());
         if (logConfigOptional.isPresent()) throw new RecordAlreadyExistsException("Could not create already existing log config " + logConfigDTO.getName());
 
-        var config = mapDTOToLogConfig(logConfigDTO);
+        var config = DTOMapper.mapDTOToLogConfig(logConfigDTO);
         logConfigRepository.save(config);
     }
 
@@ -62,7 +60,7 @@ public class LogConfigService {
         Optional<LogConfig> logConfigOptional = logConfigRepository.findById(id);
         if (logConfigOptional.isEmpty()) throw new RecordNotFoundException("Could not find log config " + id);
 
-        return mapLogConfigToDTO(logConfigOptional.get());
+        return DTOMapper.mapLogConfigToDTO(logConfigOptional.get());
     }
 
     /**
@@ -74,7 +72,7 @@ public class LogConfigService {
         Optional<LogConfig> logConfigOptional= logConfigRepository.findById(logConfigDTO.getName());
         if (logConfigOptional.isEmpty()) throw new RecordNotFoundException("Could not update non existing log config " + logConfigDTO.getName());
 
-        var config = mapDTOToLogConfig(logConfigDTO);
+        var config = DTOMapper.mapDTOToLogConfig(logConfigDTO);
         logConfigRepository.save(config);
     }
 
@@ -90,7 +88,7 @@ public class LogConfigService {
 
         var logConfig = optionalLogConfig.get();
         logConfigRepository.delete(logConfig);
-        return mapLogConfigToDTO(optionalLogConfig.get());
+        return DTOMapper.mapLogConfigToDTO(optionalLogConfig.get());
     }
 
 }

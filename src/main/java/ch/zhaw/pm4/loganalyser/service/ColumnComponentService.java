@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapColumnComponentToDTO;
-import static ch.zhaw.pm4.loganalyser.util.DTOMapper.mapDTOToColumnComponent;
-
 /**
  * Perform CRUD operations for the column components.
  */
@@ -29,7 +26,7 @@ public class ColumnComponentService {
      * @param dto to be created.
      */
     public void createColumnComponent(ColumnComponentDTO dto) {
-        var columnComponent = mapDTOToColumnComponent(dto);
+        var columnComponent = DTOMapper.mapDTOToColumnComponent(dto);
         columnComponentRepository.save(columnComponent);
     }
 
@@ -55,7 +52,7 @@ public class ColumnComponentService {
         Optional<ColumnComponent> columnComponentOptional = columnComponentRepository.findById(id);
         if(columnComponentOptional.isEmpty()) throw new RecordNotFoundException("Could not find column component with id " + id);
 
-        return mapColumnComponentToDTO(columnComponentOptional.get());
+        return DTOMapper.mapColumnComponentToDTO(columnComponentOptional.get());
     }
 
     /**
@@ -67,7 +64,7 @@ public class ColumnComponentService {
         Optional<ColumnComponent> oldColumnComponent = columnComponentRepository.findById(columnComponentDTO.getId());
         if(oldColumnComponent.isEmpty()) throw new RecordNotFoundException("Could not update non existing column component " + columnComponentDTO.getName());
 
-        columnComponentRepository.save(mapDTOToColumnComponent(columnComponentDTO));
+        columnComponentRepository.save(DTOMapper.mapDTOToColumnComponent(columnComponentDTO));
     }
 
     /**
@@ -82,7 +79,7 @@ public class ColumnComponentService {
 
         var columnComponent = optionalColumnComponent.get();
         columnComponentRepository.delete(columnComponent);
-        return mapColumnComponentToDTO(columnComponent);
+        return DTOMapper.mapColumnComponentToDTO(columnComponent);
     }
 
 }

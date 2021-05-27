@@ -14,7 +14,7 @@ public class IP {
      * @param ip IP address that should be converted into a long
      * @return The address as a numerical value
      */
-    public static long ipToLong(InetAddress ip) {
+    public long ipToLong(InetAddress ip) {
         byte[] octets = ip.getAddress();
         long result = 0;
         for (byte octet : octets) {

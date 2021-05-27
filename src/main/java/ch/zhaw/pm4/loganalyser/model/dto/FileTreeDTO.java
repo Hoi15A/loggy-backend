@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * Data Transfer Object for the log files location.
  */
-@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Data @Builder
 public class FileTreeDTO {
