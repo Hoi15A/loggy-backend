@@ -40,6 +40,10 @@ public class LogParser {
     public List<String[]> read(LogService service, int page) throws IOException {
         var logDir = Path.of(service.getLogDirectory());
 
+        System.out.println(logDir);
+        System.out.println(logDir.toFile());
+        System.out.println(logDir.toFile().listFiles());
+
         LOGGER.info("Load logfiles in [" + service.getLogDirectory() + "]");
         List<String[]> rows = new ArrayList<>();
         for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
@@ -105,13 +109,15 @@ public class LogParser {
         sortedColumns = new TreeMap<>(Collections.reverseOrder());
         sortedColumns.putAll(config.getColumnComponents());
 
+        var lastComponentSeparator = true;
         for(ColumnComponent c : sortedColumns.values()) {
             lineRegex = String.format("(?<%s>%s)%s%s", convertNameForCapturingGroup(c), c.getFormat(),
-                                      config.getSeparator(), lineRegex);
+                                      lastComponentSeparator ? "": config.getSeparator(), lineRegex);
+            lastComponentSeparator = false;
         }
 
-        LOGGER.info("Builded regex: " + lineRegex.trim());
-        return lineRegex.trim();
+        LOGGER.info("Builded regex: " + lineRegex);
+        return lineRegex;
     }
 
     private String convertNameForCapturingGroup(ColumnComponent columnComponent) {

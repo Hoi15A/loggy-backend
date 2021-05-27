@@ -9,8 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +28,7 @@ class LogParserTest {
     void testRead() throws Exception {
         // prepare
         LogService serviceMock = mock(LogService.class);
-        File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LOGS_TEST_READ).getPath());
+        File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LOGS_TEST_READ).toURI().getPath());
         when(serviceMock.getLogDirectory()).thenReturn(logFolder.toString());
         when(serviceMock.getLogConfig()).thenReturn(getLogConfig());
 
@@ -44,10 +46,10 @@ class LogParserTest {
     }
 
     @Test
-    void testReadWithPaging() throws IOException {
+    void testReadWithPaging() throws Exception {
         // prepare
         LogService serviceMock = mock(LogService.class);
-        File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LOGS_TEST_PAGING).getPath());
+        File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LOGS_TEST_PAGING).toURI().getPath());
         when(serviceMock.getLogDirectory()).thenReturn(logFolder.toString());
         when(serviceMock.getLogConfig()).thenReturn(getLogConfig());
 
