@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -23,6 +24,8 @@ import java.util.stream.Stream;
  * It filters and parses the necessary files / file contents and provides them for further processing.
  */
 public class LogParser {
+
+    private static final Logger LOGGER = Logger.getLogger(LogParser.class.getName());
 
     private Map<Integer, ColumnComponent> sortedColumns;
     public static final long PAGE_SIZE = 500L;
@@ -37,13 +40,16 @@ public class LogParser {
     public List<String[]> read(LogService service, int page) throws IOException {
         var logDir = Path.of(service.getLogDirectory());
 
+        LOGGER.info("Load logfiles in [" + service.getLogDirectory() + "]");
         List<String[]> rows = new ArrayList<>();
         for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
             if (logfile.isFile()) {
+                LOGGER.info("Parse file [" + logfile.getName() + "]");
                 rows.addAll(parse(logfile, service.getLogConfig(), page));
             }
         }
 
+        LOGGER.info("Parsed " + rows.size() + " lines");
         return rows;
     }
 
