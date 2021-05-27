@@ -109,6 +109,8 @@ public class LogParser {
             lineRegex = String.format("(?<%s>%s)%s%s", convertNameForCapturingGroup(c), c.getFormat(),
                                       config.getSeparator(), lineRegex);
         }
+
+        LOGGER.info("Builded regex: " + lineRegex.trim());
         return lineRegex.trim();
     }
 
