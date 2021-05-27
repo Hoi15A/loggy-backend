@@ -10,7 +10,7 @@ public enum ColumnType {
 
     DATE(FilterType.RANGE, FilterType.EXACT),
     ENUM(FilterType.EXACT),
-    TEXT(FilterType.REGEX, FilterType.CONTAINS),
+    TEXT(FilterType.REGEX, FilterType.CONTAINS, FilterType.EXACT),
     INTEGER(FilterType.RANGE, FilterType.EXACT),
     DOUBLE(FilterType.RANGE, FilterType.EXACT),
     IP(FilterType.RANGE, FilterType.EXACT);

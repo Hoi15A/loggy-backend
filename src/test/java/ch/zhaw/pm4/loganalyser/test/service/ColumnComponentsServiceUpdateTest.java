@@ -40,7 +40,7 @@ class ColumnComponentsServiceUpdateTest {
                 .id(2L) // is an existing id
                 .name("newName")
                 .format("newFormat")
-                .filterTypes(List.of(FilterType.REGEX, FilterType.CONTAINS).toArray(FilterType[]::new))
+                .filterTypes(List.of(FilterType.REGEX, FilterType.CONTAINS, FilterType.EXACT).toArray(FilterType[]::new))
                 .columnType(ColumnType.TEXT)
                 .build();
 
