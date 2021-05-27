@@ -49,7 +49,7 @@ public class LogParser {
             }
         }
 
-        LOGGER.info("Parsed " + rows.size() + " lines");
+        LOGGER.info("Total parsed lines: " + rows.size());
         return rows;
     }
 
@@ -75,10 +75,12 @@ public class LogParser {
         var p = Pattern.compile(concatenateRegex(config));
 
         try (Stream<String> lines = Files.lines(logfile.toPath())) {
+            LOGGER.info("Skipped " + (page * PAGE_SIZE) + " lines");
             lines.skip(page * PAGE_SIZE).limit(PAGE_SIZE).forEach(line -> {
                 String[] parsed = parseLine(p, line);
                 if (parsed != null) rows.add(parsed);
             });
+            LOGGER.info("Parsed " + (page * PAGE_SIZE) + " lines");
         }
 
         return rows;
