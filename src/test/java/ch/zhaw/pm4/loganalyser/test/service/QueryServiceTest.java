@@ -14,14 +14,19 @@ import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +57,8 @@ class QueryServiceTest {
     private static final String[] entryHomeNetwork = new String[] { "192.168.1.2"    , "12/05/2021 - 12:59:59", "WARN: Coffemachine broke"    , "6.9"   , "42"      };
     private static final String[] entryMinIp       = new String[] { "0.0.0.0"        , "13/05/2021 - 11:59:59", "INFO: Nginx restarted"       , "123.7" , "112"     };
     private static final String[] entryMaxIp       = new String[] { "255.255.255.255", "24/12/2121 - 00:00:00", "CRITICAL: Server died"       , "5555.5", "5555555" };
+
+    private static final int GENERATE_ENTRIES_COUNT = 255;
 
     @Autowired QueryService queryService;
 
@@ -99,6 +106,19 @@ class QueryServiceTest {
         ColumnComponentDTO textCompDTO    = mock(ColumnComponentDTO.class);
         ColumnComponentDTO doubleCompDTO  = mock(ColumnComponentDTO.class);
         ColumnComponentDTO intCompDTO     = mock(ColumnComponentDTO.class);
+
+        // name
+        when(ipComp.getName()).thenReturn("IP");
+        when(dateComp.getName()).thenReturn("DATE");
+        when(textComp.getName()).thenReturn("TEXT");
+        when(doubleComp.getName()).thenReturn("DOUBLE");
+        when(intComp.getName()).thenReturn("INT");
+
+        when(ipCompDTO.getName()).thenReturn("IP");
+        when(dateCompDTO.getName()).thenReturn("DATE");
+        when(textCompDTO.getName()).thenReturn("TEXT");
+        when(doubleCompDTO.getName()).thenReturn("DOUBLE");
+        when(intCompDTO.getName()).thenReturn("INT");
 
         // id
         long l = 0;
@@ -256,7 +276,6 @@ class QueryServiceTest {
                 .to("200")
                 .build();
 
-
         QueryComponentDTO integerRange = QueryComponentDTO.builder()
                 .columnComponentId(4L)
                 .filterType(FilterType.RANGE)
@@ -305,33 +324,36 @@ class QueryServiceTest {
 
     @Test
     void testReadWithPaging() throws Exception {
-        /*
         // prepare
-        LogService serviceMock = mock(LogService.class);
-        File logFolder = new File(getClass().getClassLoader().getResource(LOGS_TEST_PAGING).toURI().getPath());
-        when(serviceMock.getLogDirectory()).thenReturn(logFolder.toString());
-        when(serviceMock.getLogConfig()).thenReturn(getLogConfig());
+        List<String[]> data = new ArrayList<>();
+        for (int i = 0; i < GENERATE_ENTRIES_COUNT; i++) {
+            data.addAll(getParsedEntries());
+        }
+        when(logParserMock.read(logServiceMock)).thenReturn(data);
 
-        LogParser parser = new LogParser();
+        QueryComponentDTO doubleRange = QueryComponentDTO.builder()
+                .columnComponentId(3L)
+                .filterType(FilterType.RANGE)
+                .from("10")
+                .to("200")
+                .build();
 
         // execute
-        List<String[]> resultPageZero = parser.read(serviceMock, 0);
-        List<String[]> resultPageOne = parser.read(serviceMock, 1);
+        var resultPageZero = queryService.runQueryForService(SERVICE_ID, List.of(doubleRange),0);
+        var resultPageOne = queryService.runQueryForService(SERVICE_ID, List.of(doubleRange),1);
 
         // validate
-        assertEquals("192.168.1.1", resultPageZero.get(0)[0]);
         assertEquals(500, resultPageZero.size());
+        assertEquals("127.0.0.1", resultPageZero.get(0)[0]);
         for (String[] line : resultPageZero) {
-            assertEquals(9, line.length);
+            assertEquals(5, line.length);
         }
 
-        assertEquals("63.143.42.248", resultPageOne.get(0)[0]);
-        assertEquals(40, resultPageOne.size());
+        assertEquals(10, resultPageOne.size());
+        assertEquals("0.0.0.0", resultPageOne.get(1)[0]);
         for (String[] line : resultPageOne) {
-            assertEquals(9, line.length);
+            assertEquals(5, line.length);
         }
-         */
-        // todo: anpassen von parser zu queryservice
     }
 
     /* ****************************************************************************************************************
