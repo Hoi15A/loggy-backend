@@ -14,19 +14,14 @@ import ch.zhaw.pm4.loganalyser.query.parser.LogParser;
 import ch.zhaw.pm4.loganalyser.repository.LogServiceRepository;
 import ch.zhaw.pm4.loganalyser.service.ColumnComponentService;
 import ch.zhaw.pm4.loganalyser.service.QueryService;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,8 +42,6 @@ class QueryServiceTest {
 
     private static final String IP_REGEX = "(1?\\d{1,2}\\.){3}(1?\\d{1,2})" // 0.0.0.0 - 199.199.199.199
                                          + "|(2[0-5]{2}\\.){3}(2[0-5]{2})"; // 200.200.200.200 - 255.255.255.255
-
-    private static final String LOGS_TEST_PAGING = "logs/testPaging";
 
     private static final long SERVICE_ID = 99L;
 
