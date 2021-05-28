@@ -52,7 +52,7 @@ class QueryServiceTest {
 
     private static final long SERVICE_ID = 99L;
 
-    //                                                              ip,                date,          text,                           double,   int
+    //                                                              ip,                date,                    text,                           double,   int
     private static final String[] entryLocalhost   = new String[] { "127.0.0.1"      , "11/05/2021 - 23:59:59", "ERROR: Everything is on fire", "12.0"  , "8"       };
     private static final String[] entryHomeNetwork = new String[] { "192.168.1.2"    , "12/05/2021 - 12:59:59", "WARN: Coffemachine broke"    , "6.9"   , "42"      };
     private static final String[] entryMinIp       = new String[] { "0.0.0.0"        , "13/05/2021 - 11:59:59", "INFO: Nginx restarted"       , "123.7" , "112"     };
@@ -318,8 +318,29 @@ class QueryServiceTest {
 
     @Test
     void testRunQueryForService_multiple() {
-        // -- list of queries
-        // TODO: implement
+        // prepare
+        QueryComponentDTO doubleRange = QueryComponentDTO.builder()
+                .columnComponentId(3L)
+                .filterType(FilterType.RANGE)
+                .from("100")
+                .build();
+
+        QueryComponentDTO integerRange = QueryComponentDTO.builder()
+                .columnComponentId(4L)
+                .filterType(FilterType.RANGE)
+                .to("200")
+                .build();
+
+        List<String[]> filtered = new ArrayList<>();
+        filtered.add(entryMinIp);
+
+        // execute
+        List<String[]> result = queryService.runQueryForService(SERVICE_ID, List.of(doubleRange, integerRange), 0);
+
+        // verify
+        assertNotNull(result);
+        assertEquals(filtered.size(), result.size());
+        assertIterableEquals(filtered, result);
     }
 
     @Test
