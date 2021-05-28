@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
 class LogParserTest {
 
     private static final String LOGS_TEST_READ = "logs/testRead";
-    private static final String LOGS_TEST_PAGING = "logs/testPaging";
 
     @Test
     void testRead() throws Exception {
@@ -32,40 +31,12 @@ class LogParserTest {
         LogParser parser = new LogParser();
 
         // execute
-        List<String[]> result = parser.read(serviceMock, 0);
+        List<String[]> result = parser.read(serviceMock);
 
         // validate
         assertEquals("192.168.1.1", result.get(0)[0]);
         assertEquals(30, result.size());
         for (String[] line : result) {
-            assertEquals(9, line.length);
-        }
-    }
-
-    @Test
-    void testReadWithPaging() throws Exception {
-        // prepare
-        LogService serviceMock = mock(LogService.class);
-        File logFolder = new File(LogParserTest.class.getClassLoader().getResource(LOGS_TEST_PAGING).toURI().getPath());
-        when(serviceMock.getLogDirectory()).thenReturn(logFolder.toString());
-        when(serviceMock.getLogConfig()).thenReturn(getLogConfig());
-
-        LogParser parser = new LogParser();
-
-        // execute
-        List<String[]> resultPageZero = parser.read(serviceMock, 0);
-        List<String[]> resultPageOne = parser.read(serviceMock, 1);
-
-        // validate
-        assertEquals("192.168.1.1", resultPageZero.get(0)[0]);
-        assertEquals(500, resultPageZero.size());
-        for (String[] line : resultPageZero) {
-            assertEquals(9, line.length);
-        }
-
-        assertEquals("63.143.42.248", resultPageOne.get(0)[0]);
-        assertEquals(40, resultPageOne.size());
-        for (String[] line : resultPageOne) {
             assertEquals(9, line.length);
         }
     }

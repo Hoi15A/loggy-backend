@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,6 +42,8 @@ class QueryServiceTest {
 
     private static final String IP_REGEX = "(1?\\d{1,2}\\.){3}(1?\\d{1,2})" // 0.0.0.0 - 199.199.199.199
                                          + "|(2[0-5]{2}\\.){3}(2[0-5]{2})"; // 200.200.200.200 - 255.255.255.255
+
+    private static final String LOGS_TEST_PAGING = "logs/testPaging";
 
     private static final long SERVICE_ID = 99L;
 
@@ -74,7 +75,7 @@ class QueryServiceTest {
         when(logServiceRepositoryMock.findById(SERVICE_ID)).thenReturn(Optional.of(logServiceMock));
         when(logServiceMock.getLogConfig()).thenReturn(logConfigMock);
         when(logConfigMock.getColumnComponents()).thenReturn(columnComponentMap);
-        when(logParserMock.read(logServiceMock, 0)).thenReturn(getParsedEntries());
+        when(logParserMock.read(logServiceMock)).thenReturn(getParsedEntries());
     }
 
     List<String[]> getParsedEntries() {
@@ -302,6 +303,37 @@ class QueryServiceTest {
         // TODO: implement
     }
 
+    @Test
+    void testReadWithPaging() throws Exception {
+        /*
+        // prepare
+        LogService serviceMock = mock(LogService.class);
+        File logFolder = new File(getClass().getClassLoader().getResource(LOGS_TEST_PAGING).toURI().getPath());
+        when(serviceMock.getLogDirectory()).thenReturn(logFolder.toString());
+        when(serviceMock.getLogConfig()).thenReturn(getLogConfig());
+
+        LogParser parser = new LogParser();
+
+        // execute
+        List<String[]> resultPageZero = parser.read(serviceMock, 0);
+        List<String[]> resultPageOne = parser.read(serviceMock, 1);
+
+        // validate
+        assertEquals("192.168.1.1", resultPageZero.get(0)[0]);
+        assertEquals(500, resultPageZero.size());
+        for (String[] line : resultPageZero) {
+            assertEquals(9, line.length);
+        }
+
+        assertEquals("63.143.42.248", resultPageOne.get(0)[0]);
+        assertEquals(40, resultPageOne.size());
+        for (String[] line : resultPageOne) {
+            assertEquals(9, line.length);
+        }
+         */
+        // todo: anpassen von parser zu queryservice
+    }
+
     /* ****************************************************************************************************************
      * NEGATIVE TESTS
      * ****************************************************************************************************************/
@@ -318,7 +350,7 @@ class QueryServiceTest {
     void testRunQueryForService_FileNotFound() throws IOException {
         LogService logServiceMock = mock(LogService.class);
 
-        when(logParserMock.read(any(), anyInt())).thenThrow(new java.io.FileNotFoundException());
+        when(logParserMock.read(any())).thenThrow(new java.io.FileNotFoundException());
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.of(logServiceMock));
 
         List<QueryComponentDTO> queries = new ArrayList<>();
@@ -329,7 +361,7 @@ class QueryServiceTest {
     void testRunQueryForService_FileReadException() throws IOException {
         LogService logServiceMock = mock(LogService.class);
 
-        when(logParserMock.read(any(), anyInt())).thenThrow(new IOException());
+        when(logParserMock.read(any())).thenThrow(new IOException());
         when(logServiceRepositoryMock.findById(anyLong())).thenReturn(Optional.of(logServiceMock));
 
         List<QueryComponentDTO> queries = new ArrayList<>();

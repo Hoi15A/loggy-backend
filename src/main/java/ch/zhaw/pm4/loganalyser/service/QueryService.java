@@ -36,6 +36,8 @@ public class QueryService {
 
     private static final Logger LOGGER = Logger.getLogger(QueryService.class.getName());
 
+    public static final long PAGE_SIZE = 500L;
+
     @NonNull
     private ColumnComponentService columnComponentService;
 
@@ -48,7 +50,7 @@ public class QueryService {
      * Runs a query on a service and returns all matched lines.
      * @param serviceId to be queried on.
      * @param  queryComponentDTOS {@link QueryComponentDTO} to be applied on the log files.
-     * @param page of the file which should be fetched. A page is {@value LogParser#PAGE_SIZE} lines long.
+     * @param page of the file which should be fetched. A page is {@value QueryService#PAGE_SIZE} lines long.
      * @throws RecordNotFoundException when the service does not exist.
      * @throws FileNotFoundException when the log file does not exist.
      * @throws FileReadException when there were complication while reading the log file.
@@ -63,7 +65,7 @@ public class QueryService {
 
         try {
             var service = logService.get();
-            List<String[]> logEntries = logParser.read(service, page);
+            List<String[]> logEntries = logParser.read(service);
 
             for (QueryComponent component : queryComponents) {
                 int componentIndex = getComponentIndex(component, service.getLogConfig().getColumnComponents());
@@ -76,12 +78,20 @@ public class QueryService {
                 LOGGER.info(() -> "Lines remaining after query applied on [" + component.getColumnComponent().getName() + "]: " + finalLogEntries.size());
             }
 
-            return logEntries;
+            return pageList(logEntries, page);
         } catch (java.io.FileNotFoundException ex1) {
             throw new FileNotFoundException("Log service file not found", ex1);
         } catch (IOException ex2) {
             throw new FileReadException("Something went wrong while reading the file");
         }
+    }
+
+    private List<String[]> pageList(List<String[]> logEntries, int page) {
+        LOGGER.info(() -> "Skipped " + (page * PAGE_SIZE) + " lines");
+        return logEntries.stream()
+                .skip(page * PAGE_SIZE)
+                .limit(PAGE_SIZE)
+                .collect(Collectors.toList());
     }
 
     private List<QueryComponent> mapQueryComponents(List<QueryComponentDTO> queryComponentDTOS) {

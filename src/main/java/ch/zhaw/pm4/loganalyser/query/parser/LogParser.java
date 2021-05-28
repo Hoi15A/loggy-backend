@@ -12,11 +12,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -31,16 +29,14 @@ public class LogParser {
     private static final Logger LOGGER = Logger.getLogger(LogParser.class.getName());
 
     private Map<Integer, ColumnComponent> sortedColumns;
-    public static final long PAGE_SIZE = 500L;
 
     /**
      * Reads log files from {@link LogService}, then filters and parses them.
      * @param service to be analyzed.
-     * @param page of the file which should be fetched. A page is {@value LogParser#PAGE_SIZE} lines long.
      * @return the parsed content of the log files.
      * @throws IOException when either a file is not found or there were complications while reading the file.
      */
-    public List<String[]> read(LogService service, int page) throws IOException {
+    public List<String[]> read(LogService service) throws IOException {
         var logDirPath = Path.of(service.getLogDirectory());
         var logDir = logDirPath.toFile();
 
@@ -59,7 +55,7 @@ public class LogParser {
         for (File logfile : files) {
             if (logfile.isFile()) {
                 LOGGER.info(() -> "Parse file [" + logfile.getName() + "]");
-                rows.addAll(parse(logfile, service.getLogConfig(), page));
+                rows.addAll(parse(logfile, service.getLogConfig()));
             }
         }
 
@@ -83,21 +79,19 @@ public class LogParser {
      *
      * @param logfile File that should be parsed
      * @param config Config to apply while parsing
-     * @param page of the file which should be fetched. A page is {@value LogParser#PAGE_SIZE} lines long.
      * @return Parsed logs
      * @throws IOException If file could not be found or there were complications while reading the file.
      */
-    private List<String[]> parse(File logfile, LogConfig config, int page) throws IOException {
+    private List<String[]> parse(File logfile, LogConfig config) throws IOException {
         List<String[]> rows = new ArrayList<>();
         var p = Pattern.compile(concatenateRegex(config));
 
         try (Stream<String> lines = Files.lines(logfile.toPath())) {
-            LOGGER.info(() -> "Skipped " + (page * PAGE_SIZE) + " lines");
-            lines.skip(page * PAGE_SIZE).limit(PAGE_SIZE).forEach(line -> {
+            lines.forEach(line -> {
                 String[] parsed = parseLine(p, line);
                 if (parsed != null) rows.add(parsed);
             });
-            LOGGER.info(() -> "Parsed " + (page * PAGE_SIZE) + " lines");
+            LOGGER.info(() -> "Parsed " + rows.size() + " lines");
         }
 
         return rows;
