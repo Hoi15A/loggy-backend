@@ -1,15 +1,18 @@
 package ch.zhaw.pm4.loganalyser.query.parser;
 
+import ch.zhaw.pm4.loganalyser.exception.InvalidInputException;
 import ch.zhaw.pm4.loganalyser.model.log.LogConfig;
 import ch.zhaw.pm4.loganalyser.model.log.LogService;
 import ch.zhaw.pm4.loganalyser.model.log.column.ColumnComponent;
 import org.springframework.lang.Nullable;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +41,22 @@ public class LogParser {
      * @throws IOException when either a file is not found or there were complications while reading the file.
      */
     public List<String[]> read(LogService service, int page) throws IOException {
-        var logDir = Path.of(service.getLogDirectory());
+        var logDirPath = Path.of(service.getLogDirectory());
+        var logDir = logDirPath.toFile();
+
+        if(!logDir.exists()) {
+            throw new InvalidInputException("'" + service.getLogDirectory() + "' does not exist.");
+        }
+
+        var files = logDir.listFiles();
+        if(files == null || files.length == 0) {
+            throw new FileNotFoundException("'" + service.getLogDirectory() + "' is empty.");
+        }
 
         LOGGER.info(() -> "Load logfiles in [" + service.getLogDirectory() + "]");
         List<String[]> rows = new ArrayList<>();
-        for (File logfile : Objects.requireNonNull(logDir.toFile().listFiles())) {
+
+        for (File logfile : files) {
             if (logfile.isFile()) {
                 LOGGER.info(() -> "Parse file [" + logfile.getName() + "]");
                 rows.addAll(parse(logfile, service.getLogConfig(), page));
@@ -50,6 +64,9 @@ public class LogParser {
         }
 
         LOGGER.info(() -> "Total parsed lines: " + rows.size());
+        if (rows.size() == 0) {
+            throw new InvalidInputException("No lines could be parsed. Please check the order of your column component and your patterns.");
+        }
         return rows;
     }
 
@@ -113,7 +130,7 @@ public class LogParser {
         }
 
         String finalLineRegex = lineRegex;
-        LOGGER.info(() -> "Builded regex: " + finalLineRegex);
+        LOGGER.info(() -> "Built regex: " + finalLineRegex);
         return lineRegex;
     }
 

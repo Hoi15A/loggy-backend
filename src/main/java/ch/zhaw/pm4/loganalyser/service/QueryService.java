@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +33,8 @@ import java.util.stream.Collectors;
 @Setter
 @Service
 public class QueryService {
+
+    private static final Logger LOGGER = Logger.getLogger(QueryService.class.getName());
 
     @NonNull
     private ColumnComponentService columnComponentService;
@@ -68,11 +71,14 @@ public class QueryService {
                 var filterType = component.getFilterType();
                 var criteria = createCriteria(filterType, component);
                 logEntries = criteria.apply(logEntries, componentIndex);
+
+                List<String[]> finalLogEntries = logEntries;
+                LOGGER.info(() -> "Lines remaining after query applied on [" + component.getColumnComponent().getName() + "]: " + finalLogEntries.size());
             }
 
             return logEntries;
         } catch (java.io.FileNotFoundException ex1) {
-            throw new FileNotFoundException("Log service file not found");
+            throw new FileNotFoundException("Log service file not found", ex1);
         } catch (IOException ex2) {
             throw new FileReadException("Something went wrong while reading the file");
         }

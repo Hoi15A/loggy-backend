@@ -13,4 +13,12 @@ public class FileNotFoundException extends RuntimeException {
         super(message);
     }
 
+    /**
+     * Creates a new file not found exception instance.
+     * @param message String
+     */
+    public FileNotFoundException(String message, Exception ex) {
+        super(message, ex);
+    }
+
 }
